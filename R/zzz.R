@@ -1,5 +1,5 @@
 
-multimir_URL <- "http://multimir.ucdenver.edu/cgi-bin/multimir.pl"
+multimir_URL <- "http://multimir.ucdenver.edu/cgi-bin/multimir2.1.pl"
 
 
 # To search the multiMiR database on the web server given a MySQL query
@@ -30,7 +30,7 @@ multimir_dbInfo <- function(url=multimir_URL) {
 
 
 # To display database schema
-multimir_dbSchema <- function(schema.file="http://multimir.ucdenver.edu/multiMiR_DB_schema.sql") {
+multimir_dbSchema <- function(schema.file="http://multimir.ucdenver.edu/multiMiR_DB_schema_2.1.sql") {
     schema <- readLines(schema.file)
     cat(schema, sep="\n")
 }
@@ -69,7 +69,7 @@ list.multimir <- function(x=c("mirna","gene","drug","disease"), url=multimir_URL
 
 
 # To load pre-calculated score cutoffs
-get.multimir.cutoffs <- function(cutoff.file="http://multimir.ucdenver.edu/multimir_cutoffs.rda") {
+get.multimir.cutoffs <- function(cutoff.file="http://multimir.ucdenver.edu/multimir_cutoffs_2.1.rda") {
     multimir_cutoffs <- NULL
     url.file <- url(cutoff.file)
     on.exit(close(url.file))
