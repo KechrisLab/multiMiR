@@ -5,3 +5,7 @@
 .Rhistory
 .Rapp_history
 
+# Vim temp files
+*.swo
+*.swp
+
