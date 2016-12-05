@@ -1,0 +1,7 @@
+# System temp files
+.DS_Store
+
+# R system/temp files 
+.Rhistory
+.Rapp_history
+
