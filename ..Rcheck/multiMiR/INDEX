@@ -1,0 +1,28 @@
+add.multimir.links      Add External Database Link for Each of the
+                        multiMiR Result Entry
+get.multimir            Get microRNA-target Interactions from the
+                        multiMiR Package
+get.multimir.by.table   Get microRNA/target Information from a Given
+                        Table in the multiMiR Package
+get.multimir.cutoffs    Load Pre-calculated Prediction Score Cutoffs in
+                        the multiMiR Package
+get.multimir.disease    Get microRNA-disease/drug Relationships from
+                        the multiMiR Package
+get.multimir.predicted
+                        Get Predicted microRNA-target Interactions from
+                        the multiMiR Package
+get.multimir.validated
+                        Get Validated microRNA-target Interactions from
+                        the multiMiR Package
+list.multimir           List microRNAs, Genes, Drugs Or Diseases in the
+                        multiMiR Package
+multimir.summary        Summarize microRNA/target Information from the
+                        multiMiR Package
+multimir_dbInfo         Collect Information About the Web Server And
+                        Database of the multiMiR Package
+myurlencode             Encode a URL Before Submitting It to the
+                        multiMiR Web Server
+parse.multimir          Parse the Result Returned by the multiMiR Web
+                        Server
+search.multimir         Search the multiMiR Database Given a MySQL
+                        Query

@@ -1,0 +1,103 @@
+
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "multiMiR"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('multiMiR')
+Welcome to multiMiR.
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("get.multimir")
+> ### * get.multimir
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: get.multimir
+> ### Title: Get microRNA-target Interactions from the multiMiR Package
+> ### Aliases: get.multimir
+> ### Keywords: utilities database
+> 
+> ### ** Examples
+> 
+>   ## search 'hsa-miR-18a-3p' in validated interactions in human
+>   example1 <- get.multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
+Searching mirecords ...
+Searching mirtarbase ...
+Searching tarbase ...
+>   names(example1)
+[1] "validated" "summary"  
+>   ## target genes that are validated by Luciferase assay
+>   example1$validated[grep("Luciferase", example1$validated[,"experiment"]),]
+     database mature_mirna_acc mature_mirna_id target_symbol target_entrez
+1   mirecords     MIMAT0002891  hsa-miR-18a-3p          KRAS          3845
+48 mirtarbase     MIMAT0002891  hsa-miR-18a-3p          KRAS          3845
+    target_ensembl                                       experiment
+1  ENSG00000133703          Western blot//Luciferase activity assay
+48 ENSG00000133703 Luciferase reporter assay//qRT-PCR//Western blot
+     support_type pubmed_id
+1                  19372139
+48 Functional MTI  19372139
+>   example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
+  mature_mirna_acc mature_mirna_id target_symbol target_entrez  target_ensembl
+1     MIMAT0002891  hsa-miR-18a-3p          KRAS          3845 ENSG00000133703
+  mirecords mirtarbase validated.sum all.sum
+1         1          1             2       2
+> 
+>   ## search 'cisplatin' in disease and drug tables in human
+>   example2 <- get.multimir(disease.drug='cisplatin', table='disease.drug')
+Searching mir2disease ...
+Searching pharmaco_mir ...
+Searching phenomir ...
+>   nrow(example2$disease.drug)
+[1] 53
+>   head(example2$disease.drug)
+      database mature_mirna_acc mature_mirna_id target_symbol target_entrez
+1 pharmaco_mir     MIMAT0000772  hsa-miR-345-5p         ABCC1          4363
+2 pharmaco_mir     MIMAT0000720 hsa-miR-376c-3p          ALK7              
+3 pharmaco_mir     MIMAT0000423 hsa-miR-125b-5p          BAK1           578
+4 pharmaco_mir                       hsa-miR-34          BCL2           596
+5 pharmaco_mir     MIMAT0000318 hsa-miR-200b-3p          BCL2           596
+6 pharmaco_mir     MIMAT0000617 hsa-miR-200c-3p          BCL2           596
+   target_ensembl disease_drug paper_pubmedID
+1 ENSG00000103222    cisplatin       20099276
+2                    cisplatin       21224400
+3 ENSG00000030110    cisplatin       21823019
+4 ENSG00000171791    cisplatin       18803879
+5 ENSG00000171791    cisplatin       21993663
+6 ENSG00000171791    cisplatin       21993663
+> 
+> 
+> 
+> cleanEx()
+> nameEx("list.multimir")
+> ### * list.multimir
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: list.multimir
+> ### Title: List microRNAs, Genes, Drugs Or Diseases in the multiMiR Package
+> ### Aliases: list.multimir
+> ### Keywords: utilities database
+> 
+> ### ** Examples
+> 
+>   miRNAs <- list.multimir("mirna")
+>   genes <- list.multimir("gene")
