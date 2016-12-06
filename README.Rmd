@@ -1,10 +1,9 @@
 [![Build Status](https://travis-ci.com/mmulvahill/multiMiR.svg?token=Vzy3B4WH2SvZ4ybN4Uzy&branch=master)](https://travis-ci.com/mmulvahill/multiMiR)
 
 
-multiMiR  
+# multiMiR  
 
 ---
-
 
 The \Rpackage{multiMiR} web server (\url{http://multimir.ucdenver.edu}) hosts a
 database containing miRNA-target interactions from external databases. The
