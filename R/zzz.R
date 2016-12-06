@@ -541,7 +541,7 @@ get.multimir.by.table <- function(url = NULL,
                        "FROM", 
                        mirna.table, "AS m INNER JOIN", table, "AS i INNER JOIN", 
                        target.table, 
-                       "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND"
+                       "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
                        "i.target_uid=t.target_uid) WHERE", 
                        sep = " ")
             if (!is.null(target)) {
