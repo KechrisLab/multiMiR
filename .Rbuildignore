@@ -2,3 +2,4 @@
 .vimrc
 .travis.yml
 ..Rcheck
+.gitignore
