@@ -2,7 +2,6 @@ import(XML)
 import(RCurl)
 
 export(
-    multimir_URL,
     multimir_dbSchema,
     multimir_dbInfo,
     multimir_dbCount,

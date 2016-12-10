@@ -4,11 +4,11 @@ language: R
 sudo: false
 cache: packages
 r:
-  - oldrel
-  - release
-  - devel
-  - bioc-release
-  - bioc-devel
+    - oldrel
+    - release
+    - devel
+    - bioc-release
+    - bioc-devel
 
 warnings_are_errors: true
 #env:
@@ -24,3 +24,9 @@ warnings_are_errors: true
 
 #after_success:
 #- Rscript -e 'covr::codecov()'
+
+#notifications
+notifications:
+    email:
+        on_success: change
+        on_failure: change

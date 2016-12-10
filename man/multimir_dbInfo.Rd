@@ -1,6 +1,5 @@
 \name{multimir_dbInfo}
 
-\alias{multimir_URL}
 \alias{multimir_dbCount}
 \alias{multimir_dbInfo}
 \alias{multimir_dbSchema}
@@ -16,11 +15,10 @@
 }
 
 \usage{
-  multimir_URL
-  multimir_dbCount(url = multimir_URL)
-  multimir_dbInfo(url = multimir_URL)
-  multimir_dbSchema(schema.file = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql")
-  multimir_dbTables(url = multimir_URL)
+  multimir_dbCount(url = getOption("multimir.url"))
+  multimir_dbInfo(url = getOption("multimir.url"))
+  multimir_dbSchema(schema.file = getOption("multimir.schema.url"))
+  multimir_dbTables(url = getOption("multimir.url"))
 }
 
 \arguments{
@@ -34,7 +32,7 @@
 }
 
 \details{
-  \code{multimir_URL} is a character string containing the URL of the multiMiR
+  \code{url} is a character string containing the URL of the multiMiR
   web server.
 
   \code{multimir_dbCount} returns counts of records in the tables in the
@@ -52,9 +50,6 @@
 }
 
 \value{
-  \code{multimir_URL}: a character string with the URL of the multiMiR
-  web server.
-
   \code{multimir_dbCount}: a data frame with the count of records in each of
   the tables in the multiMiR database.
 
@@ -72,7 +67,7 @@
 }
 
 \examples{
-  multimir_URL
+  getOption("multimir.url")
 
   db.count <- multimir_dbCount()
 

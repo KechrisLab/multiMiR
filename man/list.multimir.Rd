@@ -13,7 +13,7 @@
 
 \usage{
   list.multimir(x = c("mirna","gene","drug","disease"),
-                url = multimir_URL)
+                url = getOption("multimir.url"))
 }
 
 \arguments{
@@ -24,7 +24,7 @@
   }
   \item{url}{
     a character string for the URL of the multiMiR web server.
-    The default is multimir_URL
+    The default is getOption("multimir.url")
     ("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").
   }
 }

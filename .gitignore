@@ -4,6 +4,7 @@
 # R system/temp files 
 .Rhistory
 .Rapp_history
+..Rcheck
 
 # Vim temp files
 *.swo

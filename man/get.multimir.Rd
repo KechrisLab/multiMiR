@@ -13,7 +13,7 @@
 }
 
 \usage{
-  get.multimir(url = multimir_URL, org = 'hsa', mirna = NULL,
+  get.multimir(url = getOption("multimir.url"), org = 'hsa', mirna = NULL,
                target = NULL, disease.drug = NULL, table = 'validated',
                predicted.cutoff = NULL, predicted.cutoff.type = 'p',
                predicted.site = 'conserved', summary = FALSE,
@@ -23,7 +23,7 @@
 \arguments{
   \item{url}{
     a character string for the URL of the multiMiR web server.
-    The default is multimir_URL
+    The default is getOption(" multimir.url")
     ("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").
   }
   \item{org}{

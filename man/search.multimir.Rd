@@ -16,13 +16,13 @@
 }
 
 \usage{
-  search.multimir(url = multimir_URL, query)
+  search.multimir(url = getOption("multimir.url"), query)
 }
 
 \arguments{
   \item{url}{
     a character string for the URL of the multiMiR web server.
-    The default is multimir_URL
+    The default is getOption("multimir.url")
     ("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").
   }
   \item{query}{
