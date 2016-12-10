@@ -1,14 +1,15 @@
 [![Build Status](https://travis-ci.com/mmulvahill/multiMiR.svg?token=Vzy3B4WH2SvZ4ybN4Uzy&branch=master)](https://travis-ci.com/mmulvahill/multiMiR)
 
 
-# multiMiR  
+multiMiR  
 
 ---
 
-The \Rpackage{multiMiR} web server (\url{http://multimir.ucdenver.edu}) hosts a
+
+The [*multiMiR* web server](http://multimir.ucdenver.edu) hosts a
 database containing miRNA-target interactions from external databases. The
-package \Rpackage{multiMiR} provides functions to communicate with the
-\Rpackage{multiMiR} web server and its database. 
+package *multiMiR* provides functions to communicate with the
+*multiMiR* web server and its database. 
 
 
 
