@@ -1,6 +1,5 @@
 \name{multimir_dbInfo}
 
-\alias{getOption("multimir.url")}
 \alias{multimir_dbCount}
 \alias{multimir_dbInfo}
 \alias{multimir_dbSchema}
@@ -16,7 +15,6 @@
 }
 
 \usage{
-  getOption("multimir.url")
   multimir_dbCount(url = getOption("multimir.url"))
   multimir_dbInfo(url = getOption("multimir.url"))
   multimir_dbSchema(schema.file = getOption("multimir.schema.url"))
@@ -52,9 +50,6 @@
 }
 
 \value{
-  \code{getOption("multimir")}: a character string with the URL of the multiMiR
-  web server. Use option(multimir = "https://foo.bar") to change value.
-
   \code{multimir_dbCount}: a data frame with the count of records in each of
   the tables in the multiMiR database.
 
