@@ -1,13 +1,17 @@
 
-
-
-# Startup messages, basic for now
+# Startup messages, reports default url
 .onAttach <- function(libname, pkgname) {
-    packageStartupMessage("Welcome to multiMiR.")
+  
+    packageStartupMessage(paste0("Welcome to multiMiR.\n\n", 
+                                 "multiMiR database URL has been set to the ",
+                                 "default value: ", getOption("multimir.url")))
+
 }
 
 
+# Set default url options on load
 .onLoad <- function(libname, pkgname) {
+
     op <- options()
 
     op.devtools <- list(
@@ -21,4 +25,5 @@
     if (any(toset)) options(op.devtools[toset])
 
     invisible()
+
 }
