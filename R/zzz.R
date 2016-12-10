@@ -15,7 +15,7 @@
     op <- options()
 
     op.devtools <- list(
-        multimir.version     = "2.0",
+        multimir.db.version  = "2.0",
         multimir.url         = "http://multimir.ucdenver.edu/cgi-bin/multimir.pl",
         multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
         multimir.cutoffs.url = "http://multimir.ucdenver.edu/multimir_cutoffs.rda"
