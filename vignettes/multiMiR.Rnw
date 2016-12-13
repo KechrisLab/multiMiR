@@ -25,12 +25,35 @@
 
 \section{Introduction}
 
-microRNAs (miRNAs) regulate expression by promoting degradation or repressing translation of target transcripts. miRNA target sites have been catalogued in databases based on experimental validation and computational prediction using a variety of algorithms. Several online resources provide collections of multiple databases but need to be imported into other software, such as R, for processing, tabulation, graphing and computation. Currently available miRNA target site packages in R are limited in the number of databases, types of databases and flexibility. The R package \Rpackage{multiMiR}, with web server at \url{http://multimir.ucdenver.edu}, is a comprehensive collection of predicted and validated miRNA-target interactions and their associations with diseases and drugs. \Rpackage{multiMiR} includes several novel features not available in existing R packages: 1) compilation of 14 different databases, more than any other collection; 2) expansion of databases to those based on disease annotation and drug response, in addition to many experimental and computational databases; and 3) user-defined cutoffs for predicted binding strength to provide the most confident selection. The \Rpackage{multiMiR} package enables retrieval of miRNA-target interactions from 14 external databases in R without the need to visit all these databases. Advanced users can also submit SQL queries to the web server to retrieve results.
+microRNAs (miRNAs) regulate expression by promoting degradation or repressing
+translation of target transcripts. miRNA target sites have been catalogued in
+databases based on experimental validation and computational prediction using a
+variety of algorithms. Several online resources provide collections of multiple
+databases but need to be imported into other software, such as R, for
+processing, tabulation, graphing and computation. Currently available miRNA
+target site packages in R are limited in the number of databases, types of
+databases and flexibility. The R package \Rpackage{multiMiR}, with web server at
+\url{http://multimir.ucdenver.edu}, is a comprehensive collection of predicted
+and validated miRNA-target interactions and their associations with diseases and
+drugs. \Rpackage{multiMiR} includes several novel features not available in
+existing R packages: 1) compilation of 14 different databases, more than any
+other collection; 2) expansion of databases to those based on disease annotation
+and drug response, in addition to many experimental and computational databases;
+and 3) user-defined cutoffs for predicted binding strength to provide the most
+confident selection. The \Rpackage{multiMiR} package enables retrieval of
+miRNA-target interactions from 14 external databases in R without the need to
+visit all these databases. Advanced users can also submit SQL queries to the web
+server to retrieve results.
 
 
 \section{Getting to know the multiMiR database}
 
-The \Rpackage{multiMiR} web server (\url{http://multimir.ucdenver.edu}) hosts a database containing miRNA-target interactions from external databases. The package \Rpackage{multiMiR} provides functions to communicate with the \Rpackage{multiMiR} web server and its database. Information from each external database is stored in a table in the \Rpackage{multiMiR} database. To see a list of the tables, we can use the \Rfunction{multimir\_dbTables} function.
+The \Rpackage{multiMiR} web server (\url{http://multimir.ucdenver.edu}) hosts a
+database containing miRNA-target interactions from external databases. The
+package \Rpackage{multiMiR} provides functions to communicate with the
+\Rpackage{multiMiR} web server and its database. Information from each external
+database is stored in a table in the \Rpackage{multiMiR} database. To see a list
+of the tables, we can use the \Rfunction{multimir\_dbTables} function.
 
 <<annotate,echo=FALSE>>=
 options(width=100)
@@ -44,7 +67,8 @@ db.tables
 @
 \end{scriptsize}
 
-To display the database schema, we can use the \Rfunction{multimir\_dbSchema} function.
+To display the database schema, we can use the \Rfunction{multimir\_dbSchema}
+function.
 
 \begin{scriptsize}
 <<eval=FALSE, echo=TRUE>>=
@@ -108,11 +132,15 @@ CREATE TABLE `mirecords` (
 
 ......
 
-(Please note that only three of the 19 tables are shown here for demonstration purpose.)
+(Please note that only three of the 19 tables are shown here for demonstration
+purpose.)
 \end{verbatim}
 \end{scriptsize}
 
-The function \Rfunction{multimir\_dbInfo} will display information of external miRNA and miRNA-target databases in \Rpackage{multiMiR}, including version, release date, link to download the data, and the corresponding table in \Rpackage{multiMiR}.
+The function \Rfunction{multimir\_dbInfo} will display information of external
+miRNA and miRNA-target databases in \Rpackage{multiMiR}, including version,
+release date, link to download the data, and the corresponding table in
+\Rpackage{multiMiR}.
 
 \begin{scriptsize}
 <<multimir_dbInfo>>=
@@ -121,9 +149,15 @@ db.info
 @
 \end{scriptsize}
 
-Among the 14 external databases, eight (DIANA-microT-CDS, ElMMo, MicroCosm, miRanda, miRDB, PicTar, PITA, and TargetScan) contain predicted miRNA-target interactions. Three of them (miRecords, miRTarBase, and TarBase) have experimentally validated miRNA-target interactions. The remaining three databases (miR2Disease, Pharmaco-miR, and PhenomiR) contain miRNA-drug/disease associations.
+Among the 14 external databases, eight (DIANA-microT-CDS, ElMMo, MicroCosm,
+miRanda, miRDB, PicTar, PITA, and TargetScan) contain predicted miRNA-target
+interactions. Three of them (miRecords, miRTarBase, and TarBase) have
+experimentally validated miRNA-target interactions. The remaining three
+databases (miR2Disease, Pharmaco-miR, and PhenomiR) contain miRNA-drug/disease
+associations.
 
-To see how many records are in these 14 external databases we refer to the \Rfunction{multimir\_dbCount} function.
+To see how many records are in these 14 external databases we refer to the
+\Rfunction{multimir\_dbCount} function.
 
 \begin{scriptsize}
 <<multimir_dbCount>>=
@@ -138,7 +172,10 @@ The current version of \Rpackage{multiMiR} contains nearly 50 million records.
 
 \section{List miRNAs, genes, drugs and diseases in the multiMiR database}
 
-In addition to functions displaying database and table information, the \Rpackage{multiMiR} package also provides the \Rfunction{list.multimir} function to list all the unique miRNAs, target genes, drugs, and diseases in the \Rpackage{multiMiR} database.
+In addition to functions displaying database and table information, the
+\Rpackage{multiMiR} package also provides the \Rfunction{list.multimir} function
+to list all the unique miRNAs, target genes, drugs, and diseases in the
+\Rpackage{multiMiR} database.
 
 \begin{scriptsize}
 <<list.multimir>>=
@@ -157,19 +194,27 @@ head(diseases)
 @
 \end{scriptsize}
 
-The current version of \Rpackage{multiMiR} has 4210 miRNAs and 94792 target genes from human, mouse, and rat, as well as 64 drugs and 223 disease terms. Depending on the speed of your Internet connection, it may take a few minutes to retrieve the large number of target genes.
+The current version of \Rpackage{multiMiR} has 4210 miRNAs and 94792 target
+genes from human, mouse, and rat, as well as 64 drugs and 223 disease terms.
+Depending on the speed of your Internet connection, it may take a few minutes to
+retrieve the large number of target genes.
 
 
 \section{Use \Rfunction{get.multimir} to query the multiMiR database}
 
-\Rfunction{get.multimir} is the main function in the package to retrieve predicted and validated miRNA-target interactions and their disease and drug associations from the \Rpackage{multiMiR} database.
+\Rfunction{get.multimir} is the main function in the package to retrieve
+predicted and validated miRNA-target interactions and their disease and drug
+associations from the \Rpackage{multiMiR} database.
 
-To get familiar with the parameters in \Rfunction{get.multimir}, you can type \textit{?get.multimir} or \textit{help(get.multimir)} in R. In the next section, many examples illustrate the use of the parameters.
+To get familiar with the parameters in \Rfunction{get.multimir}, you can type
+\textit{?get.multimir} or \textit{help(get.multimir)} in R. In the next section,
+many examples illustrate the use of the parameters.
 
 
 \section{Examples of multiMiR queries}
 
-In this section a variety of examples are described on how to query the multiMiR database.
+In this section a variety of examples are described on how to query the multiMiR
+database.
 
 \subsection{Example 1: Retrieve all validated target genes of a given miRNA}
 
@@ -188,11 +233,18 @@ example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
 @
 \end{scriptsize}
 
-It turns out that \textit{KRAS} is the only target validated by Luciferase assay. The interaction was recorded in miRecords and miRTarBase and supported by the same literature, whose PubMed ID is in column 'pubmed\_id'. The summary (by setting \textit{"summary=TRUE"} when calling \Rfunction{get.multimir}) shows the number of records in each of the external databases and the total number of databases supporting the interaction.
+It turns out that \textit{KRAS} is the only target validated by Luciferase
+assay. The interaction was recorded in miRecords and miRTarBase and supported by
+the same literature, whose PubMed ID is in column 'pubmed\_id'. The summary (by
+setting \textit{"summary=TRUE"} when calling \Rfunction{get.multimir}) shows the
+number of records in each of the external databases and the total number of
+databases supporting the interaction.
 
-\subsection{Example 2: Retrieve miRNA-target interactions associated with a given drug or disease}
+\subsection{Example 2: Retrieve miRNA-target interactions associated with a
+given drug or disease}
 
-In this example we would like to know which miRNAs and their target genes are associated with Cisplatin, a chemotherapy drug used in several cancers.
+In this example we would like to know which miRNAs and their target genes are
+associated with Cisplatin, a chemotherapy drug used in several cancers.
 
 \begin{scriptsize}
 <<Example2>>=
@@ -203,11 +255,19 @@ head(example2$disease.drug)
 @
 \end{scriptsize}
 
-\Rfunction{get.multimir} returns 53 miRNA-target pairs. For more information, we can always refer to the published papers with PubMed IDs in column 'paper\_pubmedID'.
+\Rfunction{get.multimir} returns 53 miRNA-target pairs. For more information, we
+can always refer to the published papers with PubMed IDs in column
+'paper\_pubmedID'.
 
 \subsection{Example 3: Select miRNAs predicted to target a gene}
 
-\Rfunction{get.multimir} also takes target gene(s) as input. In this example we retrieve miRNAs predicted to target \textit{Gnb1} in mouse. For predicted interactions, the default is to query the top 20\% predictions within each external database, which is equivalent to setting parameters \textit{"predicted.cutoff = 20"} and \textit{"predicted.cutoff.type = 'p'"} (for percentage cutoff). Here we search the top 35\% among all conserved and nonconserved target sites.
+\Rfunction{get.multimir} also takes target gene(s) as input. In this example we
+retrieve miRNAs predicted to target \textit{Gnb1} in mouse. For predicted
+interactions, the default is to query the top 20\% predictions within each
+external database, which is equivalent to setting parameters
+\textit{"predicted.cutoff = 20"} and \textit{"predicted.cutoff.type = 'p'"} (for
+percentage cutoff). Here we search the top 35\% among all conserved and
+nonconserved target sites.
 
 \begin{scriptsize}
 <<Example3_part1>>=
@@ -219,7 +279,10 @@ head(example3$summary)
 @
 \end{scriptsize}
 
-The records in \textit{example3\$predicted} are ordered by scores from best to worst within each external database. Once again, the summary option allows us to examine the number of target sites predicted by each external database and the total number of databases predicting the interaction.
+The records in \textit{example3\$predicted} are ordered by scores from best to
+worst within each external database. Once again, the summary option allows us to
+examine the number of target sites predicted by each external database and the
+total number of databases predicting the interaction.
 
 Finally we examine how many predictions each of the databases has.
 
@@ -229,13 +292,19 @@ apply(example3$summary[,6:13], 2, function(x) sum(x>0))
 @
 \end{scriptsize}
 
-\subsection{Example 4: Select miRNA(s) predicted to target most, if not all, of the genes of interest}
+\subsection{Example 4: Select miRNA(s) predicted to target most, if not all, of
+the genes of interest}
 
-You may have a list of genes involved in a common biological process. It is interesting to check whether some, or all, of these genes are targeted by the same miRNA(s). Here we have four genes involved in chronic obstructive pulmonary disease (COPD) in human and want to know what miRNAs target these genes by searching the top 500,000 predictions in each external database.
+You may have a list of genes involved in a common biological process. It is
+interesting to check whether some, or all, of these genes are targeted by the
+same miRNA(s). Here we have four genes involved in chronic obstructive pulmonary
+disease (COPD) in human and want to know what miRNAs target these genes by
+searching the top 500,000 predictions in each external database.
 
 \begin{scriptsize}
 <<Example4_part1>>=
-example4 = get.multimir(org='hsa', target=c('AKT2','CERS6','S1PR3','SULF2'), table='predicted',
+example4 = get.multimir(org='hsa', target=c('AKT2','CERS6','S1PR3','SULF2'),
+                        table='predicted',
 summary=TRUE, predicted.cutoff.type='n', predicted.cutoff=500000)
 @
 \end{scriptsize}
@@ -251,9 +320,13 @@ head(example4.counts)
 @
 \end{scriptsize}
 
-\subsection{Example 5: Retrieve interactions between a set of miRNAs and a set of genes}
+\subsection{Example 5: Retrieve interactions between a set of miRNAs and a set
+of genes}
 
-In this example, we profiled miRNA and mRNA expression in poorly metastatic bladder cancer cell lines T24 and Luc, and their metastatic derivatives FL4 and Lul2, respectively. We identified differentially expressed miRNAs and genes between the metastatic and poorly metastatic cells. Let's load the data.
+In this example, we profiled miRNA and mRNA expression in poorly metastatic
+bladder cancer cell lines T24 and Luc, and their metastatic derivatives FL4 and
+Lul2, respectively. We identified differentially expressed miRNAs and genes
+between the metastatic and poorly metastatic cells. Let's load the data.
 
 \begin{scriptsize}
 <<eval=FALSE, echo=TRUE>>=
@@ -261,12 +334,18 @@ load(url("http://multimir.ucdenver.edu/bladder.rda"))
 @
 \end{scriptsize}
 
-Variable \textit{DE.miRNA.up} contains 9 up-regulated miRNAs and variable \textit{DE.entrez.dn} has 47 down-regulated genes in the two metastatic cell lines. The hypothesis is that interactions between these miRNAs and genes whose expression changed at opposite directions may play a role in cancer metastasis. So we use \Rpackage{multiMiR} to check whether any of the nine miRNAs could target any of the 47 genes.
+Variable \textit{DE.miRNA.up} contains 9 up-regulated miRNAs and variable
+\textit{DE.entrez.dn} has 47 down-regulated genes in the two metastatic cell
+lines. The hypothesis is that interactions between these miRNAs and genes whose
+expression changed at opposite directions may play a role in cancer metastasis.
+So we use \Rpackage{multiMiR} to check whether any of the nine miRNAs could
+target any of the 47 genes.
 
 \begin{scriptsize}
 <<eval=FALSE, echo=TRUE>>=
 # search all tables & top 10% predictions
-example5 = get.multimir(org="hsa", mirna=DE.miRNA.up, target=DE.entrez.dn, table="all",
+example5 = get.multimir(org="hsa", mirna=DE.miRNA.up, target=DE.entrez.dn,
+                        table="all",
 summary=TRUE, predicted.cutoff.type="p", predicted.cutoff=10)
 @
 \begin{verbatim}
@@ -313,7 +392,8 @@ Two miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
 
 \begin{scriptsize}
 <<eval=FALSE, echo=TRUE>>=
-example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug, ignore.case=TRUE),]
+example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug,
+                           ignore.case=TRUE),]
 @
 \begin{verbatim}
        database mature_mirna_acc mature_mirna_id target_symbol target_entrez
@@ -331,7 +411,8 @@ example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug, ignore
 \end{verbatim}
 \end{scriptsize}
 
-The predicted databases predict 65 miRNA-gene pairs between the 9 miRNAs and 28 of the 47 genes.
+The predicted databases predict 65 miRNA-gene pairs between the 9 miRNAs and 28
+of the 47 genes.
 
 \begin{scriptsize}
 <<eval=FALSE, echo=TRUE>>=
@@ -347,7 +428,8 @@ length(unique(example5$predicted$target_entrez))
 [1] 28
 \end{verbatim}
 <<eval=FALSE, echo=TRUE>>=
-unique.pairs = unique(data.frame(miRNA.ID=as.character(example5$predicted$mature_mirna_id),
+unique.pairs = unique(data.frame(miRNA.ID =
+                                 as.character(example5$predicted$mature_mirna_id),
 target.Entrez=as.character(example5$predicted$target_entrez)))
 nrow(unique.pairs)
 @
@@ -368,7 +450,8 @@ head(unique.pairs)
 \end{verbatim}
 \end{scriptsize}
 
-Results from each of the predicted databases are already ordered by their scores from best to worst.
+Results from each of the predicted databases are already ordered by their scores
+from best to worst.
 
 \begin{scriptsize}
 <<eval=FALSE, echo=TRUE>>=
@@ -379,36 +462,58 @@ example5.split = split(example5$predicted, example5$predicted$database)
 
 \section{Direct query to the database on the multiMiR web server}
 
-As shown previously, \Rfunction{get.multimir} is the main function to retrieve information from the \Rpackage{multiMiR} database, which is hosted at http://multimir.ucdenver.edu. The function builds one SQL query for every external database that the user is going to search, submits the query to the web server, and parses, combines, and summarizes results from the web server. For advanced users, there are a couple ways to query the \Rpackage{multiMiR} database without using the \Rpackage{multiMiR} package; but they have to be familiar with SQL queries. In general, users are still advised to use the \Rfunction{get.multimir} function when querying multiple external databases in \Rpackage{multiMiR}.
+As shown previously, \Rfunction{get.multimir} is the main function to retrieve
+information from the \Rpackage{multiMiR} database, which is hosted at
+http://multimir.ucdenver.edu. The function builds one SQL query for every
+external database that the user is going to search, submits the query to the web
+server, and parses, combines, and summarizes results from the web server. For
+advanced users, there are a couple ways to query the \Rpackage{multiMiR}
+database without using the \Rpackage{multiMiR} package; but they have to be
+familiar with SQL queries. In general, users are still advised to use the
+\Rfunction{get.multimir} function when querying multiple external databases in
+\Rpackage{multiMiR}.
 
 \subsection{Direct query on the web server}
 
-The \Rpackage{multiMiR} package communicates with the \Rpackage{multiMiR} database via the script http://multimir.ucdenver.edu/cgi-bin/multimir.pl on the web server. To show all tables in the database, the following URL can be typed in the address bar of a web browser.
+The \Rpackage{multiMiR} package communicates with the \Rpackage{multiMiR}
+database via the script http://multimir.ucdenver.edu/cgi-bin/multimir.pl on the
+web server. To show all tables in the database, the following URL can be typed
+in the address bar of a web browser.
 
 \vspace*{1\baselineskip}
 \textit{http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=show tables}
 
 \vspace{1\baselineskip}\vspace{-\parskip}
-The content displayed on the resulting web page is similar with what is returned by typing \textit{multimir\_dbTables()} in R. Once again, data from each of the external databases is stored in a table in \Rpackage{multiMiR}. There are also tables for miRNAs (table \textit{mirna}) and target genes (table \textit{target}).
+The content displayed on the resulting web page is similar with what is returned
+by typing \textit{multimir\_dbTables()} in R. Once again, data from each of the
+external databases is stored in a table in \Rpackage{multiMiR}. There are also
+tables for miRNAs (table \textit{mirna}) and target genes (table
+\textit{target}).
 
 \vspace*{1\baselineskip}
-To learn about the structure of a table (e.g. DIANA-microT data in table \textit{diana\_microt}), users can use URL
+To learn about the structure of a table (e.g. DIANA-microT data in table
+\textit{diana\_microt}), users can use URL
 
 \vspace*{1\baselineskip}
 \textit{http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=describe diana\_microt}
 
 \vspace*{1\baselineskip}
-Similar with Example 1, the following URL searches for validated target genes of hsa-miR-18a-3p in miRecords.
+Similar with Example 1, the following URL searches for validated target genes of
+hsa-miR-18a-3p in miRecords.
 
 \vspace*{1\baselineskip}
 \textit{http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p'}
 
 \vspace*{1\baselineskip}
-As you can see, the query is long and searches just one of the three validated tables in \Rpackage{multiMiR}. While in Example 1, one line of R command using the \Rfunction{get.multimir} function searches, combines and summarizes results from all three validated external databases (miRecords, miRTarBase and TarBase).
+As you can see, the query is long and searches just one of the three validated
+tables in \Rpackage{multiMiR}. While in Example 1, one line of R command using
+the \Rfunction{get.multimir} function searches, combines and summarizes results
+from all three validated external databases (miRecords, miRTarBase and TarBase).
 
 \subsection{Direct query in R}
 
-The same direct queries we did above on the web server can be done in R as well. To show all tables in the database:
+The same direct queries we did above on the web server can be done in R as well.
+To show all tables in the database:
 
 \begin{scriptsize}
 <<Direct_query1>>=
@@ -416,7 +521,8 @@ direct1 = search.multimir(query="show tables")
 @
 \end{scriptsize}
 
-These are equivalent to using the \Rfunction{multimir\_dbTables} function as showed previously.
+These are equivalent to using the \Rfunction{multimir\_dbTables} function as
+showed previously.
 
 \vspace*{1\baselineskip}
 To show the structure of table \textit{diana\_microt}:
