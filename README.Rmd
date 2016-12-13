@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.com/mmulvahill/multiMiR.svg?token=Vzy3B4WH2SvZ4ybN4Uzy&branch=master)](https://travis-ci.com/mmulvahill/multiMiR)
+[![Build Status](https://travis-ci.com/KechrisLab/multiMiR.svg?token=Vzy3B4WH2SvZ4ybN4Uzy&branch=master)](https://travis-ci.com/KechrisLab/multiMiR)
 
 
-multiMiR  
+# multiMiR  
 
 ---
 
