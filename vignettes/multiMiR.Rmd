@@ -1,14 +1,16 @@
 ---
 title: "The multiMiR user's guide"
 author: Yuanbin Ru (ruyuanbin@gmail.com)
+date: "`r doc_date()`"
+package: "`r pkg_ver('BiocStyle')`"
 output: 
-	rmarkdown::html_vignette:
-		toc:true
-		code_folding: show
+  BiocStyle::html_document:
+    toc: true
+    code_folding: show
 vignette: >
-  %\VignetteIndexEntry{Put the title of your vignette here}
+  %\VignetteIndexEntry{The multiMiR user's guide}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}  
 ---
 
 
@@ -39,13 +41,6 @@ results.
 
 # Getting to know the multiMiR database
 
-The *multiMiR* web server (\url{http://multimir.ucdenver.edu}) hosts a
-database containing miRNA-target interactions from external databases. The
-package *multiMiR* provides functions to communicate with the
-*multiMiR* web server and its database. Information from each external
-database is stored in a table in the *multiMiR* database. To see a list
-of the tables, we can use the `r multimir_dbTables` function.
-
 ```{r annotate,echo=FALSE}
 options(width=100)
 ```
@@ -55,6 +50,13 @@ library(multiMiR)
 db.tables = multimir_dbTables()
 db.tables
 ```
+
+The *multiMiR* web server (\url{http://multimir.ucdenver.edu}) hosts a
+database containing miRNA-target interactions from external databases. The
+package *multiMiR* provides functions to communicate with the
+*multiMiR* web server and its database. Information from each external
+database is stored in a table in the *multiMiR* database. To see a list
+of the tables, we can use the `r multimir_dbTables` function.
 
 To display the database schema, we can use the `r multimir_dbSchema`
 function.
@@ -249,12 +251,12 @@ nonconserved target sites.
 
 ```{r Example3_part1}
 example3 <- get.multimir(org = "mmu", 
-												 target  = "Gnb1",
-												 table   = "predicted",
-												 summary = TRUE,
-												 predicted.cutoff      = 35,
-												 predicted.cutoff.type = "p",
-												 predicted.site        = "all")
+                         target  = "Gnb1",
+                         table   = "predicted",
+                         summary = TRUE,
+                         predicted.cutoff      = 35,
+                         predicted.cutoff.type = "p",
+                         predicted.site        = "all")
 names(example3)
 head(example3$predicted)
 head(example3$summary)
@@ -282,19 +284,19 @@ searching the top 500,000 predictions in each external database.
 
 ```{r Example4_part1} 
 example4 <- get.multimir(org='hsa',
-												 target=c('AKT2', 'CERS6', 'S1PR3', 'SULF2'),
-												 table='predicted',
-												 summary=TRUE,
-												 predicted.cutoff.type='n',
-												 predicted.cutoff=500000)
+                         target=c('AKT2', 'CERS6', 'S1PR3', 'SULF2'),
+                         table='predicted',
+                         summary=TRUE,
+                         predicted.cutoff.type='n',
+                         predicted.cutoff=500000)
 ```
 
 Then we count the number of target genes for each miRNA.
 
 ```{r Example4_part2}
-example4.counts <- addmargins(table(example4$summary[,2:3]))
-example4.counts <- example4.counts[-nrow(example4.counts),]
-example4.counts <- example4.counts[order(example4.counts[,5], decreasing=TRUE),]
+example4.counts <- addmargins(table(example4$summary[, 2:3]))
+example4.counts <- example4.counts[-nrow(example4.counts), ]
+example4.counts <- example4.counts[order(example4.counts[, 5], decreasing = TRUE), ]
 head(example4.counts)
 ```
 
@@ -316,215 +318,208 @@ expression changed at opposite directions may play a role in cancer metastasis.
 So we use `r multiMiR` to check whether any of the nine miRNAs could
 target any of the 47 genes.
 
-```{r Example5_part2, eval=FALSE, echo=TRUE}
+```{r Example5_part2, eval=TRUE, echo=TRUE}
 # search all tables & top 10% predictions
-example5 = get.multimir(org="hsa", mirna=DE.miRNA.up, target=DE.entrez.dn,
-table="all", summary=TRUE, predicted.cutoff.type="p", predicted.cutoff=10)
+example5 <- get.multimir(org = "hsa",
+                         mirna = DE.miRNA.up,
+                         target = DE.entrez.dn,
+                         table = "all",
+                         summary = TRUE,
+                         predicted.cutoff.type = "p",
+                         predicted.cutoff = 10)
 ```
-\begin{verbatim}
-Searching diana_microt ...
-Searching elmmo ...
-Searching microcosm ...
-Searching miranda ...
-Searching mirdb ...
-Searching pictar ...
-Searching pita ...
-Searching targetscan ...
-Searching mirecords ...
-Searching mirtarbase ...
-Searching tarbase ...
-Searching mir2disease ...
-Searching pharmaco_mir ...
-Searching phenomir ...
-\end{verbatim}
-\end{scriptsize}
+```{r eval = FALSE}
+# Searching diana_microt ...
+# Searching elmmo ...
+# Searching microcosm ...
+# Searching miranda ...
+# Searching mirdb ...
+# Searching pictar ...
+# Searching pita ...
+# Searching targetscan ...
+# Searching mirecords ...
+# Searching mirtarbase ...
+# Searching tarbase ...
+# Searching mir2disease ...
+# Searching pharmaco_mir ...
+# Searching phenomir ...
+```
 
 In the result, there are 3 unique miRNA-gene pairs that have been validated.
 
-\begin{scriptsize}
-<<eval=FALSE, echo=TRUE>>=
+```{r Example5_part3, eval=FALSE, echo=TRUE}
 example5$validated
-@
-\begin{verbatim}
-    database mature_mirna_acc mature_mirna_id target_symbol target_entrez
-1 mirtarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
-2 mirtarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
-3    tarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
-4    tarbase     MIMAT0000424     hsa-miR-128          NEK2          4751
-5    tarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
-   target_ensembl               experiment          support_type pubmed_id
-1 ENSG00000137714               Proteomics Functional MTI (Weak)  18668040
-2 ENSG00000064042 pSILAC//Proteomics;Other Functional MTI (Weak)  18668040
-3 ENSG00000137714               Proteomics              positive          
-4 ENSG00000117650               Microarray              positive          
-5 ENSG00000064042               Proteomics              positive          
-\end{verbatim}
-\end{scriptsize}
+```
+```{r eval=FALSE}
+#     database mature_mirna_acc mature_mirna_id target_symbol target_entrez
+# 1 mirtarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
+# 2 mirtarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
+# 3    tarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
+# 4    tarbase     MIMAT0000424     hsa-miR-128          NEK2          4751
+# 5    tarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
+#    target_ensembl               experiment          support_type pubmed_id
+# 1 ENSG00000137714               Proteomics Functional MTI (Weak)  18668040
+# 2 ENSG00000064042 pSILAC//Proteomics;Other Functional MTI (Weak)  18668040
+# 3 ENSG00000137714               Proteomics              positive          
+# 4 ENSG00000117650               Microarray              positive          
+# 5 ENSG00000064042               Proteomics              positive          
+```
 
 Two miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
 
-\begin{scriptsize}
-<<eval=FALSE, echo=TRUE>>=
+```{r Example5_part4, eval=FALSE, echo=TRUE}
 example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug,
                            ignore.case=TRUE),]
-@
-\begin{verbatim}
-       database mature_mirna_acc mature_mirna_id target_symbol target_entrez
-18  mir2disease     MIMAT0000418  hsa-miR-23b-3p            NA            NA
-711    phenomir     MIMAT0000418  hsa-miR-23b-3p            NA            NA
-311    phenomir     MIMAT0000449 hsa-miR-146a-5p            NA            NA
-    target_ensembl   disease_drug
-18              NA bladder cancer
-711             NA Bladder cancer
-311             NA Bladder cancer
-                                              paper_pubmedID
-18  2007. Micro-RNA profiling in kidney and bladder cancers.
-711                                                 17826655
-311                                                 19127597
-\end{verbatim}
-\end{scriptsize}
+```
+```{r eval=FALSE}
+#        database mature_mirna_acc mature_mirna_id target_symbol target_entrez
+# 18  mir2disease     MIMAT0000418  hsa-miR-23b-3p            NA            NA
+# 711    phenomir     MIMAT0000418  hsa-miR-23b-3p            NA            NA
+# 311    phenomir     MIMAT0000449 hsa-miR-146a-5p            NA            NA
+#     target_ensembl   disease_drug
+# 18              NA bladder cancer
+# 711             NA Bladder cancer
+# 311             NA Bladder cancer
+#                                               paper_pubmedID
+# 18  2007. Micro-RNA profiling in kidney and bladder cancers.
+# 711                                                 17826655
+# 311                                                 19127597
+```
 
 The predicted databases predict 65 miRNA-gene pairs between the 9 miRNAs and 28
 of the 47 genes.
 
-\begin{scriptsize}
-<<eval=FALSE, echo=TRUE>>=
+```{r Example5_part5, eval=FALSE, echo=TRUE}
 length(unique(example5$predicted$mature_mirna_id))
-@
-\begin{verbatim}
-[1] 9
-\end{verbatim}
-<<eval=FALSE, echo=TRUE>>=
+# [1] 9
+```
+
+
+```{r Example5_part6, eval=FALSE, echo=TRUE}
 length(unique(example5$predicted$target_entrez))
 @
-\begin{verbatim}
-[1] 28
-\end{verbatim}
-<<eval=FALSE, echo=TRUE>>=
+```{r, eval=FALSE}
+# [1] 28
+```
+
+
+```{r Example5_part7, eval=FALSE, echo=TRUE}
 unique.pairs = unique(data.frame(miRNA.ID =
                                  as.character(example5$predicted$mature_mirna_id),
 target.Entrez=as.character(example5$predicted$target_entrez)))
 nrow(unique.pairs)
-@
-\begin{verbatim}
-[1] 65
-\end{verbatim}
-<<eval=FALSE, echo=TRUE>>=
+```
+```{r, eval=FALSE}
+# [1] 65
+```
+
+
+```{r Example5_part8, eval=FALSE, echo=TRUE}
 head(unique.pairs)
-@
-\begin{verbatim}
-        miRNA.ID target.Entrez
-1 hsa-miR-182-5p          2017
-2 hsa-miR-182-5p          1112
-3 hsa-miR-30d-5p         22998
-4 hsa-miR-30a-5p         22998
-5 hsa-miR-30b-5p         22998
-6 hsa-miR-182-5p          5962
-\end{verbatim}
-\end{scriptsize}
+```
+```{r, eval = FALSE}
+#         miRNA.ID target.Entrez
+# 1 hsa-miR-182-5p          2017
+# 2 hsa-miR-182-5p          1112
+# 3 hsa-miR-30d-5p         22998
+# 4 hsa-miR-30a-5p         22998
+# 5 hsa-miR-30b-5p         22998
+# 6 hsa-miR-182-5p          5962
+```
 
 Results from each of the predicted databases are already ordered by their scores
 from best to worst.
 
-\begin{scriptsize}
-<<eval=FALSE, echo=TRUE>>=
+
+```{r Example5_part9, eval=FALSE, echo=TRUE}
 example5.split = split(example5$predicted, example5$predicted$database)
-@
-\end{scriptsize}
+```
 
 
-\section{Direct query to the database on the multiMiR web server}
 
-As shown previously, \Rfunction{get.multimir} is the main function to retrieve
-information from the \Rpackage{multiMiR} database, which is hosted at
+
+# Direct query to the database on the multiMiR web server
+
+As shown previously, *get.multimir* is the main function to retrieve
+information from the *multiMiR* database, which is hosted at
 http://multimir.ucdenver.edu. The function builds one SQL query for every
 external database that the user is going to search, submits the query to the web
 server, and parses, combines, and summarizes results from the web server. For
-advanced users, there are a couple ways to query the \Rpackage{multiMiR}
-database without using the \Rpackage{multiMiR} package; but they have to be
+advanced users, there are a couple ways to query the *multiMiR*
+database without using the *multiMiR* package; but they have to be
 familiar with SQL queries. In general, users are still advised to use the
-\Rfunction{get.multimir} function when querying multiple external databases in
-\Rpackage{multiMiR}.
+`r get.multimir` function when querying multiple external databases in
+*multiMiR*.
 
-\subsection{Direct query on the web server}
+## Direct query on the web server
 
-The \Rpackage{multiMiR} package communicates with the \Rpackage{multiMiR}
+The *multiMiR* package communicates with the *multiMiR*
 database via the script http://multimir.ucdenver.edu/cgi-bin/multimir.pl on the
 web server. To show all tables in the database, the following URL can be typed
 in the address bar of a web browser.
 
-\vspace*{1\baselineskip}
-\textit{http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=show tables}
 
-\vspace{1\baselineskip}\vspace{-\parskip}
+[](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=show tables)
+
+
 The content displayed on the resulting web page is similar with what is returned
-by typing \textit{multimir\_dbTables()} in R. Once again, data from each of the
-external databases is stored in a table in \Rpackage{multiMiR}. There are also
-tables for miRNAs (table \textit{mirna}) and target genes (table
-\textit{target}).
+by typing `r multimir\_dbTables()` in R. Once again, data from each of the
+external databases is stored in a table in *multiMiR*. There are also tables for
+miRNAs (table *mirna*) and target genes (table *target*).
 
-\vspace*{1\baselineskip}
 To learn about the structure of a table (e.g. DIANA-microT data in table
-\textit{diana\_microt}), users can use URL
+*diana\_microt*), users can use URL
 
-\vspace*{1\baselineskip}
-\textit{http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=describe diana\_microt}
 
-\vspace*{1\baselineskip}
+[](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=describe diana\_microt)
+
+
 Similar with Example 1, the following URL searches for validated target genes of
 hsa-miR-18a-3p in miRecords.
 
-\vspace*{1\baselineskip}
-\textit{http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p'}
 
-\vspace*{1\baselineskip}
+[](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p')
+
+
 As you can see, the query is long and searches just one of the three validated
-tables in \Rpackage{multiMiR}. While in Example 1, one line of R command using
-the \Rfunction{get.multimir} function searches, combines and summarizes results
-from all three validated external databases (miRecords, miRTarBase and TarBase).
+tables in *multiMiR*. While in Example 1, one line of R command using the `r
+get.multimir` function searches, combines and summarizes results from all three
+validated external databases (miRecords, miRTarBase and TarBase).
 
-\subsection{Direct query in R}
+## Direct query in R
 
 The same direct queries we did above on the web server can be done in R as well.
 To show all tables in the database:
 
-\begin{scriptsize}
-<<Direct_query1>>=
+```{r Direct_query1}
 direct1 = search.multimir(query="show tables")
-@
-\end{scriptsize}
+```
 
-These are equivalent to using the \Rfunction{multimir\_dbTables} function as
-showed previously.
+These are equivalent to using the `r multimir\_dbTables` function as showed
+previously.
 
-\vspace*{1\baselineskip}
-To show the structure of table \textit{diana\_microt}:
+To show the structure of table *diana\_microt*:
 
-\begin{scriptsize}
-<<Direct_query2>>=
+```{r Direct_query2}
 direct2 = search.multimir(query="describe diana_microt")
 direct2
-@
-\end{scriptsize}
+```
 
 To search for validated target genes of hsa-miR-18a-3p in miRecords:
 
-\begin{scriptsize}
-<<Direct_query3>>=
-direct3 = search.multimir(query="select m.mature_mirna_acc, m.mature_mirna_id, t.target_symbol, t.target_entrez, t.target_ensembl, i.experiment, i.support_type, i.pubmed_id from mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature_mirna_uid=i.mature_mirna_uid and i.target_uid=t.target_uid) WHERE m.mature_mirna_id='hsa-miR-18a-3p'")
+```{r Direct_query3}
+direct3 <- search.multimir(query="select m.mature_mirna_acc, m.mature_mirna_id, t.target_symbol, t.target_entrez, t.target_ensembl, i.experiment, i.support_type, i.pubmed_id from mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature_mirna_uid=i.mature_mirna_uid and i.target_uid=t.target_uid) WHERE m.mature_mirna_id='hsa-miR-18a-3p'")
 direct3
-@
-\end{scriptsize}
+```
 
 
-\section{Session Info}
+# Session Info
 
-\begin{scriptsize}
-<<sessionInfo>>=
+```{r sessionInfo}
 sessionInfo()
 warnings()
-@
-\end{scriptsize}
+```
 
-\end{document}
+
+
 

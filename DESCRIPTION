@@ -11,7 +11,7 @@ Author: Yuanbin Ru <ruyuanbin@gmail.com> and Katerina Kechris <Katerina.Kechris@
 Maintainer: Yuanbin Ru <ruyuanbin@gmail.com>
 Depends:
 Imports: XML, RCurl
-Suggests: knitr, rmarkdown
+Suggests: BiocStyle, knitr, rmarkdown
 VignetteBuilder: knitr
 License: file LICENSE
 Packaged: 2016-12-08 04:19:34 UTC; smahaffey
