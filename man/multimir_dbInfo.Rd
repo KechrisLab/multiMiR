@@ -33,7 +33,7 @@
 
 \details{
   \code{url} is a character string containing the URL of the multiMiR
-  web server.
+  web server. 
 
   \code{multimir_dbCount} returns counts of records in the tables in the
   multiMiR database. Each table contains data from an external miRNA/target
@@ -67,7 +67,9 @@
 }
 
 \examples{
-  getOption("multimir.url")
+  this_url <- getOption("multimir.url")
+  this_url
+  options(multimir.url = this_url)
 
   db.count <- multimir_dbCount()
 

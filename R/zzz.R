@@ -3,7 +3,7 @@
 .onAttach <- function(libname, pkgname) {
   
     packageStartupMessage(paste0("Welcome to multiMiR.\n\n", 
-                                 "multiMiR database URL has been set to the ",
+                                 "multiMiR database URL has been set to the\n",
                                  "default value: ", getOption("multimir.url")))
 
 }

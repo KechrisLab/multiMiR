@@ -37,7 +37,7 @@
     the mature miRNA(s). It can be the mature miRNA accession number
     (i.e. "MIMAT0000072"), mature miRNA ID (i.e. "hsa-miR-199a-3p"),
     or a combination of both (i.e. c("MIMAT0000065", "hsa-miR-30a-5p")).
-    The character is case insensitive.
+    The character is case insensitive. *See note about the length of list supported.
   }
   \item{target}{
     'NULL' (default) or a character string or character vector for
@@ -45,7 +45,7 @@
     Entrez gene ID (i.e. c(578, 3845)), Ensembl gene ID (i.e.
     "ENSG00000171791"), or a combination of any of these identifiers
     (i.e. c("TP53", 3845, "ENSG00000171791")). The character is case
-    insensitive.
+    insensitive. *See note about the length of list supported.
   }
   \item{disease.drug}{
     'NULL' (default) or a character string or character vector for
@@ -111,6 +111,14 @@
   please note that for predicted interactions a combination approach
   may not be as effective as a single algorithm because of age or quality
   of the tool.
+  
+  Note: The length of the list supported has been increased from 
+  version1.0.1.  The size is now limited to 20MB which should accommodate
+  most requests.  There is a possibility for technical reasons that the 
+  query could fail even if the list is under this limit.  If this occurs 
+  it is recommended that you break up the list into smaller batches and 
+  submit them sequentially.
+
 }
 
 \value{

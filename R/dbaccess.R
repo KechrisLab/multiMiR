@@ -3,10 +3,7 @@
 # To search the multiMiR database on the web server given a MySQL query
 search.multimir <- function(url = getOption("multimir.url"), 
                             query) {
-    query  <- paste("query", query, sep = "=")
-    query  <- paste(url, query, sep = "?")
-    query  <- myurlencode(query)
-    result <- getURL(query)
+    result <- postForm(url, query = query, .cgifields = c("query"))
     result <- readHTMLTable(result)
     result <- parse.multimir(result)
     return(result)
@@ -107,9 +104,9 @@ get.multimir <- function(url = getOption("multimir.url"),
                          mirna = NULL, 
                          target = NULL,
                          disease.drug = NULL, 
-                         table = "validated", 
+                         table = "validated",
                          predicted.cutoff = NULL,
-                         predicted.cutoff.type = "p", 
+                         predicted.cutoff.type = "p",
                          predicted.site = "conserved", 
                          summary = FALSE, 
                          add.link = FALSE) {
@@ -157,14 +154,14 @@ get.multimir <- function(url = getOption("multimir.url"),
         }
     } else {
         # search an individual table
-        result[[table]] <- get.multimir.by.table(url = url, 
-                                                 org = org, 
-                                                 mirna = mirna, 
+        result[[table]] <- get.multimir.by.table(url = url,
+                                                 org = org,
+                                                 mirna = mirna,
                                                  target = target,
-                                                 disease.drug = disease.drug, 
-                                                 table = table, 
-                                                 predicted.cutoff = predicted.cutoff, 
-                                                 predicted.cutoff.type = predicted.cutoff.type, 
+                                                 disease.drug = disease.drug,
+                                                 table = table,
+                                                 predicted.cutoff = predicted.cutoff,
+                                                 predicted.cutoff.type = predicted.cutoff.type,
                                                  predicted.site = predicted.site)
         if (add.link & !is.null(result[[table]])) {
             result[[table]] <- add.multimir.links(result[[table]], 
@@ -180,7 +177,7 @@ get.multimir <- function(url = getOption("multimir.url"),
 
 
 # To get validated miRNA-target interactions
-get.multimir.validated <- function(url = NULL, 
+get.multimir.validated <- function(url = NULL,
                                    org = "hsa", 
                                    mirna = NULL, 
                                    target = NULL) {
@@ -229,21 +226,21 @@ get.multimir.predicted <- function(url = NULL,
 
 
 # To get miRNA-disease/drug interactions
-get.multimir.disease <- function(url = NULL, 
-                                 org = "hsa", 
-                                 mirna = NULL, 
-                                 target = NULL, 
+get.multimir.disease <- function(url = NULL,
+                                 org = "hsa",
+                                 mirna = NULL,
+                                 target = NULL,
                                  disease.drug = NULL) {
     if (is.null(mirna) & is.null(target) & is.null(disease.drug)) {
         return(NULL)
     }
     result <- NULL
     for (table in c("mir2disease", "pharmaco_mir", "phenomir")) {
-        r <- get.multimir.by.table(url = url, 
-                                   org = org, 
-                                   mirna = mirna, 
-                                   target = target, 
-                                   table = table, 
+        r <- get.multimir.by.table(url = url,
+                                   org = org,
+                                   mirna = mirna,
+                                   target = target,
+                                   table = table,
                                    disease.drug = disease.drug)
         result <- rbind(result, r)
     }
@@ -252,16 +249,16 @@ get.multimir.disease <- function(url = NULL,
 
 
 # To get miRNA-target interactions in a given table
-get.multimir.by.table <- function(url = NULL, 
-                                  org = "hsa", 
-                                  mirna = NULL, 
-                                  target = NULL, 
-                                  table = NULL, 
-                                  disease.drug = NULL, 
-                                  predicted.cutoff = NULL, 
-                                  predicted.cutoff.type = "p", 
-                                  predicted.site = "conserved", 
-                                  mirna.table = "mirna", 
+get.multimir.by.table <- function(url = NULL,
+                                  org = "hsa",
+                                  mirna = NULL,
+                                  target = NULL,
+                                  table = NULL,
+                                  disease.drug = NULL,
+                                  predicted.cutoff = NULL,
+                                  predicted.cutoff.type = "p",
+                                  predicted.site = "conserved",
+                                  mirna.table = "mirna",
                                   target.table = "target") {
     multimir.tables <- setdiff(as.character(multimir_dbTables()[, 1]),
                                c("map_counts", "map_metadata", "metadata"))
@@ -299,7 +296,7 @@ get.multimir.by.table <- function(url = NULL,
         } else if (org %in% c("rno", "rat", "rattus norvegicus")) {
             org <- "rno"
         } else {
-            stop(paste("Organism", org, "is not in multiMiR. Current options", 
+            stop(paste("Organism", org, "is not in multiMiR. Current options",
                        "are 'hsa' (human), 'mmu' (mouse) and 'rno' (rat).\n", 
                        sep = " "))
         }
@@ -457,15 +454,15 @@ get.multimir.by.table <- function(url = NULL,
                 }
             } else {
                 if (predicted.cutoff < 10000) {
-                    warning(paste("Number predicted cutoff (predicted.cutoff)", 
-                                  predicted.cutoff, 
+                    message(paste("Number predicted cutoff (predicted.cutoff)",
+                                  predicted.cutoff,
                                   "may be too small. A cutoff of 10000 will be",
                                   "used instead.\n", 
                                   sep = " "))
                     # predicted.cutoff = 10000
                     score.cutoff <- cutoffs[[name]][["10000"]]
                 } else if (predicted.cutoff > cutoffs[[name]][["count"]]) {
-                    warning(paste0("Number predicted cutoff (predicted.cutoff) ",
+                    message(paste0("Number predicted cutoff (predicted.cutoff) ",
                                    predicted.cutoff, " is larger than the total",
                                    "number of records in table ", 
                                    table, ". All records will be queried.\n"))
@@ -514,7 +511,7 @@ get.multimir.by.table <- function(url = NULL,
             q <- paste("SELECT m.mature_mirna_acc, m.mature_mirna_id, 'NA' AS",
                        "target_symbol, 'NA' AS target_entrez, 'NA' AS",
                        "target_ensembl, i.disease AS disease_drug,",
-                       "CONCAT_WS('.  ', i.year, i.title)",
+                       "CONCAT_WS('. ', i.year, i.title)",
                        "AS paper_pubmedID FROM", 
                        mirna.table, "AS m INNER JOIN", table, 
                        "AS i ON (m.mature_mirna_uid=i.mature_mirna_uid) WHERE", 
@@ -751,19 +748,19 @@ add.multimir.links <- function(x, org) {
         } else if (d == "mirtarbase") {
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://mirtarbase.mbc.nctu.edu.tw/php/search.php?org=", 
+                paste("http://mirtarbase.mbc.nctu.edu.tw/php/search.php?org=",
                       org, "&mirnas=", mir, "&targets=", symbol, "&opt=adv", 
                       sep = "")
         } else if (d == "tarbase") {
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://diana.imis.athena-innovation.gr/DianaTools/index.php?r=tarbase/index&mirnas=", 
+                paste("http://diana.imis.athena-innovation.gr/DianaTools/index.php?r=tarbase/index&mirnas=",
                       mir, "&genes=", symbol, sep = "")
         } else if (d == "mir2disease") {
             # NOTE: Can only search by miRNA, gene or disease alone - here use gene
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://watson.compbio.iupui.edu:8080/miR2Disease/searchTarget.jsp?SearchUnit=target&SearchText=", 
+                paste("http://watson.compbio.iupui.edu:8080/miR2Disease/searchTarget.jsp?SearchUnit=target&SearchText=",
                       symbol, "&checkbox2=Causal&checkbox2=Unspecified", 
                       sep = "")
         } else if (d == "pharmaco_mir") {
@@ -773,13 +770,13 @@ add.multimir.links <- function(x, org) {
             # NOTE: search by gene
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://mips.helmholtz-muenchen.de/phenomir/main/list/searchform2?query=", 
+                paste("http://mips.helmholtz-muenchen.de/phenomir/main/list/searchform2?query=",
                       symbol, "&selectedview=mirs&searchtype=fuzzy", 
                       sep = "")
         } else if (d == "diana_microt") {
             ensembl <- as.character(x$target_ensembl[m])
             links[m] <- 
-                paste("http://diana.imis.athena-innovation.gr/DianaTools/index.php?r=microT_CDS/results&genes=", 
+                paste("http://diana.imis.athena-innovation.gr/DianaTools/index.php?r=microT_CDS/results&genes=",
                       ensembl, "&mirnas=", mir, "&threshold=0", 
                       sep = "")
         } else if (d == "elmmo") {
@@ -809,7 +806,7 @@ add.multimir.links <- function(x, org) {
             }
             symbol   <- as.character(x$target_symbol[m])
             links[m] <-
-                paste("http://www.ebi.ac.uk/enright-srv/microcosm/cgi-bin/targets/v5/hit_list.pl?", 
+                paste("http://www.ebi.ac.uk/enright-srv/microcosm/cgi-bin/targets/v5/hit_list.pl?",
                       s, "&mirna_id=", mir, "&external_name=", symbol, 
                       sep = "")
         } else if (d == "miranda") {
