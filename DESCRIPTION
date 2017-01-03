@@ -9,10 +9,10 @@ Description: A collection of microRNAs/targets from external resources,
 Version: 0.98.0.1
 Author: Yuanbin Ru <ruyuanbin@gmail.com> and Katerina Kechris <Katerina.Kechris@ucdenver.edu>
 Maintainer: Yuanbin Ru <ruyuanbin@gmail.com>
-Depends:
+Depends: R (>= 3.3)
 Imports: XML, RCurl
-Suggests: BiocStyle, knitr, rmarkdown
 VignetteBuilder: knitr
+Suggests: BiocStyle, knitr, rmarkdown
 License: file LICENSE
 Packaged: 2016-12-08 04:19:34 UTC; smahaffey
 LazyData: true

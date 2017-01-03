@@ -47,7 +47,7 @@ options(width=100)
 opts_chunk$set(echo       = TRUE,
                message    = TRUE,
                warning    = TRUE,
-               eval       = FALSE)
+               eval       = TRUE)
 ```
 
 ```{r multimir_dbTables}
