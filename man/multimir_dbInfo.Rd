@@ -67,8 +67,9 @@
 }
 
 \examples{
-  getOption("multimir.url")
-  options(multimir.url = "https://multimir.ucdenver.edu/")
+  this_url <- getOption("multimir.url")
+  this_url
+  options(multimir.url = this_url)
 
   db.count <- multimir_dbCount()
 

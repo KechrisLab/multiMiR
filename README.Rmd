@@ -5,11 +5,19 @@
 
 ---
 
-
 The [*multiMiR* web server](http://multimir.ucdenver.edu) hosts a
 database containing miRNA-target interactions from external databases. The
 package *multiMiR* provides functions to communicate with the
 *multiMiR* web server and its database. 
 
 
+```{r}
+source("https://bioconductor.org/biocLite.R")
+biocLite()
+biocLite("BiocStyle")
+
+install.packages("devtools")
+library(devtools)
+devtools::install_github("kechrislab/multimir")
+```
 
