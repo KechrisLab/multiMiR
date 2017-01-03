@@ -42,12 +42,12 @@ results.
 # Getting to know the multiMiR database
 
 ```{r annotate, echo=FALSE}
-#library(knitr)
+library(knitr)
 options(width=100)
-#opts_chunk$set(echo       = TRUE,
-#               message    = TRUE,
-#               warning    = TRUE,
-#               eval       = FALSE)
+opts_chunk$set(echo       = TRUE,
+               message    = TRUE,
+               warning    = TRUE,
+               eval       = FALSE)
 ```
 
 ```{r multimir_dbTables}
