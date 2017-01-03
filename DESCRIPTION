@@ -15,4 +15,5 @@ Suggests: BiocStyle, knitr, rmarkdown
 VignetteBuilder: knitr
 License: file LICENSE
 Packaged: 2016-12-08 04:19:34 UTC; smahaffey
+LazyData: true
 NeedsCompilation: no
