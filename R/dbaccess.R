@@ -454,7 +454,7 @@ get.multimir.by.table <- function(url = NULL,
                 }
             } else {
                 if (predicted.cutoff < 10000) {
-                    warning(paste("Number predicted cutoff (predicted.cutoff)",
+                    message(paste("Number predicted cutoff (predicted.cutoff)",
                                   predicted.cutoff,
                                   "may be too small. A cutoff of 10000 will be",
                                   "used instead.\n", 
@@ -462,7 +462,7 @@ get.multimir.by.table <- function(url = NULL,
                     # predicted.cutoff = 10000
                     score.cutoff <- cutoffs[[name]][["10000"]]
                 } else if (predicted.cutoff > cutoffs[[name]][["count"]]) {
-                    warning(paste0("Number predicted cutoff (predicted.cutoff) ",
+                    message(paste0("Number predicted cutoff (predicted.cutoff) ",
                                    predicted.cutoff, " is larger than the total",
                                    "number of records in table ", 
                                    table, ". All records will be queried.\n"))
