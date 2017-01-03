@@ -4,11 +4,11 @@ language: R
 sudo: false
 cache: packages
 r:
-    - oldrel
-    - release
-    - devel
     - bioc-release
     - bioc-devel
+      #    - oldrel
+      #    - release
+      #    - devel
 
 warnings_are_errors: true
 #env:
