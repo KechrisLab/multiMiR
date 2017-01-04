@@ -9,6 +9,9 @@ r:
       #    - oldrel
       #    - release
       #    - devel
+os:
+    - linux
+    - osx
 
 warnings_are_errors: true
 #env:
