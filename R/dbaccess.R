@@ -103,7 +103,7 @@ multimir_dbTables <- function(url = getOption("multimir.url"),dbName=getOption("
 
 # To list miRNAs, genes, drugs or diseases in the multimir database
 list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
-                          url = getOption("multimir.url")) {
+                          url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
     x <- match.arg(tolower(x), c("mirna", "gene", "drug", "disease"))
     if (x == "mirna") {
         q <- "SELECT*FROM mirna"
@@ -118,13 +118,13 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
         q1 <- "SELECT DISTINCT(disease)FROM mir2disease"
         result1 <- search.multimir(url = url, query = q1)
         q2 <- "SELECT DISTINCT(disease)FROM phenomir"
-        result2 <- search.multimir(url = url, query = q2)
+        result2 <- search.multimir(url = url, query = q2,dbName=dbName)
         result  <- sort(union(toupper(result1[, 1]), toupper(result2[, 1])))
         result  <- data.frame(result)
         colnames(result) <- "disease"
         return(result)
     }
-    result <- search.multimir(url = url, query = q)
+    result <- search.multimir(url = url, query = q,dbName=dbName)
     return(result)
 }
 
@@ -665,7 +665,7 @@ get.multimir.by.table <- function(url = NULL,
     }
     
     # query the database
-    result <- search.multimir(url = url, query = q)
+    result <- search.multimir(url = url, query = q,dbName=getOption("multimir.db.name"))
     if (!is.null(result)) 
         result <- cbind(database = table, result)
     if (table %in% c("mir2disease", "pharmaco_mir", "phenomir")) 
