@@ -14,7 +14,7 @@ search.multimir <- function(url = getOption("multimir.url"),
 # To switch DB version to search to the specified version if one matches
 multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
   op.devtools = tryCatch({
-    query=paste0("Select * from multimir_versions.version where version='",dbVer,"' order by version DESC")
+    query=paste0("Select * from multimir_versions.version where version='",dbVer,"' and public=1 order by version DESC")
     result <- postForm(url, query = query, .cgifields = c("query"))
     result <- readHTMLTable(result)
     tmp=list()

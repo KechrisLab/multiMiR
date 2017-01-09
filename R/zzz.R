@@ -23,7 +23,7 @@
     
     op.devtools = tryCatch({
       mmurl="http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl"
-      result <- postForm(mmurl, query = "Select * from multimir_versions.version order by version DESC", .cgifields = c("query"))
+      result <- postForm(mmurl, query = "Select * from multimir_versions.version where public=1 order by version DESC", .cgifields = c("query"))
       result <- readHTMLTable(result)
       current <- result[[2]][1,]
       tmp<-list(
