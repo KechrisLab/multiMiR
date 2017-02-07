@@ -29,10 +29,11 @@
       tmp<-list(
         multimir.db.version  = as.character(current[[1]]),
         multimir.db.updated  = as.character(current[[2]]),
+        multimir.db.name     = as.character(current[[4]]),
+        multimir.db.tables  = paste0("http://multimir.ucdenver.edu/",as.character(current[[7]])),
         multimir.url = mmurl,
         multimir.schema.url  = paste0("http://multimir.ucdenver.edu/",as.character(current[[5]])),
         multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/",as.character(current[[3]])),
-        multimir.db.name     = as.character(current[[4]]),
         multimir.error.msg   = ""
       )
     },warning = function(war){
@@ -40,10 +41,11 @@
       return(list(
         multimir.db.version  = "0",
         multimir.db.updated  = "",
+        multimir.db.name     = "",
+        multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
         multimir.url = mmurl,
         multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
         multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-        multimir.db.name     = "",
         multimir.error.msg   = "The multiMiR Server did not respond with a list of versions.  The server is temporarily unavailable.  Please try again later."
       ))
     },error = function(e){
@@ -51,10 +53,11 @@
       return(list(
         multimir.db.version  = "0",
         multimir.db.updated  = "",
+        multimir.db.name     = "",
+        multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
         multimir.url = mmurl,
         multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
         multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-        multimir.db.name     = "",
         multimir.error.msg   = "The multiMiR Server did not respond with a list of versions.  The server is temporarily unavailable.  Please try again later."
       ))
     },finally = {})

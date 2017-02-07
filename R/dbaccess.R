@@ -23,10 +23,11 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
       tmp=list(
         multimir.db.version  = "0",
         multimir.db.updated  = "",
+        multimir.db.name     = "",
+        multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
         multimir.url = url,
         multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
         multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-        multimir.db.name     = "",
         multimir.error.msg   = "The multiMiR Server did not return a result.  This is most likely from an incorrect version number."
       )
     }else{
@@ -34,10 +35,11 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
       tmp=list(
         multimir.db.version  = as.character(current[[1]]),
         multimir.db.updated  = as.character(current[[2]]),
+        multimir.db.name     = as.character(current[[4]]),
+        multimir.db.tables = paste0("http://multimir.ucdenver.edu/",as.character(current[[7]])),
         multimir.url = url,
         multimir.schema.url  = paste0("http://multimir.ucdenver.edu/",as.character(current[[5]])),
         multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/",as.character(current[[3]])),
-        multimir.db.name     = as.character(current[[4]]),
         multimir.error.msg   = ""
       )
       cat( paste0("Now using database version: ",as.character(current[[1]])) )
@@ -48,10 +50,11 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
     return(list(
       multimir.db.version  = "0",
       multimir.db.updated  = "",
+      multimir.db.name     = "",
+      multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
       multimir.url = url,
       multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
       multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-      multimir.db.name     = "",
       multimir.error.msg   = "The multiMiR Server did not respond with a list of versions.  The server is temporarily unavailable.  Please try again later."
     ))
   },error = function(e){
@@ -59,10 +62,11 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
     return(list(
       multimir.db.version  = "0",
       multimir.db.updated  = "",
+      multimir.db.name     = "",
+      multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
       multimir.url = url,
       multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
       multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-      multimir.db.name     = "",
       multimir.error.msg   = "The multiMiR Server did not respond with a list of versions.  The server is temporarily unavailable.  Please try again later."
     ))
   },finally = {})
@@ -99,8 +103,8 @@ multimir_dbSchema <- function(schema.file = getOption("multimir.schema.url")) {
 
 
 # To show tables in the multimir database
-multimir_dbTables <- function(url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
-    res <- search.multimir(url = url, query = "SHOW tables",dbName=dbName)
+multimir_dbTables <- function(url = getOption("multimir.db.tables")) {
+    res <- readLines(url)
     return(res)
 }
 
@@ -110,18 +114,18 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
                           url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
     x <- match.arg(tolower(x), c("mirna", "gene", "drug", "disease"))
     if (x == "mirna") {
-        q <- "SELECT*FROM mirna"
+        q <- "SELECT * FROM mirna"
     } else if (x == "gene") {
-        q <- "SELECT*FROM target"
+        q <- "SELECT * FROM target"
     } else if (x == "drug") {
-        q <- "SELECT DISTINCT(drug)FROM pharmaco_mir"
+        q <- "SELECT DISTINCT(drug) FROM pharmaco_mir"
     } else if (x == "disease") {
         # q <- 'SELECT DISTINCT(disease)FROM mir2disease UNION SELECT
         #       DISTINCT(disease) FROM phenomir' # did not work for IP's
         #       outside of campus - split the query into two
-        q1 <- "SELECT DISTINCT(disease)FROM mir2disease"
+        q1 <- "SELECT DISTINCT(disease) FROM mir2disease"
         result1 <- search.multimir(url = url, query = q1)
-        q2 <- "SELECT DISTINCT(disease)FROM phenomir"
+        q2 <- "SELECT DISTINCT(disease) FROM phenomir"
         result2 <- search.multimir(url = url, query = q2,dbName=dbName)
         result  <- sort(union(toupper(result1[, 1]), toupper(result2[, 1])))
         result  <- data.frame(result)
@@ -324,7 +328,7 @@ get.multimir.by.table <- function(url = NULL,
                                   predicted.site = "conserved",
                                   mirna.table = "mirna",
                                   target.table = "target") {
-    multimir.tables <- setdiff(as.character(multimir_dbTables()[, 1]),
+    multimir.tables <- setdiff(as.character(multimir_dbTables()),
                                c("map_counts", "map_metadata", "metadata"))
     if (!table %in% multimir.tables) {
         stop(paste("Table", table, "does not exist!\n", "Please use",
@@ -456,9 +460,10 @@ get.multimir.by.table <- function(url = NULL,
         }
         
         # add organism to the query
-        if (!is.null(org)) 
+        if (!is.null(org) && org %in% c("hsa","mmu","rno")) {
             q <- paste(q, " AND m.org = '", org, "' AND t.org = '", org, "'",
                        sep = "")
+        }
         
         # process conserved/nonconserved sites in miranda, pita & targetscan
         # (other tables don't have conserved/nonconserved annotation)
@@ -584,7 +589,7 @@ get.multimir.by.table <- function(url = NULL,
                 q <- paste(q, "i.disease IN", disease.drug, sep = " ")
                 cond <- cond + 1
             }
-            if (!is.null(org)) {
+            if (!is.null(org) && org %in% c("hsa","mmu","rno") ) {
                 if (cond == 0) {
                     q <- paste(q, " m.org = '", org, "'", sep = "")
                 } else {
@@ -617,7 +622,7 @@ get.multimir.by.table <- function(url = NULL,
                 }
                 cond <- cond + 1
             }
-            if (!is.null(org)) {
+            if (!is.null(org) && org %in% c("hsa","mmu","rno")) {
                 if (cond == 0) {
                     q <- paste(q, " m.org = '", org, "' AND t.org = '", org, "'",
                                sep = "")
@@ -644,7 +649,7 @@ get.multimir.by.table <- function(url = NULL,
                            sep = " ")
                 cond <- cond + 1
             }
-            if (!is.null(org)) {
+            if (!is.null(org) && org %in% c("hsa","mmu","rno")) {
                 if (cond == 0) {
                     q <- paste(q, " m.org = '", org, "'", sep = "")
                 } else {
