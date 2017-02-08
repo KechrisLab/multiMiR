@@ -13,69 +13,36 @@ search.multimir <- function(url = getOption("multimir.url"),
 
 # To switch DB version to search to the specified version if one matches
 multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
-  op.devtools = tryCatch({
+  tryCatch({
     query=paste0("Select * from multimir_versions.version where version='",dbVer,"' and public=1 order by version DESC")
     result <- postForm(url, query = query, .cgifields = c("query"))
     result <- readHTMLTable(result)
-    tmp=list()
     if(as.numeric(as.character(result[[1]][[1]]))==0){
       cat("ERROR:Version not set.\nVersion probably doesn't match an available version.  Please use the full version as displayed in multimir_dbInfoVersions().")
-      tmp=list(
-        multimir.db.version  = "0",
-        multimir.db.updated  = "",
-        multimir.db.name     = "",
-        multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
-        multimir.url = url,
-        multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
-        multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-        multimir.error.msg   = "The multiMiR Server did not return a result.  This is most likely from an incorrect version number."
-      )
     }else{
       current <- result[[2]][1,]
-      tmp=list(
-        multimir.db.version  = as.character(current[[1]]),
-        multimir.db.updated  = as.character(current[[2]]),
-        multimir.db.name     = as.character(current[[4]]),
-        multimir.db.tables = paste0("http://multimir.ucdenver.edu/",as.character(current[[7]])),
-        multimir.url = url,
-        multimir.schema.url  = paste0("http://multimir.ucdenver.edu/",as.character(current[[5]])),
-        multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/",as.character(current[[3]])),
-        multimir.error.msg   = ""
-      )
-      cat( paste0("Now using database version: ",as.character(current[[1]])) )
+      options(multimir.db.version  = as.character(current[[1]]))
+      options(multimir.db.updated  = as.character(current[[2]]))
+      options(multimir.db.name     = as.character(current[[4]]))
+      options(multimir.db.tables  = paste0("http://multimir.ucdenver.edu/",as.character(current[[7]])))
+      options(multimir.url = mmurl)
+      options(multimir.schema.url  = paste0("http://multimir.ucdenver.edu/",as.character(current[[5]])))
+      options(multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/",as.character(current[[3]])))
+      options(multimir.error.msg   = "")
+      cat( paste0("Now using database version: ",getOption("multimir.db.version") ))
     }
     ret=tmp
   },warning = function(war){
     print(war)
-    return(list(
-      multimir.db.version  = "0",
-      multimir.db.updated  = "",
-      multimir.db.name     = "",
-      multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
-      multimir.url = url,
-      multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
-      multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-      multimir.error.msg   = "The multiMiR Server did not respond with a list of versions.  The server is temporarily unavailable.  Please try again later."
-    ))
   },error = function(e){
     print(e)
-    return(list(
-      multimir.db.version  = "0",
-      multimir.db.updated  = "",
-      multimir.db.name     = "",
-      multimir.db.tables  = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
-      multimir.url = url,
-      multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
-      multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-      multimir.error.msg   = "The multiMiR Server did not respond with a list of versions.  The server is temporarily unavailable.  Please try again later."
-    ))
   },finally = {})
   
 }
 
 # To count records in the database
 multimir_dbCount <- function(url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
-    res <- search.multimir(url = url, query = "SELECT*FROM map_counts",dbName=dbName)
+    res <- search.multimir(url = url, query = "SELECT * FROM map_counts",dbName=dbName)
     for (i in 2:ncol(res)) {
         res[, i] <- as.numeric(as.character(res[, i]))
     }
@@ -85,13 +52,13 @@ multimir_dbCount <- function(url = getOption("multimir.url"),dbName=getOption("m
 
 # To display database information
 multimir_dbInfo <- function(url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
-    res <- search.multimir(url = url, query = "SELECT*FROM map_metadata",dbName=dbName)
+    res <- search.multimir(url = url, query = "SELECT * FROM map_metadata",dbName=dbName)
     return(res)
 }
 
 # To display database information on DB versions
 multimir_dbInfoVersions <- function(url = getOption("multimir.url")) {
-  res <- search.multimir(url = url, query = "SELECT * FROM multimir_versions.version")
+  res <- search.multimir(url = url, query = "Select * from multimir_versions.version where public=1 order by version DESC")
   return(res)
 }
 

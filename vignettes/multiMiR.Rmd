@@ -139,6 +139,7 @@ release date, link to download the data, and the corresponding table in
 *multiMiR*.
 
 ```{r multimir_dbInfo}
+library(multiMiR)
 db.info = multimir_dbInfo()
 db.info
 ```

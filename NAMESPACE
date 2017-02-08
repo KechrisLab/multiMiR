@@ -3,7 +3,9 @@ import(RCurl)
 
 export(
     multimir_dbSchema,
+    multimir_switchDBVersion,
     multimir_dbInfo,
+    multimir_dbInfoVersions,
     multimir_dbCount,
     multimir_dbTables,
     list.multimir,
