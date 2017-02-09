@@ -2,6 +2,7 @@
 
 \alias{multimir_dbCount}
 \alias{multimir_dbInfo}
+\alias{multimir_dbInfoVersions}
 \alias{multimir_dbSchema}
 \alias{multimir_dbTables}
 
@@ -17,6 +18,7 @@
 \usage{
   multimir_dbCount(url = getOption("multimir.url"))
   multimir_dbInfo(url = getOption("multimir.url"))
+  multimir_dbInfoVersions(url = getOption("multimir.url"))
   multimir_dbSchema(schema.file = getOption("multimir.schema.url"))
   multimir_dbTables(url = getOption("multimir.url"))
 }
@@ -43,6 +45,10 @@
   database. This includes information of external miRNA/target databases
   in multiMiR.
 
+  \code{multimir_dbInfoVersions} returns other information about the multiMiR
+  database versions available. This provides a list of available options if 
+  switching to previous version is desired.
+
   \code{multimir_dbSchema} prints the schema definition of the multiMiR
   database.
 
@@ -55,6 +61,9 @@
 
   \code{multimir_dbInfo}: a data frame with information about the multiMiR
   database.
+  
+  \code{multimir_dbInfoVersions}: a data frame with information about the multiMiR
+  database versions.
 
   \code{multimir_dbSchema}: none (invisible \code{NULL}).
 
@@ -70,7 +79,9 @@
   this_url <- getOption("multimir.url")
   this_url
   options(multimir.url = this_url)
-
+  
+  db.ver <- multimir_dbInfoVersions()
+  
   db.count <- multimir_dbCount()
 
   db.info <- multimir_dbInfo()

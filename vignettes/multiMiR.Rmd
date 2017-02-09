@@ -18,7 +18,7 @@ vignette: >
 # Introduction
 
 microRNAs (miRNAs) regulate expression by promoting degradation or repressing
-translation of target transcripts. miRNA target sites have been catalogued in
+translation of target transcripts. miRNA target sites have been cataloged in
 databases based on experimental validation and computational prediction using a
 variety of algorithms. Several online resources provide collections of multiple
 databases but need to be imported into other software, such as R, for
@@ -36,7 +36,9 @@ for predicted binding strength to provide the most confident selection. The
 *multiMiR* package enables retrieval of miRNA-target interactions from
 14 external databases in R without the need to visit all these databases.
 Advanced users can also submit SQL queries to the web server to retrieve
-results.
+results.  The database is now versioned so it is possible to use previous 
+versions of databases from the current R package, however the package defaults
+to the most recent version.
 
 
 # Getting to know the multiMiR database
@@ -50,25 +52,42 @@ opts_chunk$set(echo       = TRUE,
                eval       = TRUE)
 ```
 
+The *multiMiR* web server (\url{http://multimir.ucdenver.edu}) hosts a
+database containing miRNA-target interactions from external databases. The
+package *multiMiR* provides functions to communicate with the
+*multiMiR* web server and its database. The *multiMiR* database is now versioned
+by default *multiMiR* will use the most recent version each time *multiMiR* is loaded.
+However it is now possible to switch between database versions and get information 
+about the *multiMiR* database versions. `multimir_dbInfoVersions` returns a dataframe
+with the available versions.
+
+```{r multimir_dbInfoVersions}
+library(multiMiR)
+db.ver = multimir_dbInfoVersions()
+db.ver
+```
+
+To switch between versions we can use `multimir_switchDBVersion`.
+
+```{r multimir_switchDBVersion,echo=TRUE}
+library(multiMiR)
+multimir_switchDBVersion("2.0.0")
+```
+
+The remaining functions will query the selected version until the package is reloaded 
+or until we switch to another version.
+
+Information from each external database is stored in a table in the *multiMiR* database.
+To see a list of the tables, we can use the `multimir_dbTables` function.
+
 ```{r multimir_dbTables}
 library(multiMiR)
 db.tables = multimir_dbTables()
 db.tables
 ```
 
-The *multiMiR* web server (\url{http://multimir.ucdenver.edu}) hosts a
-database containing miRNA-target interactions from external databases. The
-package *multiMiR* provides functions to communicate with the
-*multiMiR* web server and its database. Information from each external
-database is stored in a table in the *multiMiR* database. To see a list
-of the tables, we can use the `multimir_dbTables` function.
-
 To display the database schema, we can use the `multimir_dbSchema`
-function.
-
-```{r dbSchema, echo=TRUE}
-multimir_dbSchema()
-```
+function.  Following is only a portion of the full output.
 
 ```{sql, eval=FALSE}
 --
@@ -184,7 +203,7 @@ dim(diseases)
 head(diseases)
 ```
 
-The current version of *multiMiR* has 4210 miRNAs and 94792 target
+The current version of *multiMiR* has 5830 miRNAs and 97186 target
 genes from human, mouse, and rat, as well as 64 drugs and 223 disease terms.
 Depending on the speed of your Internet connection, it may take a few minutes to
 retrieve the large number of target genes.
@@ -460,31 +479,31 @@ familiar with SQL queries. In general, users are still advised to use the
 ## Direct query on the web server
 
 The *multiMiR* package communicates with the *multiMiR*
-database via the script http://multimir.ucdenver.edu/cgi-bin/multimir.pl on the
-web server. To show all tables in the database, the following URL can be typed
-in the address bar of a web browser.
-
-
-[](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=show tables)
-
-
-The content displayed on the resulting web page is similar with what is returned
-by typing `multimir\_dbTables()` in R. Once again, data from each of the
+database via the script http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl on the
+web server. Once again, data from each of the
 external databases is stored in a table in *multiMiR*. There are also tables for
-miRNAs (table *mirna*) and target genes (table *target*).
+miRNAs (table *mirna*) and target genes (table *target*).  
+
+NOTE: While it is possible to complete short queries from a browser, the limits of 
+submitting a query through typing in the address bar of a browser are quickly reached
+(8192 characters total).  If you are a developer you should use your preferred method 
+to submit a HTTP POST which will allow for longer queries.  The fields to include are 
+query and dbName.  query- is the SQL query to submit.  dbName is the DBNAME column 
+from a call to multimir_dbInfoVersions(), however if this is excluded the current 
+version is the default.
 
 To learn about the structure of a table (e.g. DIANA-microT data in table
 *diana\_microt*), users can use URL
 
 
-[](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=describe diana\_microt)
+http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl?query=describe diana\_microt
 
 
 Similar with Example 1, the following URL searches for validated target genes of
 hsa-miR-18a-3p in miRecords.
 
 
-[](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p')
+http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p'
 
 
 As you can see, the query is long and searches just one of the three validated
@@ -494,26 +513,21 @@ validated external databases (miRecords, miRTarBase and TarBase).
 
 ## Direct query in R
 
-The same direct queries we did above on the web server can be done in R as well.
-To show all tables in the database:
-
-```{r Direct_query1}
-direct1 = search.multimir(query="show tables")
-```
-
-These are equivalent to using the `multimir\_dbTables` function as showed
-previously.
+The same direct queries we did above on the web server can be done in R as well.  This
+is the preferred method if you are unfamiliar with HTTP POST. Be sure to set the correct 
+database version, if you wish to change versions, before calling 'search.multimir' it uses
+the currently set version.
 
 To show the structure of table *diana\_microt*:
 
-```{r Direct_query2}
+```{r Direct_query1}
 direct2 = search.multimir(query="describe diana_microt")
 direct2
 ```
 
 To search for validated target genes of hsa-miR-18a-3p in miRecords:
 
-```{r Direct_query3}
+```{r Direct_query2}
 direct3 <- 
     search.multimir(query = 
                         "SELECT m.mature_mirna_acc, m.mature_mirna_id,
