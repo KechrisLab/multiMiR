@@ -2,9 +2,9 @@
 
 # To search the multiMiR database on the web server given a MySQL query
 search.multimir <- function(url = getOption("multimir.url"), 
-                            query, 
-                            dbName=getOption("multimir.db.name") 
+                            query
                             ) {
+    dbName=getOption("multimir.db.name")
     result <- postForm(url, query = query, dbName=dbName, .cgifields = c("query","dbName"))
     result <- readHTMLTable(result)
     result <- parse.multimir(result)
@@ -18,7 +18,7 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
     result <- postForm(url, query = query, .cgifields = c("query"))
     result <- readHTMLTable(result)
     if(as.numeric(as.character(result[[1]][[1]]))==0){
-      cat("ERROR:Version not set.\nVersion probably doesn't match an available version.  Please use the full version as displayed in multimir_dbInfoVersions().")
+      message("ERROR:Version not set.\nVersion probably doesn't match an available version.  Please use the full version as displayed in multimir_dbInfoVersions().")
     }else{
       current <- result[[2]][1,]
       options(multimir.db.version  = as.character(current[[1]]))
@@ -33,16 +33,16 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
     }
     ret=tmp
   },warning = function(war){
-    print(war)
+    message(war)
   },error = function(e){
-    print(e)
+    message(e)
   },finally = {})
   
 }
 
 # To count records in the database
-multimir_dbCount <- function(url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
-    res <- search.multimir(url = url, query = "SELECT * FROM map_counts",dbName=dbName)
+multimir_dbCount <- function(url = getOption("multimir.url")) {
+    res <- search.multimir(url = url, query = "SELECT * FROM map_counts")
     for (i in 2:ncol(res)) {
         res[, i] <- as.numeric(as.character(res[, i]))
     }
@@ -51,8 +51,8 @@ multimir_dbCount <- function(url = getOption("multimir.url"),dbName=getOption("m
 
 
 # To display database information
-multimir_dbInfo <- function(url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
-    res <- search.multimir(url = url, query = "SELECT * FROM map_metadata",dbName=dbName)
+multimir_dbInfo <- function(url = getOption("multimir.url")) {
+    res <- search.multimir(url = url, query = "SELECT * FROM map_metadata")
     return(res)
 }
 
@@ -78,7 +78,7 @@ multimir_dbTables <- function(url = getOption("multimir.db.tables")) {
 
 # To list miRNAs, genes, drugs or diseases in the multimir database
 list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
-                          url = getOption("multimir.url"),dbName=getOption("multimir.db.name")) {
+                          url = getOption("multimir.url")) {
     x <- match.arg(tolower(x), c("mirna", "gene", "drug", "disease"))
     if (x == "mirna") {
         q <- "SELECT * FROM mirna"
@@ -93,13 +93,13 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
         q1 <- "SELECT DISTINCT(disease) FROM mir2disease"
         result1 <- search.multimir(url = url, query = q1)
         q2 <- "SELECT DISTINCT(disease) FROM phenomir"
-        result2 <- search.multimir(url = url, query = q2,dbName=dbName)
+        result2 <- search.multimir(url = url, query = q2)
         result  <- sort(union(toupper(result1[, 1]), toupper(result2[, 1])))
         result  <- data.frame(result)
         colnames(result) <- "disease"
         return(result)
     }
-    result <- search.multimir(url = url, query = q,dbName=dbName)
+    result <- search.multimir(url = url, query = q)
     return(result)
 }
 
@@ -641,7 +641,7 @@ get.multimir.by.table <- function(url = NULL,
     }
     
     # query the database
-    result <- search.multimir(url = url, query = q,dbName=getOption("multimir.db.name"))
+    result <- search.multimir(url = url, query = q)
     if (!is.null(result)) 
         result <- cbind(database = table, result)
     if (table %in% c("mir2disease", "pharmaco_mir", "phenomir")) 

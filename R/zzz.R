@@ -29,7 +29,7 @@
       multimir.url = "http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl",
       multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
       multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
-      multimir.error.msg   = "The multiMiR Server did not return a result.  This is most likely from an incorrect version number."
+      multimir.error.msg   = "There was an error setting up the database version.  This indicates either a server error or that the server is currently unavailable.  Please try again later."
     )
     
     # Only set options multimir if name doesn't exist in current global options
@@ -49,11 +49,12 @@
       options(multimir.schema.url  = paste0("http://multimir.ucdenver.edu/",as.character(current[[5]])))
       options(multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/",as.character(current[[3]])))
       options(multimir.error.msg   = "")
-      
     },warning = function(war){
-      cat(war)
+      message("There was an error setting up the database version.  This indicates either a server error or that the server is currently unavailable.  Please try again later.")
+      message(war)
     },error = function(e){
-      cat(e)
+      message("There was an error setting up the database version.  This indicates either a server error or that the server is currently unavailable.  Please try again later.")
+      message(e)
     },finally = {})
 
     invisible()
