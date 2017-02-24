@@ -9,11 +9,17 @@ output:
     code_folding: show
 vignette: >
   %\VignetteIndexEntry{The multiMiR user's guide}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}  
 ---
 
-
+<style>
+    pre {
+    white-space: pre !important;
+    overflow-y: scroll !important;
+    height: 50vh !important;
+    }
+</style>
 
 # Introduction
 
@@ -44,7 +50,7 @@ to the most recent version.
 # Getting to know the multiMiR database
 
 ```{r annotate, echo=FALSE}
-library(knitr)
+#library(knitr)
 options(width=100)
 opts_chunk$set(echo       = TRUE,
                message    = TRUE,
@@ -188,7 +194,7 @@ In addition to functions displaying database and table information, the
 to list all the unique miRNAs, target genes, drugs, and diseases in the
 *multiMiR* database.
 
-```{r list.multimir}
+```{r list.multimir, eval=FALSE}
 miRNAs = list.multimir("mirna")
 dim(miRNAs)
 head(miRNAs)

@@ -9,6 +9,9 @@ r:
 #    - oldrel
 #    - release
 #    - devel
+os:
+    - linux
+    - osx
 
 warnings_are_errors: true
 #env:
@@ -25,7 +28,6 @@ warnings_are_errors: true
 #after_success:
 #- Rscript -e 'covr::codecov()'
 
-#notifications
 notifications:
     email:
         on_success: change

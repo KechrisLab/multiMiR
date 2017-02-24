@@ -10,14 +10,27 @@ database containing miRNA-target interactions from external databases. The
 package *multiMiR* provides functions to communicate with the
 *multiMiR* web server and its database. 
 
+Note this repository is the development version.  Public releases are available
+on the web server's [website](http://multimir.ucdenver.edu) or via versioned
+tags (e.g.  v2.1) in this repo.
+
 
 ```{r}
+# To install multiMiR, first install suggested package BiocStyle
 source("https://bioconductor.org/biocLite.R")
 biocLite()
 biocLite("BiocStyle")
 
+# Now install devtools (for installing from GitHub repositories)
 install.packages("devtools")
 library(devtools)
+
+# Now install the development version of the multiMiR package
 devtools::install_github("kechrislab/multimir")
+
+# To install a public release, use the `ref=` option to select the tag of the
+# release version 
+devtools::install_github("kechrislab/multimir", ref = "v2.0")
 ```
+
 
