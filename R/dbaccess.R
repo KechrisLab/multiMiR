@@ -12,7 +12,7 @@ search.multimir <- function(url = getOption("multimir.url"),
 }
 
 # To switch DB version to search to the specified version if one matches
-multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
+multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer=getOption("multimir.db.version")) {
   tryCatch({
     query=paste0("Select * from multimir_versions.version where version='",dbVer,"' and public=1 order by version DESC")
     result <- postForm(url, query = query, .cgifields = c("query"))
@@ -25,18 +25,16 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer) {
       options(multimir.db.updated  = as.character(current[[2]]))
       options(multimir.db.name     = as.character(current[[4]]))
       options(multimir.db.tables  = paste0("http://multimir.ucdenver.edu/",as.character(current[[7]])))
-      options(multimir.url = mmurl)
+      options(multimir.url = getOption("multimir.url"))
       options(multimir.schema.url  = paste0("http://multimir.ucdenver.edu/",as.character(current[[5]])))
       options(multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/",as.character(current[[3]])))
       options(multimir.error.msg   = "")
       cat( paste0("Now using database version: ",getOption("multimir.db.version") ))
-    }
-    ret=tmp
-  },warning = function(war){
-    message(war)
-  },error = function(e){
-    message(e)
-  },finally = {})
+  }}, warning = function(war){
+      message(war)
+  }, error = function(e){
+      message(e)
+  }, finally = {})
   
 }
 

@@ -20,7 +20,7 @@
   multimir_dbInfo(url = getOption("multimir.url"))
   multimir_dbInfoVersions(url = getOption("multimir.url"))
   multimir_dbSchema(schema.file = getOption("multimir.schema.url"))
-  multimir_dbTables(url = getOption("multimir.url"))
+  multimir_dbTables(url = getOption("multimir.db.tables"))
 }
 
 \arguments{

@@ -1,7 +1,6 @@
 \name{multimir_switchDBVersion}
 
 \alias{multimir_switchDBVersion}
-\alias{multimir_dbInfoVersions}
 
 
 \title{
@@ -13,8 +12,7 @@
 }
 
 \usage{
-  multimir_dbInfoVersions(url = getOption("multimir.url"))
-  multimir_switchDBVersion(url = getOption("multimir.url"),dbVer="2.1.0")
+  multimir_switchDBVersion(url = getOption("multimir.url"),dbVer=getOption("multimir.db.version"))
 }
 
 \arguments{
@@ -57,13 +55,7 @@
 
 \examples{
   multimir_dbInfoVersions()
-    VERSION    UPDATED    RDA                      DBNAME          SCHEMA                 PUBLIC   TABLES
-1   2.1.0      2016-12-22 multimir_cutoffs_2.1.rda multimir2_1     multiMiR_DB_schema.sql      1   multiMiR_dbTables.txt
-2   2.0.0      2015-05-01 multimir_cutoffs.rda     multimir        multiMiR_DB_schema.sql      1   multiMiR_dbTables.txt
-  
   multimir_switchDBVersion(dbVer="2.0.0")
-  Now using database version: 2.0.0
-  
 }
 
 \keyword{utilities}
