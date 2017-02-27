@@ -5,8 +5,8 @@
 #' Functions for collecting and displaying information about the web server and
 #' database of the multiMiR package.
 #' 
-#' \code{url} is a character string containing the URL of the multiMiR web
-#' server.
+#' \code{multimir.url} is a global option containing the URL of the multiMiR web
+#' server. Set using \code{options("multimir.url" = ...)}
 #' 
 #' \code{multimir_dbCount} returns counts of records in the tables in the
 #' multiMiR database. Each table contains data from an external miRNA/target
@@ -28,10 +28,9 @@
 #' 
 #' @aliases multimir_dbCount multimir_dbInfo multimir_dbInfoVersions
 #' multimir_dbSchema multimir_dbTables
-#' @param url A character string naming the URL of the web server hosting the
-#' multiMiR database.
-#' @param schema.file A character string naming the file containing the
-#' multiMiR database schema.
+#' @param url Deprecated. Use global option \code{multimir.url} instead. 
+#' @param schema.file Deprecated. Option exists as \code{multimir.schema.url},
+#' but it should not need to be set directly.
 #' @return \code{multimir_dbCount}: a data frame with the count of records in
 #' each of the tables in the multiMiR database.
 #' 
@@ -64,26 +63,52 @@
 #'   db_tables <- multimir_dbTables()
 #' 
 #' @export multimir_dbInfo
-multimir_dbInfo <- function(url = getOption("multimir.url")) {
+multimir_dbInfo <- function(url = NULL) {
+
+    if (!is.null(url)) deprecate_arg("url")
     qry <- "SELECT * FROM map_metadata"
-    search.multimir(url = url, query = qry)
+    search.multimir(query = qry)
+
 }
 
 # To display database information on DB versions
-multimir_dbInfoVersions <- function(url = getOption("multimir.url")) {
+multimir_dbInfoVersions <- function(url = NULL) {
+
+    if (!is.null(url)) deprecate_arg("url")
     qry <- paste("SELECT * FROM multimir_versions.version",
                  "WHERE public=1 ORDER BY version DESC")
-    search.multimir(url = url, query = qry)
+    search.multimir(query = qry)
 }
 
 # To display database schema
-multimir_dbSchema <- function(schema.file = getOption("multimir.schema.url")) {
-    schema <- readLines(schema.file)
+multimir_dbSchema <- function(schema.file = NULL) {
+
+    if (!is.null(schema.file)) deprecate_urlarg("schema.file")
+    schema <- readLines(getOption("multimir.schema.url"))
     cat(schema, sep = "\n")
+
 }
 
 # To show tables in the multimir database
-multimir_dbTables <- function(url = getOption("multimir.db.tables")) {
-    readLines(url)
+multimir_dbTables <- function(url = NULL) {
+
+    if (!is.null(url)) deprecate_arg("db.tables")
+    readLines(getOption("multimir.db.tables"))
+
 }
 
+# To count records in the database 
+multimir_dbCount <- function(url = NULL) {
+
+    if (!is.null(url)) deprecate_arg("url")
+
+    qry <- "SELECT * FROM map_counts"
+    res <- search.multimir(query = qry)
+
+    for (i in 2:ncol(res)) {
+        res[, i] <- as.numeric(as.character(res[, i]))
+    }
+
+    return(res)
+
+}

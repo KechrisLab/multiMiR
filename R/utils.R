@@ -1,13 +1,4 @@
 
-# To count records in the database 
-# NOTE: Not used at all??
-multimir_dbCount <- function(url = getOption("multimir.url")) {
-    res <- search.multimir(url = url, query = "SELECT * FROM map_counts")
-    for (i in 2:ncol(res)) {
-        res[, i] <- as.numeric(as.character(res[, i]))
-    }
-    return(res)
-}
 
 
 
@@ -170,3 +161,23 @@ multimir.summary <- function(result,
     return(s)
 }
 
+
+
+
+# 
+deprecate_arg <- function(name = c("url", "schema.file", "db.tables")) {
+
+    name <- match.arg(name)
+    ops  <- switch(name,
+                   url         = "multimir.url",
+                   schema.file = "multimir.schema.url",
+                   db.tables   = "multimir.db.tables")
+
+    # the function using the schema option had an arg name of url, so switch for
+    # an accurate message
+    if (name == "db.tables") name <- "url"
+
+    message("The ", name, " argument is deprecated. Please set using the package ",
+            "option ", ops, " via options()")
+
+}
