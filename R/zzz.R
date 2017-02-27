@@ -42,8 +42,8 @@
         mmurl  <- "http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl"
         query  <- paste("SELECT * FROM multimir_versions.version",
                         "WHERE public=1 ORDER BY version DESC")
-        result <- postForm(mmurl, query = query, .cgifields = c("query"))
-        result <- readHTMLTable(result)
+        result <- RCurl::postForm(mmurl, query = query, .cgifields = c("query"))
+        result <- XML::readHTMLTable(result)
 
         current <- result[[2]][1, ]
         options(multimir.db.version  = as.character(current[[1]]))

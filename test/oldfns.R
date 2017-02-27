@@ -1,18 +1,18 @@
 
 
 # To search the multiMiR database on the web server given a MySQL query
-search.multimir <- function(url = getOption("multimir.url"), 
+search.multimir_old_old <- function(url = getOption("multimir.url"), 
                             query
                             ) {
     dbName=getOption("multimir.db.name")
     result <- postForm(url, query = query, dbName=dbName, .cgifields = c("query","dbName"))
     result <- readHTMLTable(result)
-    result <- parse.multimir(result)
+    result <- parse.multimir_old(result)
     return(result)
 }
 
 # To switch DB version to search to the specified version if one matches
-multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer=getOption("multimir.db.version")) {
+multimir_switchDBVersion_old <- function(url = getOption("multimir.url"),dbVer=getOption("multimir.db.version")) {
   tryCatch({
     query=paste0("Select * from multimir_versions.version where version='",dbVer,"' and public=1 order by version DESC")
     result <- postForm(url, query = query, .cgifields = c("query"))
@@ -39,8 +39,8 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),dbVer=getOp
 }
 
 # To count records in the database
-multimir_dbCount <- function(url = getOption("multimir.url")) {
-    res <- search.multimir(url = url, query = "SELECT * FROM map_counts")
+multimir_dbCount_old <- function(url = getOption("multimir.url")) {
+    res <- search.multimir_old(url = url, query = "SELECT * FROM map_counts")
     for (i in 2:ncol(res)) {
         res[, i] <- as.numeric(as.character(res[, i]))
     }
@@ -49,33 +49,33 @@ multimir_dbCount <- function(url = getOption("multimir.url")) {
 
 
 # To display database information
-multimir_dbInfo <- function(url = getOption("multimir.url")) {
-    res <- search.multimir(url = url, query = "SELECT * FROM map_metadata")
+multimir_dbInfo_old <- function(url = getOption("multimir.url")) {
+    res <- search.multimir_old(url = url, query = "SELECT * FROM map_metadata")
     return(res)
 }
 
 # To display database information on DB versions
-multimir_dbInfoVersions <- function(url = getOption("multimir.url")) {
-  res <- search.multimir(url = url, query = "Select * from multimir_versions.version where public=1 order by version DESC")
+multimir_dbInfoVersions_old <- function(url = getOption("multimir.url")) {
+  res <- search.multimir_old(url = url, query = "Select * from multimir_versions.version where public=1 order by version DESC")
   return(res)
 }
 
 # To display database schema
-multimir_dbSchema <- function(schema.file = getOption("multimir.schema.url")) {
+multimir_dbSchema_old <- function(schema.file = getOption("multimir.schema.url")) {
     schema <- readLines(schema.file)
     cat(schema, sep = "\n")
 }
 
 
 # To show tables in the multimir database
-multimir_dbTables <- function(url = getOption("multimir.db.tables")) {
+multimir_dbTables_old <- function(url = getOption("multimir.db.tables")) {
     res <- readLines(url)
     return(res)
 }
 
 
 # To list miRNAs, genes, drugs or diseases in the multimir database
-list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
+list.multimir_old <- function(x   = c("mirna", "gene", "drug", "disease"),
                           url = getOption("multimir.url")) {
     x <- match.arg(tolower(x), c("mirna", "gene", "drug", "disease"))
     if (x == "mirna") {
@@ -89,21 +89,21 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
         #       DISTINCT(disease) FROM phenomir' # did not work for IP's
         #       outside of campus - split the query into two
         q1 <- "SELECT DISTINCT(disease) FROM mir2disease"
-        result1 <- search.multimir(url = url, query = q1)
+        result1 <- search.multimir_old(url = url, query = q1)
         q2 <- "SELECT DISTINCT(disease) FROM phenomir"
-        result2 <- search.multimir(url = url, query = q2)
+        result2 <- search.multimir_old(url = url, query = q2)
         result  <- sort(union(toupper(result1[, 1]), toupper(result2[, 1])))
         result  <- data.frame(result)
         colnames(result) <- "disease"
         return(result)
     }
-    result <- search.multimir(url = url, query = q)
+    result <- search.multimir_old(url = url, query = q)
     return(result)
 }
 
 
 # To load pre-calculated score cutoffs
-get.multimir.cutoffs <- function(cutoff.file = getOption("multimir.cutoffs.url")) {
+get.multimir.cutoffs_old <- function(cutoff.file = getOption("multimir.cutoffs.url")) {
     multimir_cutoffs <- NULL
     url.file <- url(cutoff.file)
     on.exit(close(url.file))
@@ -114,7 +114,7 @@ get.multimir.cutoffs <- function(cutoff.file = getOption("multimir.cutoffs.url")
 
 # To parse the result from the multimir web server.  Two tables should return. The first table
 # (result[[1]]) is the summary. And the second table (result[[2]]) has the result in details.
-parse.multimir <- function(HTML.result) {
+parse.multimir_old <- function(HTML.result) {
     result <- NULL
     l      <- length(HTML.result)
     if (l == 2) {
@@ -132,7 +132,7 @@ parse.multimir <- function(HTML.result) {
 
 
 # The main function to search miRNA-target and miRNA-disease interactions
-get.multimir <- function(url = getOption("multimir.url"), 
+get.multimir_old <- function(url = getOption("multimir.url"), 
                          org = "hsa", 
                          mirna = NULL, 
                          target = NULL,
@@ -148,7 +148,7 @@ get.multimir <- function(url = getOption("multimir.url"),
         if (table == "predicted" | table == "all") {
             # search predicted miRNA-target tables
             result[["predicted"]] <- 
-                get.multimir.predicted(url = url, 
+                get.multimir.predicted_old(url = url, 
                                        org = org, 
                                        mirna = mirna,
                                        target = target, 
@@ -157,37 +157,37 @@ get.multimir <- function(url = getOption("multimir.url"),
                                        site = predicted.site)
             if (add.link & !is.null(result[["predicted"]])) {
                 result[["predicted"]] <- 
-                    add.multimir.links(result[["predicted"]], org)
+                    add.multimir.links_old(result[["predicted"]], org)
             }
         }
         if (table == "validated" | table == "all") {
             # search validated miRNA-target tables
             result[["validated"]] <- 
-                get.multimir.validated(url = url, 
+                get.multimir.validated_old(url = url, 
                                        org = org, 
                                        mirna = mirna, 
                                        target = target)
             if (add.link & !is.null(result[["validated"]])) {
-                result[["validated"]] <- add.multimir.links(result[["validated"]], 
+                result[["validated"]] <- add.multimir.links_old(result[["validated"]], 
                                                             org)
             }
         }
         if (table == "disease.drug" | table == "all") {
             # search miRNA-disease tables
             result[["disease.drug"]] <- 
-                get.multimir.disease(url = url,
+                get.multimir.disease_old(url = url,
                                      org = org,
                                      mirna = mirna,
                                      target = target,
                                      disease.drug = disease.drug)
             if (add.link & !is.null(result[["disease.drug"]])) {
-                result[["disease.drug"]] <- add.multimir.links(result[["disease.drug"]], 
+                result[["disease.drug"]] <- add.multimir.links_old(result[["disease.drug"]], 
                                                                org)
             }
         }
     } else {
         # search an individual table
-        result[[table]] <- get.multimir.by.table(url = url,
+        result[[table]] <- get.multimir.by.table_old(url = url,
                                                  org = org,
                                                  mirna = mirna,
                                                  target = target,
@@ -197,20 +197,20 @@ get.multimir <- function(url = getOption("multimir.url"),
                                                  predicted.cutoff.type = predicted.cutoff.type,
                                                  predicted.site = predicted.site)
         if (add.link & !is.null(result[[table]])) {
-            result[[table]] <- add.multimir.links(result[[table]], 
+            result[[table]] <- add.multimir.links_old(result[[table]], 
                                                   org)
         }
     }
 
     if (summary) {
-        result[["summary"]] <- multimir.summary(result)
+        result[["summary"]] <- multimir.summary_old(result)
     }
     return(result)
 }
 
 
 # To get validated miRNA-target interactions
-get.multimir.validated <- function(url = NULL,
+get.multimir.validated_old <- function(url = NULL,
                                    org = "hsa", 
                                    mirna = NULL, 
                                    target = NULL) {
@@ -219,7 +219,7 @@ get.multimir.validated <- function(url = NULL,
     }
     result <- NULL
     for (table in c("mirecords", "mirtarbase", "tarbase")) {
-        r <- get.multimir.by.table(url = url, 
+        r <- get.multimir.by.table_old(url = url, 
                                    org = org, 
                                    mirna = mirna, 
                                    target = target, 
@@ -231,7 +231,7 @@ get.multimir.validated <- function(url = NULL,
 
 
 # To get predicted miRNA-target interactions
-get.multimir.predicted <- function(url = NULL, 
+get.multimir.predicted_old <- function(url = NULL, 
                                    org = "hsa", 
                                    mirna = NULL, 
                                    target = NULL, 
@@ -244,7 +244,7 @@ get.multimir.predicted <- function(url = NULL,
     result <- NULL
     for (table in c("diana_microt", "elmmo", "microcosm", "miranda", "mirdb",
                     "pictar", "pita", "targetscan")) {
-        r <- get.multimir.by.table(url = url, 
+        r <- get.multimir.by.table_old(url = url, 
                                    org = org, 
                                    mirna = mirna, 
                                    target = target, 
@@ -259,7 +259,7 @@ get.multimir.predicted <- function(url = NULL,
 
 
 # To get miRNA-disease/drug interactions
-get.multimir.disease <- function(url = NULL,
+get.multimir.disease_old <- function(url = NULL,
                                  org = "hsa",
                                  mirna = NULL,
                                  target = NULL,
@@ -269,7 +269,7 @@ get.multimir.disease <- function(url = NULL,
     }
     result <- NULL
     for (table in c("mir2disease", "pharmaco_mir", "phenomir")) {
-        r <- get.multimir.by.table(url = url,
+        r <- get.multimir.by.table_old(url = url,
                                    org = org,
                                    mirna = mirna,
                                    target = target,
@@ -282,7 +282,7 @@ get.multimir.disease <- function(url = NULL,
 
 
 # To get miRNA-target interactions in a given table
-get.multimir.by.table <- function(url = NULL,
+get.multimir.by.table_old <- function(url = NULL,
                                   org = "hsa",
                                   mirna = NULL,
                                   target = NULL,
@@ -293,7 +293,7 @@ get.multimir.by.table <- function(url = NULL,
                                   predicted.site = "conserved",
                                   mirna.table = "mirna",
                                   target.table = "target") {
-    multimir.tables <- setdiff(as.character(multimir_dbTables()),
+    multimir.tables <- setdiff(as.character(multimir_dbTables_old()),
                                c("map_counts", "map_metadata", "metadata"))
     if (!table %in% multimir.tables) {
         stop(paste("Table", table, "does not exist!\n", "Please use",
@@ -466,7 +466,7 @@ get.multimir.by.table <- function(url = NULL,
         }
 
         # get dataset-specific score cutoff
-        cutoffs      <- get.multimir.cutoffs()
+        cutoffs      <- get.multimir.cutoffs_old()
         score.cutoff <- NA
         if (predicted.cutoff.type == "p") {
             # percent cutoff (default = 20 %)
@@ -639,7 +639,7 @@ get.multimir.by.table <- function(url = NULL,
     }
     
     # query the database
-    result <- search.multimir(url = url, query = q)
+    result <- search.multimir_old(url = url, query = q)
     if (!is.null(result)) 
         result <- cbind(database = table, result)
     if (table %in% c("mir2disease", "pharmaco_mir", "phenomir")) 
@@ -650,7 +650,7 @@ get.multimir.by.table <- function(url = NULL,
 
 
 # To summarize the result from functions get.multimir*
-multimir.summary <- function(result, 
+multimir.summary_old <- function(result, 
                              pair.index = 2:6, 
                              order.by = "all.sum") {
     len <- length(pair.index)
@@ -739,7 +739,7 @@ multimir.summary <- function(result,
 
 # To change the encoding of URL (to account for the OS difference).  This is modified from the URLencode
 # function in the utils package.
-myurlencode <- function(url) {
+myurlencode_old <- function(url) {
     OK <- "[^-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_.+*(),:/?=]"
     x <- strsplit(url, "")[[1L]]
     z <- grep(OK, x)
@@ -753,7 +753,7 @@ myurlencode <- function(url) {
 
 
 # To add external database link for each of the multiMiR result entry
-add.multimir.links <- function(x, org) {
+add.multimir.links_old <- function(x, org) {
     warning(paste("Some of the links to external databases may be broken due",
                   "to outdated identifiers in these databases. Please refer",
                   "to Supplementary Table 2 in the multiMiR paper for details",
