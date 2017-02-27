@@ -35,17 +35,30 @@
 #'   result <- search.multimir(query = qry)
 #' 
 #' @export search.multimir
-search.multimir <- function(url = getOption("multimir.url"), query) {
+search.multimir <- function(query) {
     # To search the multiMiR database on the web server given a MySQL query
+    # NOTE: Can only be used after version is set?? due to dbName arg?
 
     dbName <- getOption("multimir.db.name")
-    result <- RCurl::postForm(url, query = query, dbName = dbName, 
-                              .cgifields = c("query","dbName"))
-    result <- XML::readHTMLTable(result)
-    result <- parse.multimir(result)
-    return(result)
+    submit_request(query = query, dbName = dbName, 
+                   .cgifields = c("query","dbName"))
 }
 
+
+#' General workhorse function for submitting and returning queries
+#' 
+#' This is an internal multiMiR function that is not intended to be used
+#' directly.  Please use \code{get.multimir}.
+#' 
+#' 
+#' @export submit_request
+submit_request <- function(url = getOption("multimir.url"), query, ...) {
+
+    request <- RCurl::postForm(url, query = query, ...)
+    result  <- XML::readHTMLTable(request)
+    parse.multimir(result)
+
+}
 
 
 
