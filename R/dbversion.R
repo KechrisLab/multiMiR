@@ -60,8 +60,8 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),
       options(multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/", 
                                             as.character(current[[3]])))
       options(multimir.error.msg   = "")
-      cat(paste0("Now using database version: ", 
-                  getOption("multimir.db.version")))
+      message(paste0("Now using database version: ", 
+                     getOption("multimir.db.version")))
   }}, warning = function(war) {
       message(war)
   }, error = function(e) {
@@ -69,3 +69,22 @@ multimir_switchDBVersion <- function(url = getOption("multimir.url"),
   }, finally = {})
   
 }
+
+multimir_queryDBVersions <- function() {
+
+    qry     <- paste("SELECT * FROM multimir_versions.version",
+                     "WHERE public=1 ORDER BY version DESC")
+    submit_request(query = qry, .cgifileds = c("query"))
+
+}
+
+
+multimir_setDBVersion <- function() {
+
+
+
+
+}
+
+
+

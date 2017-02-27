@@ -164,7 +164,7 @@ multimir.summary <- function(result,
 
 
 
-# 
+# NOTE: Figure out if roxygen header is needed for non-exported files
 deprecate_arg <- function(name = c("url", "schema.file", "db.tables")) {
 
     name <- match.arg(name)

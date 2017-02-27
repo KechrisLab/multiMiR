@@ -23,9 +23,9 @@ library(multiMiR)
 # Convert to roxygen2 documentation
 ########################################
 
-formatR::usage(Rd2roxygen)
-setwd("~/Projects/KechrisLab/")
-Rd2roxygen("multiMiR")
+# formatR::usage(Rd2roxygen)
+# setwd("~/Projects/KechrisLab/")
+# Rd2roxygen("multiMiR")
 
 
 

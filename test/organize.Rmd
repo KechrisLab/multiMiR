@@ -29,7 +29,7 @@ multimir_dbCount
     - options: multimir.url
     - multimir: *search.multimir*
 
-#### dbsearch
+#### search [DONE]
 search.multimir
     - depends: RCurl, XML
     - options: multimir.db.name, multimir.url
@@ -40,13 +40,13 @@ parse.multimir   **internal**
 add.multimir.links **internal**
 
 
-#### listmrna
+#### listdata [DONE]
 list.multimir
     - depends: [none]
     - options: multimir.url
     - multimir: *search.multimir* (x3)
 
-#### querydata
+#### getdata
 get.multimir
     - options: multimir.url, 
     - multimir: get.multimir.predicted, get.multimir.validated,

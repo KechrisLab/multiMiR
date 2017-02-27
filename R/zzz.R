@@ -18,13 +18,17 @@
 
     op <- options()
    
+    base.url <- "http://multimir.ucdenver.edu/"
     op.multimir <- 
+        list(multimir.base.url = base.url,
+             multimir.url      = paste0(base.url, "cgi-bin/multimir_univ.pl"))
+
+    op.multimir.vers <-
         list(
              multimir.db.version  = "0",
              multimir.db.updated  = "",
              multimir.db.name     = "",
              multimir.db.tables   = "http://multimir.ucdenver.edu/multiMiR_dbTables.txt",
-             multimir.url         = "http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl",
              multimir.schema.url  = "http://multimir.ucdenver.edu/multiMiR_DB_schema.sql",
              multimir.cutoffs.url = "http://multimir.ucdenver.edu/",
              multimir.error.msg   = 
@@ -39,13 +43,15 @@
 
     tryCatch({
 
-        mmurl  <- "http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl"
-        query  <- paste("SELECT * FROM multimir_versions.version",
-                        "WHERE public=1 ORDER BY version DESC")
-        result <- RCurl::postForm(mmurl, query = query, .cgifields = c("query"))
-        result <- XML::readHTMLTable(result)
+        #mmurl  <- "http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl"
+        #query  <- paste("SELECT * FROM multimir_versions.version",
+        #                "WHERE public=1 ORDER BY version DESC")
+        #result <- RCurl::postForm(mmurl, query = query, .cgifields = c("query"))
+        #result <- XML::readHTMLTable(result)
+        #current <- result[[2]][1, ]
 
-        current <- result[[2]][1, ]
+        dbvers <- multimir_queryDBVersions()
+
         options(multimir.db.version  = as.character(current[[1]]))
         options(multimir.db.updated  = as.character(current[[2]]))
         options(multimir.db.name     = as.character(current[[4]]))
