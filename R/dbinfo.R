@@ -29,7 +29,7 @@
 #' @aliases multimir_dbCount multimir_dbInfo multimir_dbInfoVersions
 #' multimir_dbSchema multimir_dbTables
 #' @param url Deprecated. Use global option \code{multimir.url} instead. 
-#' @param schema.file Deprecated. Option exists as \code{multimir.schema.url},
+#' @param schema.file Deprecated. Option exists as \code{multimir.schema},
 #' but it should not need to be set directly.
 #' @return \code{multimir_dbCount}: a data frame with the count of records in
 #' each of the tables in the multiMiR database.
@@ -62,7 +62,7 @@
 #' 
 #'   db_tables <- multimir_dbTables()
 #' 
-#' @export multimir_dbInfo
+#' @export multimir_dbInfo multimir_dbInfoVersions multimir_dbSchema multimir_dbTables multimir_dbCount
 multimir_dbInfo <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
@@ -77,14 +77,14 @@ multimir_dbInfoVersions <- function(url = NULL) {
     if (!is.null(url)) deprecate_arg("url")
     qry <- paste("SELECT * FROM multimir_versions.version",
                  "WHERE public=1 ORDER BY version DESC")
-    search.multimir(query = qry)
+    submit_request(query = qry)
 }
 
 # To display database schema
 multimir_dbSchema <- function(schema.file = NULL) {
 
-    if (!is.null(schema.file)) deprecate_urlarg("schema.file")
-    schema <- readLines(getOption("multimir.schema.url"))
+    if (!is.null(schema.file)) deprecate_arg("schema.file")
+    schema <- readLines(full_url("multimir.schema"))
     cat(schema, sep = "\n")
 
 }
@@ -93,7 +93,7 @@ multimir_dbSchema <- function(schema.file = NULL) {
 multimir_dbTables <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("db.tables")
-    readLines(getOption("multimir.db.tables"))
+    readLines(full_url("multimir.db.tables"))
 
 }
 

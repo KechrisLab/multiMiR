@@ -10,9 +10,7 @@
 #' @param x a character string indicating what to list. This must be one of the
 #' strings \code{"mirna"} (default), \code{"gene"}, \code{"drug"}, or
 #' \code{"disease"}. This can be abbreviated and is case insensitive.
-#' @param url a character string for the URL of the multiMiR web server.  The
-#' default is getOption("multimir.url")
-#' ("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").
+#' @param url Deprecated. Use global option \code{multimir.url} instead. 
 #' @return \code{list.multimir} returns a data frame with information of
 #' microRNAs (microRNA unique ID, organism, mature microRNA accession number,
 #' and mature microRNA ID), target genes (gene unique ID, organism, gene
@@ -29,9 +27,10 @@
 #' 
 #' @export list.multimir
 list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
-                          url = getOption("multimir.url")) {
+                          url = NULL) {
 
-    x   <- match.arg(tolower(x), c("mirna", "gene", "drug", "disease"))
+    if (!is.null(url)) deprecate_arg("url")
+    x   <- match.arg(x)
 
 	# Set chosen query and submit/request from server 
     qry <- switch(x,
@@ -40,7 +39,7 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
                   drug    = list("SELECT DISTINCT(drug) FROM pharmaco_mir"),
                   disease = list("SELECT DISTINCT(disease) FROM mir2disease",
                                  "SELECT DISTINCT(disease) FROM phenomir"))
-    result <- lapply(qry, search.multimir, url = url)
+    result <- lapply(qry, search.multimir)
 
 	stopifnot(length(result) %in% 1:2)
 

@@ -1,22 +1,24 @@
 
-
-
-
 #' Load Pre-calculated Prediction Score Cutoffs in the multiMiR Package
 #' 
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please set prediction score cutoff in \code{get.multimir}.
 #' 
-#' 
-#' @export get.multimir.cutoffs
-get.multimir.cutoffs <- function(cutoff.file = getOption("multimir.cutoffs.url")) {
+#' @param cutoff.file Deprecated. Set path to cutoffs file with the global
+#' option \code{multimir.cutoffs}.
+get.multimir.cutoffs <- function(cutoff.file = NULL) {
     # To load pre-calculated score cutoffs
-    # NOTE: should this fn not be exported?
+    # NOTE: should this fn be exported? (NO)
+
+    if (!is.null(cutoff.file)) deprecate_arg("cutoff.file")
+
     multimir_cutoffs <- NULL
-    url.file         <- url(cutoff.file)
+    url.file         <- url(full_url("multimir.cutoffs"))
     on.exit(close(url.file))
     load(url.file)
+
     return(multimir_cutoffs)
+
 }
 
 
@@ -27,38 +29,13 @@ get.multimir.cutoffs <- function(cutoff.file = getOption("multimir.cutoffs.url")
 #' directly.  Please use \code{get.multimir}.
 #' 
 #' 
-#' @export myurlencode
 myurlencode <- function(url) {
     OK <- "[^-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_.+*(),:/?=]"
-    x <- strsplit(url, "")[[1L]]
-    z <- grep(OK, x)
+    x  <- strsplit(url, "")[[1L]]
+    z  <- grep(OK, x)
     if (length(z)) {
-        y <- sapply(x[z], function(x) paste0("%", as.character(charToRaw(x)),
-                                             collapse = ""))
-        x[z] <- y
-    }
-    paste(x, collapse = "")
-}
-
-
-
-#' Encode a URL Before Submitting It to the multiMiR Web Server
-#' 
-#' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
-#' 
-#' 
-#' @export myurlencode
-myurlencode <- function(url) {
-    # To change the encoding of URL (to account for the OS difference).  This is modified from the URLencode
-    # function in the utils package.
-
-    OK <- "[^-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_.+*(),:/?=]"
-    x <- strsplit(url, "")[[1L]]
-    z <- grep(OK, x)
-    if (length(z)) {
-        y <- sapply(x[z], function(x) paste0("%", as.character(charToRaw(x)),
-                                             collapse = ""))
+        y <- sapply(x[z], function(x) { paste0("%", as.character(charToRaw(x)),
+                                               collapse = "") })
         x[z] <- y
     }
     paste(x, collapse = "")
@@ -73,7 +50,6 @@ myurlencode <- function(url) {
 #' directly.  Please use \code{get.multimir}.
 #' 
 #' 
-#' @export multimir.summary
 multimir.summary <- function(result, 
                              pair.index = 2:6, 
                              order.by = "all.sum") {
@@ -165,13 +141,14 @@ multimir.summary <- function(result,
 
 
 # NOTE: Figure out if roxygen header is needed for non-exported files
-deprecate_arg <- function(name = c("url", "schema.file", "db.tables")) {
+deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.file")) {
 
     name <- match.arg(name)
     ops  <- switch(name,
                    url         = "multimir.url",
-                   schema.file = "multimir.schema.url",
-                   db.tables   = "multimir.db.tables")
+                   schema.file = "multimir.schema",
+                   db.tables   = "multimir.db.tables",
+                   cutoff.file = "multimir.cutoffs")
 
     # the function using the schema option had an arg name of url, so switch for
     # an accurate message

@@ -8,9 +8,7 @@
 #' structures. Users are advised to use \code{get.multimir} instead.
 #' 
 #' 
-#' @param url a character string for the URL of the multiMiR web server.  The
-#' default is getOption("multimir.url")
-#' ("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").
+#' @param url Deprecated. Use global option \code{multimir.url} instead. 
 #' @param query a character string for the MySQL query.
 #' @return \code{search.multimir} returns a data frame containing results from
 #' the multiMiR web server.
@@ -52,11 +50,11 @@ search.multimir <- function(query) {
 #' 
 #' 
 #' @export submit_request
-submit_request <- function(url = getOption("multimir.url"), query, ...) {
+submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 
     request <- RCurl::postForm(url, query = query, ...)
     result  <- XML::readHTMLTable(request)
-    parse.multimir(result)
+    parse_response(result)
 
 }
 
@@ -68,29 +66,29 @@ submit_request <- function(url = getOption("multimir.url"), query, ...) {
 #' directly.  Please use \code{get.multimir}.
 #' 
 #' 
-#' @export parse.multimir
-parse.multimir <- function(HTML.result) {
-    # To parse the result from the multimir web server.  Two tables should
-    # return. The first table (result[[1]]) is the summary. And the second table
-    # (result[[2]]) has the result in details.
+#' @export parse_response
+parse_response <- function(HTML.response) {
+    # To parse the response from the multimir web server.  Two tables should
+    # return. The first table (response[[1]]) is the summary. And the second table
+    # (response[[2]]) has the response in details.
 
-    result <- NULL
-    l      <- length(HTML.result)
-    if (l == 2) {
-        result <- HTML.result[[2]]
-    } else if (l == 0) {
-        warning(paste("Request to multiMiR web server failed. There could be",
-					  "incorrect syntax in your query, or you are not connected",
-					  "to the internet.  Alternatively the multiMiR web server",
-					  "at http://multimir.ucdenver.edu is temporarily down.\n"))
-    } else {
+	response <- NULL
+	l      <- length(HTML.response)
+	if (l == 2) {
+		response <- HTML.response[[2]]
+	} else if (l > 2) {
 		# This should never happen, but just in case...
-		warning(paste("Unexpected result from request of multiMiR web server.",
-					  "Problem originates with web server - Please submit issue",
-					  "on Github repo"))
-	}
+		stop(paste("Unexpected response from multiMiR web server.",
+				   "Problem originates with web server - Please submit issue",
+				   "on Github repo"))
+	} else if (l == 0) {
+		stop("Request to multiMiR web server failed. There could be ",
+			 "incorrect syntax in your query, or you are not connected to ",
+			 "the internet.  Alternatively the multiMiR web server at ", 
+			 "http://multimir.ucdenver.edu is temporarily down. \n")
+	}  # else if l ==1, just return NULL
 
-    return(result)
+	return(response)
 
 }
 
