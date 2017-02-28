@@ -4,17 +4,14 @@
 \alias{list.multimir}
 \title{List microRNAs, Genes, Drugs Or Diseases in the multiMiR Package}
 \usage{
-list.multimir(x = c("mirna", "gene", "drug", "disease"),
-  url = getOption("multimir.url"))
+list.multimir(x = c("mirna", "gene", "drug", "disease"), url = NULL)
 }
 \arguments{
 \item{x}{a character string indicating what to list. This must be one of the
 strings \code{"mirna"} (default), \code{"gene"}, \code{"drug"}, or
 \code{"disease"}. This can be abbreviated and is case insensitive.}
 
-\item{url}{a character string for the URL of the multiMiR web server.  The
-default is getOption("multimir.url")
-("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").}
+\item{url}{Deprecated. Use global option \code{multimir.url} instead.}
 }
 \value{
 \code{list.multimir} returns a data frame with information of

@@ -4,12 +4,10 @@
 \alias{multimir_switchDBVersion}
 \title{Manage Database Version to use}
 \usage{
-multimir_switchDBVersion(url = getOption("multimir.url"),
-  dbVer = getOption("multimir.db.version"))
+multimir_switchDBVersion(db_version, url = NULL)
 }
 \arguments{
-\item{url}{A character string naming the URL of the web server hosting the
-multiMiR database.}
+\item{url}{Deprecated. Use global option \code{multimir.url} instead.}
 
 \item{dbVer}{A character string containing the full version number for the
 database version to use for for all package functions. The default will be

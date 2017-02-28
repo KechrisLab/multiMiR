@@ -3,10 +3,11 @@
 ################################################################################
 
 
+options(width = 300)
 library(devtools)
 #library(roxygen2)
 library(dplyr)
-library(Rd2roxygen)
+#library(Rd2roxygen)
 
 ########################################
 # Build/Check/Install/Load

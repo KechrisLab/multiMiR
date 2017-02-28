@@ -9,14 +9,13 @@
 \title{Collect Information About the Web Server And Database of the multiMiR
 Package}
 \usage{
-multimir_dbInfo(url = getOption("multimir.url"))
+multimir_dbInfo(url = NULL)
 }
 \arguments{
-\item{url}{A character string naming the URL of the web server hosting the
-multiMiR database.}
+\item{url}{Deprecated. Use global option \code{multimir.url} instead.}
 
-\item{schema.file}{A character string naming the file containing the
-multiMiR database schema.}
+\item{schema.file}{Deprecated. Option exists as \code{multimir.schema},
+but it should not need to be set directly.}
 }
 \value{
 \code{multimir_dbCount}: a data frame with the count of records in
@@ -38,8 +37,8 @@ Functions for collecting and displaying information about the web server and
 database of the multiMiR package.
 }
 \details{
-\code{url} is a character string containing the URL of the multiMiR web
-server.
+\code{multimir.url} is a global option containing the URL of the multiMiR web
+server. Set using \code{options("multimir.url" = ...)}
 
 \code{multimir_dbCount} returns counts of records in the tables in the
 multiMiR database. Each table contains data from an external miRNA/target

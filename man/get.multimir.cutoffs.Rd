@@ -4,7 +4,7 @@
 \alias{get.multimir.cutoffs}
 \title{Load Pre-calculated Prediction Score Cutoffs in the multiMiR Package}
 \usage{
-get.multimir.cutoffs(cutoff.file = getOption("multimir.cutoffs.url"))
+get.multimir.cutoffs(cutoff.file = NULL)
 }
 \description{
 This is an internal multiMiR function that is not intended to be used

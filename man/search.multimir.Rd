@@ -4,14 +4,12 @@
 \alias{search.multimir}
 \title{Search the multiMiR Database Given a MySQL Query}
 \usage{
-search.multimir(url = getOption("multimir.url"), query)
+search.multimir(query)
 }
 \arguments{
-\item{url}{a character string for the URL of the multiMiR web server.  The
-default is getOption("multimir.url")
-("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").}
-
 \item{query}{a character string for the MySQL query.}
+
+\item{url}{Deprecated. Use global option \code{multimir.url} instead.}
 }
 \value{
 \code{search.multimir} returns a data frame containing results from
