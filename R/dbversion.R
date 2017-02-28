@@ -15,8 +15,7 @@
 #' database versions available. This provides a list of available options if
 #' switching to previous version is desired.
 #' 
-#' @param url A character string naming the URL of the web server hosting the
-#' multiMiR database.
+#' @param url Deprecated. Use global option \code{multimir.url} instead. 
 #' @param dbVer A character string containing the full version number for the
 #' database version to use for for all package functions. The default will be
 #' the most recent version.
@@ -31,60 +30,90 @@
 #' @examples
 #' 
 #'   multimir_dbInfoVersions()
-#'   multimir_switchDBVersion(dbVer="2.0.0")
+#'   multimir_switchDBVersion(db_version="2.0.0")
 #' 
 #' @export multimir_switchDBVersion
-multimir_switchDBVersion <- function(url = getOption("multimir.url"), 
-                                     dbVer = getOption("multimir.db.version")) {
-    # To switch DB version to search to the specified version if one matches
-  tryCatch({
-    query <- paste0("Select * from multimir_versions.version where version='",
-                    dbVer, "' and public=1 order by version DESC")
-    result <- RCurl::postForm(url, query = query, .cgifields = c("query"))
-    result <- XML::readHTMLTable(result)
+multimir_switchDBVersion <- function(db_version, url = NULL) {
 
-    if(as.numeric(as.character(result[[1]][[1]]))==0) {
-      message("Version not set.\nVersion probably doesn't match an ",
-              "available version.  Please use the full version as displayed in ",
-              "multimir_dbInfoVersions().")
-    } else {
-      current <- result[[2]][1,]
-      options(multimir.db.version  = as.character(current[[1]]))
-      options(multimir.db.updated  = as.character(current[[2]]))
-      options(multimir.db.name     = as.character(current[[4]]))
-      options(multimir.db.tables   = paste0("http://multimir.ucdenver.edu/", 
-                                            as.character(current[[7]])))
-      options(multimir.url = url)
-      options(multimir.schema.url  = paste0("http://multimir.ucdenver.edu/", 
-                                            as.character(current[[5]])))
-      options(multimir.cutoffs.url = paste0("http://multimir.ucdenver.edu/", 
-                                            as.character(current[[3]])))
-      options(multimir.error.msg   = "")
-      message(paste0("Now using database version: ", 
-                     getOption("multimir.db.version")))
-  }}, warning = function(war) {
-      message(war)
-  }, error = function(e) {
-      message(e)
-  }, finally = {})
-  
+    if (!is.null(url)) deprecate_arg("url")
+
+    old_vers   <- getOption("multimir.db.version")
+    vers_table <- query_dbversions()
+    new_vers   <- subset(vers_table, vers_table$VERSION == db_version)
+
+    if (nrow(new_vers) == 0) stop("DB version ", db_version, " not found. ",
+                                  "Please use the full version as displayed ",
+                                  "in multimir_dbInfoVersions().")
+    if (nrow(new_vers) > 1) stop("Multiple matching DB versions.  Consider ",
+                                 "submitting an issue on Github repository.")
+
+    set_dbversion(dbversion_row = new_vers, overwrite = TRUE)
+    message(paste0("Now using database version: ", getOption("multimir.db.version")))
+
 }
 
-multimir_queryDBVersions <- function() {
+
+
+
+# Internal function
+# @param NONE 
+query_dbversions <- function() {
 
     qry     <- paste("SELECT * FROM multimir_versions.version",
                      "WHERE public=1 ORDER BY version DESC")
-    submit_request(query = qry, .cgifileds = c("query"))
+    submit_request(query = qry, .cgifields = c("query"))
 
 }
 
 
-multimir_setDBVersion <- function() {
 
 
+# Internal function
+# @param overwrite Overwite existing options (TRUE/FALSE).
+# @param dbversion_row A single row data frame from \code{queryDBVersions()}
+set_dbversion <- function(dbversion_row, overwrite = FALSE) {
 
+    # Get current global options
+    op <- options()
+
+    # Convert all cols to character (using [] is a trick via SO and Hadley that
+    # allows the dataframe to keep its 'data.frame' class)
+    dbversion_row[] <- lapply(dbversion_row, as.character)
+
+    op.multimir.vers <-
+        list(multimir.db.version = dbversion_row$VERSION,
+             multimir.db.updated = dbversion_row$UPDATED,
+             multimir.db.name    = dbversion_row$DBNAME,
+             multimir.db.tables  = dbversion_row$TABLES,
+             multimir.schema     = dbversion_row$SCHEMA,
+             multimir.cutoffs    = dbversion_row$RDA)
+
+    # Set option values
+    toset <- ifelse(overwrite, 
+                    rep(TRUE, length(op.multimir.vers)),
+                    !(names(op.multimir.vers) %in% names(op)))
+    if (any(toset)) options(op.multimir.vers[toset])
 
 }
+
+
+# Internal function for combining base url (multimir.url) with the url paths for
+# various requests.
+# @param pkg_option One of the package options corresponding to a url path
+# needing appending to the base url 
+# @return the full url to the object path passed to the function 
+full_url <- function(pkg_option = c("multimir.queries",
+                                    "multimir.db.tables",
+                                    "multimir.schema",
+                                    "multimir.cutoffs")) {
+
+    pkg_option <- match.arg(pkg_option)
+    paste0(getOption("multimir.url"), getOption(pkg_option))
+
+}
+
+
+
 
 
 
