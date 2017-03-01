@@ -4,34 +4,11 @@
 \alias{get.multimir.by.table}
 \title{Get microRNA/target Information from a Given Table in the multiMiR Package}
 \usage{
-get.multimir.by.table(url = NULL, org = "hsa", mirna = NULL,
-  target = NULL, table = NULL, disease.drug = NULL,
+get.multimir.by.table(table = NULL, url = NULL, org = c("hsa", "mmu",
+  "rno"), mirna = NULL, target = NULL, disease.drug = NULL,
   predicted.cutoff = NULL, predicted.cutoff.type = "p",
   predicted.site = "conserved", mirna.table = "mirna",
   target.table = "target")
-}
-\arguments{
-\item{url}{PLACEHOLDER}
-
-\item{org}{PLACEHOLDER}
-
-\item{mirna}{PLACEHOLDER}
-
-\item{target}{PLACEHOLDER}
-
-\item{table}{PLACEHOLDER}
-
-\item{disease.drug}{PLACEHOLDER}
-
-\item{predicted.cutoff}{PLACEHOLDER}
-
-\item{predicted.cutoff.type}{PLACEHOLDER}
-
-\item{predicted.site}{PLACEHOLDER}
-
-\item{mirna.table}{PLACEHOLDER}
-
-\item{target.table}{PLACEHOLDER}
 }
 \description{
 This is an internal multiMiR function that is not intended to be used

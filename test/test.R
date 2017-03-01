@@ -2,12 +2,12 @@
 # Script for testing during active development
 ################################################################################
 
-
-options(width = 300)
+# Load packages
 library(devtools)
 #library(roxygen2)
 library(dplyr)
 #library(Rd2roxygen)
+
 
 ########################################
 # Build/Check/Install/Load
@@ -27,8 +27,4 @@ library(multiMiR)
 # formatR::usage(Rd2roxygen)
 # setwd("~/Projects/KechrisLab/")
 # Rd2roxygen("multiMiR")
-
-
-
-
 

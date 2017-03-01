@@ -2,10 +2,6 @@
 
 export(add.multimir.links)
 export(get.multimir)
-export(get.multimir.by.table)
-export(get.multimir.disease)
-export(get.multimir.predicted)
-export(get.multimir.validated)
 export(list.multimir)
 export(multimir_dbCount)
 export(multimir_dbInfo)

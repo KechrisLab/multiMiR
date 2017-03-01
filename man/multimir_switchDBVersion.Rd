@@ -7,11 +7,11 @@
 multimir_switchDBVersion(db_version, url = NULL)
 }
 \arguments{
-\item{url}{Deprecated. Use global option \code{multimir.url} instead.}
-
-\item{dbVer}{A character string containing the full version number for the
+\item{db_version}{A character string containing the full version number for the
 database version to use for for all package functions. The default will be
 the most recent version.}
+
+\item{url}{Deprecated. Use global option \code{multimir.url} instead.}
 }
 \value{
 \code{multimir_dbInfoVersions}: a data frame with information about the
@@ -38,7 +38,7 @@ switching to previous version is desired.
 \examples{
 
   multimir_dbInfoVersions()
-  multimir_switchDBVersion(dbVer="2.0.0")
+  multimir_switchDBVersion(db_version="2.0.0")
 
 }
 \author{

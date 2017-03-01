@@ -2,7 +2,7 @@
 % Please edit documentation in R/getdata.R
 \name{get.multimir.disease}
 \alias{get.multimir.disease}
-\title{Get microRNA-disease/drug Relationships from the multiMiR Package}
+\title{Get microRNA-disease/drug interactions from the multiMiR Package}
 \usage{
 get.multimir.disease(url = NULL, org = "hsa", mirna = NULL,
   target = NULL, disease.drug = NULL)

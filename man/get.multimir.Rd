@@ -4,15 +4,14 @@
 \alias{get.multimir}
 \title{Get microRNA-target Interactions from the multiMiR Package}
 \usage{
-get.multimir(url = getOption("multimir.url"), org = "hsa", mirna = NULL,
-  target = NULL, disease.drug = NULL, table = "validated",
-  predicted.cutoff = NULL, predicted.cutoff.type = "p",
-  predicted.site = "conserved", summary = FALSE, add.link = FALSE)
+get.multimir(url = NULL, org = "hsa", mirna = NULL, target = NULL,
+  disease.drug = NULL, table = "validated", predicted.cutoff = NULL,
+  predicted.cutoff.type = "p", predicted.site = "conserved",
+  summary = FALSE, add.link = FALSE)
 }
 \arguments{
-\item{url}{a character string for the URL of the multiMiR web server.  The
-default is getOption(" multimir.url")
-("http://multimir.ucdenver.edu/cgi-bin/multimir.pl").}
+\item{url}{Deprecated. The URL for queries is now defined by the package
+options \code{multimir.url} and \code{multimir.queries}.}
 
 \item{org}{a character string for the organism. Three organisms are
 supported so far: human ("hsa" (default), "human", or "Homo Sapiens"), mouse

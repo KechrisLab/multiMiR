@@ -6,7 +6,12 @@
 \usage{
 get.multimir.cutoffs(cutoff.file = NULL)
 }
+\arguments{
+\item{cutoff.file}{Deprecated. Set path to cutoffs file with the global
+option \code{multimir.cutoffs}.}
+}
 \description{
 This is an internal multiMiR function that is not intended to be used
 directly.  Please set prediction score cutoff in \code{get.multimir}.
 }
+\keyword{internal}

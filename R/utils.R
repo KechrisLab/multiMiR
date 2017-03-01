@@ -6,6 +6,7 @@
 #' 
 #' @param cutoff.file Deprecated. Set path to cutoffs file with the global
 #' option \code{multimir.cutoffs}.
+#' @keywords internal
 get.multimir.cutoffs <- function(cutoff.file = NULL) {
     # To load pre-calculated score cutoffs
     # NOTE: should this fn be exported? (NO)
@@ -22,13 +23,13 @@ get.multimir.cutoffs <- function(cutoff.file = NULL) {
 }
 
 
-
 #' Encode a URL Before Submitting It to the multiMiR Web Server
 #' 
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #' 
-#' 
+#' @param url A url character string to encode.
+#' @keywords internal
 myurlencode <- function(url) {
     OK <- "[^-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_.+*(),:/?=]"
     x  <- strsplit(url, "")[[1L]]
@@ -42,14 +43,15 @@ myurlencode <- function(url) {
 }
 
 
-
-
 #' Summarize microRNA/target Information from the multiMiR Package
 #' 
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #' 
-#' 
+#' @param result     PLACEHOLDER
+#' @param pair.index PLACEHOLDER
+#' @param order.by   PLACEHOLDER
+#' @keywords internal
 multimir.summary <- function(result, 
                              pair.index = 2:6, 
                              order.by = "all.sum") {
@@ -138,9 +140,11 @@ multimir.summary <- function(result,
 }
 
 
-
-
-# NOTE: Figure out if roxygen header is needed for non-exported files
+#' Internal function for sending deprecation messages
+#'
+#' @param name One of several predefined arguments that are being deprecated.
+#' All are URLs or URL paths now set by package/global options.
+#' @keywords internal
 deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.file")) {
 
     name <- match.arg(name)
@@ -158,3 +162,13 @@ deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.fi
             "option ", ops, " via options()")
 
 }
+
+
+#' Internal function for adding single quotes around a string
+#'
+#' @param x a string to be wrapped in single quotes.
+#' @keywords internal
+quote_wrap <- function(x) gsub("\\b", "'", x, perl = TRUE)
+
+
+

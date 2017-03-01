@@ -16,7 +16,7 @@
 #' switching to previous version is desired.
 #' 
 #' @param url Deprecated. Use global option \code{multimir.url} instead. 
-#' @param dbVer A character string containing the full version number for the
+#' @param db_version A character string containing the full version number for the
 #' database version to use for for all package functions. The default will be
 #' the most recent version.
 #' @return

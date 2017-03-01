@@ -1,12 +1,12 @@
 
 
 # To search the multiMiR database on the web server given a MySQL query
-search.multimir_old_old <- function(url = getOption("multimir.url"), 
+search.multimir_old <- function(url = getOption("multimir.url"), 
                             query
                             ) {
     dbName=getOption("multimir.db.name")
-    result <- postForm(url, query = query, dbName=dbName, .cgifields = c("query","dbName"))
-    result <- readHTMLTable(result)
+    result <- RCurl::postForm(url, query = query, dbName=dbName, .cgifields = c("query","dbName"))
+    result <- XML::readHTMLTable(result)
     result <- parse.multimir_old(result)
     return(result)
 }
@@ -76,7 +76,7 @@ multimir_dbTables_old <- function(url = getOption("multimir.db.tables")) {
 
 # To list miRNAs, genes, drugs or diseases in the multimir database
 list.multimir_old <- function(x   = c("mirna", "gene", "drug", "disease"),
-                          url = getOption("multimir.url")) {
+                          url = full_url("multimir.queries")) {
     x <- match.arg(tolower(x), c("mirna", "gene", "drug", "disease"))
     if (x == "mirna") {
         q <- "SELECT * FROM mirna"
