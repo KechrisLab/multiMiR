@@ -108,6 +108,7 @@ get.multimir <- function(url = NULL,
                          add.link = FALSE) {
     # The main function to search miRNA-target and miRNA-disease interactions
 
+
     if (!is.null(url)) deprecate_arg("url")
 
     { # Moved form get.multimir.by.table
@@ -147,6 +148,28 @@ get.multimir <- function(url = NULL,
         }
 
         table <- tolower(table)
+    }
+
+    { # Moved here from query_predicted (formerly get.multimir.by.table)
+
+        if (!is.null(predicted.cutoff.type)) {
+            if (is.null(predicted.cutoff))  {
+                predicted.cutoff <- switch(predicted.cutoff.type,
+                                           p = 20,
+                                           n = 300000)
+            }
+        } 
+
+        if (predicted.cutoff.type == "p" & !is.null(predicted.cutoff) & 
+            (predicted.cutoff < 1 | predicted.cutoff > 100)) {
+            stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
+                       "between 1 and 100.\n"))
+
+        }
+			if (cutoffs[[name]][["count"]] >= 3e+05) {
+				score.cutoff <- cutoffs[[name]][["300000"]]
+
+            }
     }
 
 
@@ -405,6 +428,7 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
                             predicted.cutoff, predicted.cutoff.type,
                             predicted.site) {
 
+
 	table <- match.arg(table)
 	predicted.site <- match.arg(tolower(predicted.site), 
                                 c("conserved", "nonconserved", "all"))
@@ -448,37 +472,53 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
              conserve     = qry_conserve
              )
 
-# Basic SQL structure:
-# predicted: X(choose score var) + Xbase + X(mirna and/or target) + Xorg + Xconserved(for 3 of 8) + cutoff
 
-	cutoffs      <- get.multimir.cutoffs()
-
+    # Basic SQL structure:
+    # predicted: X(choose score var) + Xbase + X(mirna and/or target) + Xorg + Xconserved(for 3 of 8) + cutoff
     # logic: predicted.cutoff.type, predicted.cutoff, name
     # output: score.cutoff
 
+	cutoffs    <- get.multimir.cutoffs()
+    pred.count <- cutoffs[[name]][["count"]]
 
-    predicted.cutoff.type <- { "p" = 
+    pred.cutoff.char <- switch(predicted.cutoff.type,
+                               p = paste0(predicted.cutoff, "%"),
+                               n = as.character(predicted.cutoff))
 
+
+    scipen.orig <- getOption("scipen")
+    options(scipen = 999)
 	# get dataset-specific score cutoff
-	cutoffs      <- get.multimir.cutoffs()
-	score.cutoff <- NA
 	if (predicted.cutoff.type == "p") {
-		# percent cutoff (default = 20 %)
-		if (is.null(predicted.cutoff)) {
-			predicted.cutoff <- 20
-		} else {
-			if (predicted.cutoff < 1 | predicted.cutoff > 100) {
-				stop(paste("Percent predicted cutoff (predicted.cutoff)",
-						   "should be between 1 and 100.\n"))
-			}
-		}
-		score.cutoff <- cutoffs[[name]][[paste(predicted.cutoff, "%", sep = "")]]
+        pred.cutoff.char <-  paste0(predicted.cutoff, "%")
+		score.cutoff     <- cutoffs[[name]][[pred.cutoff.char]]
 	} else if (predicted.cutoff.type == "n") {
-		# number cutoff (default = 300,000)
-		if (is.null(predicted.cutoff)) {
-			if (cutoffs[[name]][["count"]] >= 3e+05) {
-				score.cutoff <- cutoffs[[name]][["300000"]]
-			}
+        cut.pred.cutoff <- as.character(cut(predicted.cutoff, 
+                                            breaks = c(0, 10000, 300000, 10000000),
+                                            labels = FALSE))
+        if (predicted.cutoff < 10000) {
+            message(paste("Number predicted cutoff (predicted.cutoff)",
+                          predicted.cutoff,
+                          "may be too small. A cutoff of 10000 will be",
+                          "used instead.\n"))
+        }
+        if (predicted.cutoff > pred.count) {
+            message(paste0("Number predicted cutoff (predicted.cutoff) ",
+                           predicted.cutoff, " is larger than the total",
+                           "number of records in table ", 
+                           table, ". All records will be queried.\n"))
+        }
+        adj.pred.cutoff <- switch(cut.pred.cutoff, '1' = 10000, 
+                                  '2' = predicted.cutoff,, '3' = 300000)
+        adj.pred.cutoff <- ifelse(pred.count < adj.pred.cutoff & 
+                                  pred.count >= 10000, 
+                                  pred.count, adj.pred.cutoff)
+        pred.cutoff.char <- as.character(adj.pred.cutoff)
+        score.cutoff <- cutoffs[[name]][[pred.cutoff.char]]
+    }
+    options(scipen = scipen.orig)
+ 
+        # if !is.null(predicted.cutoff)
 		} else {
 			if (predicted.cutoff < 10000) {
 				message(paste("Number predicted cutoff (predicted.cutoff)",
@@ -494,8 +534,7 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
 							   "number of records in table ", 
 							   table, ". All records will be queried.\n"))
 			} else {
-				predicted.cutoff <- as.integer(as.integer(predicted.cutoff / 10000) * 10000)
-				score.cutoff <- cutoffs[[name]][[as.character(predicted.cutoff)]]
+				score.cutoff <- cutoffs[[name]][[pred.cutoff.char]]
 			}
 		}
 	}

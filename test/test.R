@@ -6,6 +6,8 @@
 library(devtools)
 #library(roxygen2)
 library(dplyr)
+library(tidyr)
+library(purrr)
 #library(Rd2roxygen)
 
 
@@ -19,6 +21,15 @@ devtools::check()
 devtools::install("../multiMiR", build_vignettes = TRUE)
 library(multiMiR)
 
+table <- "miranda"
+mirna <- "mirna"
+target <- "target"
+org <- "rno"
+mirna.table  <- "mirna.table"
+target.table <- "target.table"
+predicted.cutoff <- NULL
+predicted.cutoff.type <- "n"
+predicted.site <- "conserved"
 
 ########################################
 # Convert to roxygen2 documentation
