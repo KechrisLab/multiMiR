@@ -106,278 +106,233 @@ get.multimir <- function(url = NULL,
                          predicted.site = "conserved", 
                          summary = FALSE, 
                          add.link = FALSE) {
-    # The main function to search miRNA-target and miRNA-disease interactions
-
 
     if (!is.null(url)) deprecate_arg("url")
 
-    { # Moved form get.multimir.by.table
-        ########################################
-        # Prep args for inclusion in sql query
-        ########################################
-        multimir.tables <- setdiff(as.character(multimir_dbTables()),
-                                   c("map_counts", "map_metadata", "metadata"))
-        if (!table %in% multimir.tables) {
-            stop(paste("Table", table, "does not exist!\n", "Please use",
-                       "'multimir_dbTables()' to see a list of available tables.\n"))
-        }
+    # Don't use scientific notation in fn environment 
+    #   for converting num to char where "3e4" != "30000"
+    scipen.orig <- getOption("scipen")
+    options(scipen = 999)
+    on.exit( options(scipen = scipen.orig) )
 
-        cat("Searching", table, "...\n")
+    # Collect args for use in query builders
+    my_args  <- mget(names(formals()), sys.frame(sys.nframe()))
+    argmatch <- match(c("org", "mirna", "target", "disease.drug",
+                        "predicted.cutoff", "predicted.cutoff.type",
+                        "predicted.site"), names(my_args), 0L)
+    sqlargs  <- as.list(my_args[c(argmatch)])
 
-        if ((is.null(mirna) & is.null(target) & is.null(disease.drug)) |
-            is.null(table)) return(NULL) 
+    # Other default table names
+    sqlargs$mirna.table  <- "mirna"
+    sqlargs$target.table <- "target"
 
-        wrap_in_parens <- function(x) paste0("('", paste(x, collapse = "','"), "')")
-        if (!is.null(mirna))        mirna        <- wrap_in_parens(mirna)
-        if (!is.null(target))       target       <- wrap_in_parens(target)
-        if (!is.null(disease.drug)) disease.drug <- wrap_in_parens(disease.drug)
+    # Prep table argument for inclusion in sql query
+	stopifnot(!is.null(table), length(table) == 1L) 
+    multimir.tables <- c(setdiff(as.character(multimir_dbTables()),
+                                 c("map_counts", "map_metadata", "metadata")),
+                         "validated", "predicted", "disease.drug", "all")
+    if (!table %in% multimir.tables) {
+        stop(paste("Table", table, "does not exist!\n", "Please use",
+                   "'multimir_dbTables()' to see a list of available",
+                   "tables.\n"))
+    } 
 
-        if (!is.null(org)) {
-            org <- tolower(org)
-            if (org %in% c("hsa", "human", "homo sapiens")) {
-                org <- "hsa"
-            } else if (org %in% c("mmu", "mouse", "mus musculus")) {
-                org <- "mmu"
-            } else if (org %in% c("rno", "rat", "rattus norvegicus")) {
-                org <- "rno"
-            } else {
-                stop(paste("Organism", org, "is not in multiMiR. Current options",
-                           "are 'hsa' (human), 'mmu' (mouse) and 'rno' (rat).\n", 
-                           sep = " "))
-            }
-        }
+    if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
 
-        table <- tolower(table)
+	# Currently only allows single string (TODO: same as old version?).
+    if (!is.null(org)) {
+        org <- gsub("hsa|human|homo sapiens", "hsa", org, ignore.case = TRUE)
+        org <- gsub("mmu|mouse|mus musculus", "mmu", org, ignore.case = TRUE)
+        org <- gsub("rno|rat|rattus norvegicus", "rno", org, ignore.case = TRUE)
+		if (!(org %in% c("hsa", "mmu", "rno"))) {
+			stop("Organism ", org,  " is not in multiMiR. Current options ",
+				 "are 'hsa' (human), 'mmu' (mouse) and 'rno' (rat).\n")
+        } 	
+    } 
+
+    # Prep these names for use in SQL query
+    wrap_in_parens <- function(x) {
+        if (!is.null(x)) paste0("('", paste(x, collapse = "','"), "')")
+    }
+    mirna        <- wrap_in_parens(mirna)
+    target       <- wrap_in_parens(target)
+    disease.drug <- wrap_in_parens(disease.drug)
+
+	# Set default predicted.cutoff 
+    if (!is.null(predicted.cutoff.type) & is.null(predicted.cutoff))  {
+        predicted.cutoff <- switch(predicted.cutoff.type, 
+                                           p = 20, n = 300000)
+	}
+	if (predicted.cutoff.type == "p" & (predicted.cutoff < 1 | predicted.cutoff > 100)) {
+		stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
+				   "between 1 and 100.\n"))
+	}
+
+    # Reassign changed args
+    sqlargs$org              <- org
+    sqlargs$mirna            <- mirna        
+    sqlargs$target           <- target       
+    sqlargs$disease.drug     <- disease.drug 
+    sqlargs$predicted.cutoff <- predicted.cutoff
+
+    get_query <- function(x, ...) {
+        cl <- do.call(x[["query_name"]], c(table = x[["table"]]), a.list(...))
     }
 
-    { # Moved here from query_predicted (formerly get.multimir.by.table)
+    cat("Searching", table, "...\n")
+    tbls_to_query <- table_query_lookup(table)
+    my_queries    <- apply(tbls_to_query, 1, get_query, sqlargs)
 
-        if (!is.null(predicted.cutoff.type)) {
-            if (is.null(predicted.cutoff))  {
-                predicted.cutoff <- switch(predicted.cutoff.type,
-                                           p = 20,
-                                           n = 300000)
-            }
-        } 
+    return(my_queries)
 
-        if (predicted.cutoff.type == "p" & !is.null(predicted.cutoff) & 
-            (predicted.cutoff < 1 | predicted.cutoff > 100)) {
-            stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
-                       "between 1 and 100.\n"))
-
-        }
-			if (cutoffs[[name]][["count"]] >= 3e+05) {
-				score.cutoff <- cutoffs[[name]][["300000"]]
-
-            }
-    }
-
-
-
-    result <- list()
-    if (table %in% c("all", "validated", "predicted", "disease.drug")) {
-        if (table == "predicted" | table == "all") {
-            # search predicted miRNA-target tables
-            result[["predicted"]] <- 
-                get.multimir.predicted(url = url, 
-                                       org = org, 
-                                       mirna = mirna,
-                                       target = target, 
-                                       cutoff = predicted.cutoff, 
-                                       cutoff.type = predicted.cutoff.type, 
-                                       site = predicted.site)
-            if (add.link & !is.null(result[["predicted"]])) {
-                result[["predicted"]] <- 
-                    add.multimir.links(result[["predicted"]], org)
-            }
-        }
-        if (table == "validated" | table == "all") {
-            # search validated miRNA-target tables
-            result[["validated"]] <- 
-                get.multimir.validated(url = url, 
-                                       org = org, 
-                                       mirna = mirna, 
-                                       target = target)
-            if (add.link & !is.null(result[["validated"]])) {
-                result[["validated"]] <- add.multimir.links(result[["validated"]], 
-                                                            org)
-            }
-        }
-        if (table == "disease.drug" | table == "all") {
-            # search miRNA-disease tables
-            result[["disease.drug"]] <- 
-                get.multimir.disease(url = url,
-                                     org = org,
-                                     mirna = mirna,
-                                     target = target,
-                                     disease.drug = disease.drug)
-            if (add.link & !is.null(result[["disease.drug"]])) {
-                result[["disease.drug"]] <- add.multimir.links(result[["disease.drug"]], 
-                                                               org)
-            }
-        }
-    } else {
-        # search an individual table
-        result[[table]] <- get.multimir.by.table(url = url,
-                                                 org = org,
-                                                 mirna = mirna,
-                                                 target = target,
-                                                 disease.drug = disease.drug,
-                                                 table = table,
-                                                 predicted.cutoff = predicted.cutoff,
-                                                 predicted.cutoff.type = predicted.cutoff.type,
-                                                 predicted.site = predicted.site)
-        if (add.link & !is.null(result[[table]])) {
-            result[[table]] <- add.multimir.links(result[[table]], 
-                                                  org)
-        }
-    }
-
-    if (summary) {
-        result[["summary"]] <- multimir.summary(result)
-    }
-    return(result)
+#	rtn <- lapply(c("mirecords", "mirtarbase", "tarbase"), get.multimir.by.table, 
+#				  url = url, org = org, mirna = mirna, target = target)
+#	do.call(rbind, rtn)
+#
+#	if (add.link & !is.null(result[[table]])) {
+#            result[[table]] <- add.multimir.links(result[[table]], 
+#                                                  org)
+#        }
+#
+#    if (summary) {
+#        result[["summary"]] <- multimir.summary(result)
+#    }
+#    return(result)
 }
 
 
-#' Get Validated microRNA-target Interactions from the multiMiR Package
-#' 
-#' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
-#' 
-# @examples
-# 	 get.multimir.validated(mirna = "hsa-miR-18a-3p")
-# 
-get.multimir.validated <- function(url = NULL, org = "hsa", 
-                                   mirna = NULL, target = NULL) {
-
-    if (!is.null(url)) deprecate_arg("url")
-    if (is.null(mirna) & is.null(target)) return(NULL)
-
-    # get.multimir.by.table for each table in c() 
-	rtn <- lapply(c("mirecords", "mirtarbase", "tarbase"), get.multimir.by.table, 
-				  url = url, org = org, mirna = mirna, target = target)
-	do.call(rbind, rtn)
-
-}
-
-#' Get Predicted microRNA-target Interactions from the multiMiR Package
-#' 
-#' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
-#' 
-get.multimir.predicted <- function(url = NULL, org = "hsa", mirna = NULL, 
-                                   target = NULL, cutoff = NULL, 
-								   cutoff.type = "p", site = "conserved") {
-
-    if (!is.null(url)) deprecate_arg("url")
-    if (is.null(mirna) & is.null(target)) return(NULL)
-
-    # get.multimir.by.table for each table in c() 
-	rtn <- lapply(c("diana_microt", "elmmo", "microcosm", "miranda", "mirdb",
-					"pictar", "pita", "targetscan"),
-				  get.multimir.by.table, org = org, mirna = mirna, 
-				  target = target, predicted.cutoff = cutoff,
-				  predicted.cutoff.type = cutoff.type, predicted.site = site)
-	do.call(rbind, rtn)
-
-}
-
-#' Get microRNA-disease/drug interactions from the multiMiR Package
-#' 
-#' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
-#' 
-get.multimir.disease <- function(url = NULL,
-                                 org = "hsa",
-                                 mirna = NULL,
-                                 target = NULL,
-                                 disease.drug = NULL) {
-
-    if (!is.null(url)) deprecate_arg("url")
-	if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL)
-
-    # get.multimir.by.table for each table in c() 
-	rtn <- lapply(c("mir2disease", "pharmaco_mir", "phenomir"),
-				  get.multimir.by.table, org = org, mirna = mirna, 
-				  target = target, disease.drug = disease.drug)
-	do.call(rbind, rtn)
-
-}
-
-
-
-#' Get microRNA/target Information from a Given Table in the multiMiR Package
+#' Create/filter lookup table for all SQL tables to query
 #' 
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #'
-# @param url                   PLACEHOLDER
-# @param org                   PLACEHOLDER
-# @param mirna                 PLACEHOLDER
-# @param target                PLACEHOLDER
-# @param table                 PLACEHOLDER
-# @param disease.drug          PLACEHOLDER
-# @param predicted.cutoff      PLACEHOLDER
-# @param predicted.cutoff.type PLACEHOLDER
-# @param predicted.site        PLACEHOLDER
-# @param mirna.table           PLACEHOLDER
-# @param target.table          PLACEHOLDER
-get.multimir.by.table <- function(table                 = NULL,
-                                  url                   = NULL,
-                                  org                   = c("hsa", "mmu", "rno"),
-                                  mirna                 = NULL,
-                                  target                = NULL,
-                                  disease.drug          = NULL,
-                                  predicted.cutoff      = NULL,
-                                  predicted.cutoff.type = "p",
-                                  predicted.site        = "conserved",
-                                  mirna.table           = "mirna",
-                                  target.table          = "target") {
-    # To get miRNA-target interactions in a given table
+#' @param tbl_arg PLACEHOLDER
+#' 
+table_query_lookup <- function(tbl_arg) {
 
-    org <- match.arg(org)
-    
-    # prepare query for validated target table
-	if (table %in% c("mirecords", "mirtarbase", "tarbase")) {
-		qry <- query_validated(table = table, mirna = mirna, target = target,
-							   org = org, mirna.table = mirna.table,
-							   target.table = target.table)
-	}
+    factor_op <- getOption("stringsAsFactors")
+    options(stringsAsFactors = FALSE)
+    on.exit(options(stringsAsFactors = factor_op))
 
-    
-    # prepare query for predicted target table
-	if (table %in% c("diana_microt", "elmmo", "microcosm", "miranda", "mirdb",
-					 "pictar", "pita", "targetscan")) {
-		qry <- query_predicted(table = table, mirna = mirna, target = target,
-							   org = org, mirna.table = mirna.table,
-							   target.table = target.table,
-                               predicted.cutoff = predicted.cutoff,
-                               predicted.cutoff.type = predicted.cutoff.type,
-                               predicted.site = predicted.site)
-	}
+	# Create list of tables to query (input value has to be length 1L, handled above)
+    table_query_lookup <- 
+        rbind(data.frame(type = "validated", query_name = "query_validated", 
+                         table = c("mirecords", "mirtarbase", "tarbase")),
+              data.frame(type = "predicted", query_name = "query_predicted", 
+                         table = c("diana_microt", "elmmo", "microcosm",
+                                   "miranda", "mirdb", "pictar", "pita",
+                                   "targetscan")),
+              data.frame(type = "disease.drug", query_name = "query_disease",
+                         table = c("mir2disease", "pharmaco_mir", "phenomir")))
 
-    
-    # prepare query for miRNA-disease/drug table
-	if (table %in% c("mir2disease", "pharmaco_mir", "phenomir")) {
+	tables <- 
+		switch(tolower(tbl_arg),
+			   validated    = c("mirecords", "mirtarbase", "tarbase"),
+			   predicted    = c("diana_microt", "elmmo", "microcosm",
+								"miranda", "mirdb", "pictar", "pita",
+								"targetscan"),
+			   disease.drug = c("mir2disease", "pharmaco_mir", "phenomir"),
+			   all 		    = c("mirecords", "mirtarbase", "tarbase",
+								"diana_microt", "elmmo", "microcosm",
+								"miranda", "mirdb", "pictar", "pita",
+								"targetscan", "mir2disease", "pharmaco_mir",
+								"phenomir"),
+			   tolower(tbl_arg))
 
-		qry <- query_disease(table = table, mirna = mirna, target = target, org = org,
-							 mirna.table = mirna.table, target.table = target.table,
-							 disease.drug = disease.drug) 
-	}
+    rtn <- subset(table_query_lookup, table %in% tables)
+    return(rtn)
 
-    
-    # query the database
-    result <- search.multimir(query = qry)
-    if (!is.null(result)) 
-        result <- cbind(database = table, result)
-    if (table %in% c("mir2disease", "pharmaco_mir", "phenomir")) 
-        result <- unique(result)
-
-    return(result)
 }
-
-
+ 
+ 
+ 
+# #' Get microRNA/target Information from a Given Table in the multiMiR Package
+# #' 
+# #' This is an internal multiMiR function that is not intended to be used
+# #' directly.  Please use \code{get.multimir}.
+# #'
+# # @param url                   PLACEHOLDER
+# # @param org                   PLACEHOLDER
+# # @param mirna                 PLACEHOLDER
+# # @param target                PLACEHOLDER
+# # @param table                 PLACEHOLDER
+# # @param disease.drug          PLACEHOLDER
+# # @param predicted.cutoff      PLACEHOLDER
+# # @param predicted.cutoff.type PLACEHOLDER
+# # @param predicted.site        PLACEHOLDER
+# # @param mirna.table           PLACEHOLDER
+# # @param target.table          PLACEHOLDER
+# get.multimir.by.table <- function(table                 = NULL,
+#                                   url                   = NULL,
+#                                   org                   = c("hsa", "mmu", "rno"),
+#                                   mirna                 = NULL,
+#                                   target                = NULL,
+#                                   disease.drug          = NULL,
+#                                   predicted.cutoff      = NULL,
+#                                   predicted.cutoff.type = "p",
+#                                   predicted.site        = "conserved",
+#                                   mirna.table           = "mirna",
+#                                   target.table          = "target") {
+#     # To get miRNA-target interactions in a given table
+#     
+#     # prepare query for validated target table
+# 	if (table %in% c("mirecords", "mirtarbase", "tarbase")) {
+# 		qry <- query_validated(table        = table,
+#                                mirna        = mirna,
+#                                target       = target,
+# 							   org          = org,
+#                                mirna.table  = mirna.table,
+# 							   target.table = target.table)
+# 	}
+# 
+# 	get.multimir.by.table(table                 = table,
+#                           org                   = org,
+# 						  mirna                 = mirna,
+# 						  target                = target,
+# 						  disease.drug          = disease.drug,
+# 						  predicted.cutoff      = predicted.cutoff,
+# 						  predicted.cutoff.type = predicted.cutoff.type,
+# 						  predicted.site        = predicted.site)
+#     
+#     # prepare query for predicted target table
+# 	if (table %in% c("diana_microt", "elmmo", "microcosm", "miranda", "mirdb",
+# 					 "pictar", "pita", "targetscan")) {
+# 		qry <- query_predicted(table                 = table,
+#                                mirna                 = mirna,
+#                                target                = target,
+# 							   org                   = org,
+#                                mirna.table           = mirna.table,
+# 							   target.table          = target.table,
+#                                predicted.cutoff      = predicted.cutoff,
+#                                predicted.cutoff.type = predicted.cutoff.type,
+#                                predicted.site        = predicted.site)
+# 	}
+# 
+#     
+#     # prepare query for miRNA-disease/drug table
+# 	if (table %in% c("mir2disease", "pharmaco_mir", "phenomir")) {
+# 
+# 		qry <- query_disease(table        = table,
+#                              mirna        = mirna,
+#                              target       = target,
+#                              org          = org,
+# 							 mirna.table  = mirna.table,
+#                              target.table = target.table,
+# 							 disease.drug = disease.drug)
+# 	}
+# 
+#     
+#     # query the database
+#     result <- search.multimir(query = qry)
+#     if (!is.null(result)) 
+#         result <- cbind(database = table, result)
+#     if (table %in% c("mir2disease", "pharmaco_mir", "phenomir")) 
+#         result <- unique(result)
+# 
+#     return(result)
+# }
+# 
+# 
 
 #' Prepare query for validated target table
 #' 
@@ -387,33 +342,25 @@ get.multimir.by.table <- function(table                 = NULL,
 #' @param table One of the three validated tables
 #' @keywords internal
 query_validated <- function(table = c("mirecords", "mirtarbase", "tarbase"), 
-							mirna, target, org, mirna.table, target.table) {
+                            mirna = NULL, target = NULL, org = NULL,
+                            mirna.table, target.table, ...) {
 
+    if (is.null(mirna) & is.null(target)) {
+        return(NULL)
+    }
 	table <- match.arg(table)
-
-    paste(
-          "SELECT m.mature_mirna_acc, m.mature_mirna_id,",
+    paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
           "t.target_symbol, t.target_entrez, t.target_ensembl,",
           "i.experiment, i.support_type, i.pubmed_id",
           "FROM", mirna.table, "AS m INNER JOIN", table, 
           "AS i INNER JOIN", target.table, 
           "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
           "i.target_uid=t.target_uid) WHERE",
-          subquery_mirnatarget(mirna, target),
-          subquery_org(table, org)
-          )
+          subquery_mirnatarget(mirna, target), 
+          "AND",
+          subquery_org(table, org))
 
 }
-
-
-# Table options
-# alltables  <- c("mirecords", "mirtarbase", "tarbase", "diana_microt", "elmmo",
-#                 "microcosm", "miranda", "mirdb", "pictar", "pita", "targetscan",
-#                 "mir2disease", "pharmaco_mir", and "phenomir"), 
-# validated  <- c("mirecords", "mirtarbase", and "tarbase"), 
-# predicted  <- c("diana_microt", "elmmo", "microcosm", "miranda", "mirdb", "pictar", "pita", "targetscan"), 
-# disease.drug <- c("mir2disease", "pharmaco_mir", and "phenomir"), 
-
 
 
 #' Prepare query for predicted target table
@@ -426,39 +373,35 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
                                       "targetscan"), 
                             mirna, target, org, mirna.table, target.table,
                             predicted.cutoff, predicted.cutoff.type,
-                            predicted.site) {
-
-
+                            predicted.site = c("conserved", "nonconserved", "all"),
+                            ...) {
 	table <- match.arg(table)
-	predicted.site <- match.arg(tolower(predicted.site), 
-                                c("conserved", "nonconserved", "all"))
-    # NOTE: Is predicted.site=="all" actually implemented in old code?  Does result
-    # match new code (where its not really implemented)?
+	predicted.site <- match.arg(predicted.site)
 
-
+    if (is.null(mirna) & is.null(target)) return(NULL)
     # NOTE: Should this be a message saying org 'rno' doesn't exist for these tables?
-	if (org == "rno" & table %in% c("diana_microt", "pictar", "pita",
-									"targetscan")) return(NULL)
+    if (org == "rno" & table %in% c("diana_microt", "pictar", "pita",
+                                    "targetscan")) return(NULL)
 
     # Set name of score variable by table
     score_vars <- switch(table,
                          diana_microt = "i.miTG_score",
                          elmmo        = "i.p ",
-                         microcosm    = "i.score", # didn't have the 'AS score' text
-                         mirdb        = "i.score", # didn't have the 'AS score' text
-                         pictar       = "i.score", # didn't have the 'AS score' text
+                         microcosm    = "i.score", # NOTE: didn't have the 'AS score' text
+                         mirdb        = "i.score", #       didn't have the 'AS score' text
+                         pictar       = "i.score", #       didn't have the 'AS score' text
                          miranda      = "i.mirsvr_score",
                          pita         = "i.ddG",
                          targetscan   = "i.context_plus_score")
 
-    # Create qry_conserve and 'name' variable and place them in the current
-    # environment 
-    conserve_list <- subquery_conserved(predicted.site = predicted.site, 
+    # Create qry_conserve and 'name' variable 
+    conserved_list <- subquery_conserved(predicted.site = predicted.site, 
                                         table = table, org = org)
-    qry_conserve  <- conserve_list$qry_conserve
-    name          <- conserve_list$name
 
 
+    # Basic SQL structure:
+    # predicted: X(choose score var) + Xbase + X(mirna and/or target) + Xorg + #
+    #            Xconserved(for 3 of 8) + Xcutoff
 	qry_list <- 
         list(base = paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
                           "t.target_symbol, t.target_entrez, t.target_ensembl,",
@@ -469,100 +412,13 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
                           "AND i.target_uid=t.target_uid) WHERE"),
              mirna_target = subquery_mirnatarget(mirna, target),
              org          = subquery_org(table = table, org = org),
-             conserve     = qry_conserve
-             )
+             conserved    = conserved_list$query,
+             cutoff       = subquery_cutoff(table, predicted.cutoff.type, 
+                                            predicted.cutoff,
+                                            conserve_list$name, score_vars))
 
-
-    # Basic SQL structure:
-    # predicted: X(choose score var) + Xbase + X(mirna and/or target) + Xorg + Xconserved(for 3 of 8) + cutoff
-    # logic: predicted.cutoff.type, predicted.cutoff, name
-    # output: score.cutoff
-
-	cutoffs    <- get.multimir.cutoffs()
-    pred.count <- cutoffs[[name]][["count"]]
-
-    pred.cutoff.char <- switch(predicted.cutoff.type,
-                               p = paste0(predicted.cutoff, "%"),
-                               n = as.character(predicted.cutoff))
-
-
-    scipen.orig <- getOption("scipen")
-    options(scipen = 999)
-	# get dataset-specific score cutoff
-	if (predicted.cutoff.type == "p") {
-        pred.cutoff.char <-  paste0(predicted.cutoff, "%")
-		score.cutoff     <- cutoffs[[name]][[pred.cutoff.char]]
-	} else if (predicted.cutoff.type == "n") {
-        cut.pred.cutoff <- as.character(cut(predicted.cutoff, 
-                                            breaks = c(0, 10000, 300000, 10000000),
-                                            labels = FALSE))
-        if (predicted.cutoff < 10000) {
-            message(paste("Number predicted cutoff (predicted.cutoff)",
-                          predicted.cutoff,
-                          "may be too small. A cutoff of 10000 will be",
-                          "used instead.\n"))
-        }
-        if (predicted.cutoff > pred.count) {
-            message(paste0("Number predicted cutoff (predicted.cutoff) ",
-                           predicted.cutoff, " is larger than the total",
-                           "number of records in table ", 
-                           table, ". All records will be queried.\n"))
-        }
-        adj.pred.cutoff <- switch(cut.pred.cutoff, '1' = 10000, 
-                                  '2' = predicted.cutoff,, '3' = 300000)
-        adj.pred.cutoff <- ifelse(pred.count < adj.pred.cutoff & 
-                                  pred.count >= 10000, 
-                                  pred.count, adj.pred.cutoff)
-        pred.cutoff.char <- as.character(adj.pred.cutoff)
-        score.cutoff <- cutoffs[[name]][[pred.cutoff.char]]
-    }
-    options(scipen = scipen.orig)
- 
-        # if !is.null(predicted.cutoff)
-		} else {
-			if (predicted.cutoff < 10000) {
-				message(paste("Number predicted cutoff (predicted.cutoff)",
-							  predicted.cutoff,
-							  "may be too small. A cutoff of 10000 will be",
-							  "used instead.\n", 
-							  sep = " "))
-				# predicted.cutoff = 10000
-				score.cutoff <- cutoffs[[name]][["10000"]]
-			} else if (predicted.cutoff > cutoffs[[name]][["count"]]) {
-				message(paste0("Number predicted cutoff (predicted.cutoff) ",
-							   predicted.cutoff, " is larger than the total",
-							   "number of records in table ", 
-							   table, ". All records will be queried.\n"))
-			} else {
-				score.cutoff <- cutoffs[[name]][[pred.cutoff.char]]
-			}
-		}
-	}
-
-	# add dataset-specific cutoff to the query
-	if (!is.na(score.cutoff)) {
-		if (table == "diana_microt") {
-			qry <- paste(qry, "AND i.miTG_score >=", score.cutoff, 
-					   "ORDER BY i.miTG_score DESC", sep = " ")
-		} else if (table == "elmmo") {
-			qry <- paste(qry, "AND i.p >=", score.cutoff, "ORDER BY i.p DESC",
-					   sep = " ")
-		} else if (table %in% c("microcosm", "mirdb", "pictar")) {
-			qry <- paste(qry, "AND i.score >=", score.cutoff, 
-					   "ORDER BY i.score DESC", sep = " ")
-		} else if (table == "miranda") {
-			qry <- paste(qry, "AND i.mirsvr_score <=", score.cutoff, 
-					   "ORDER BY i.mirsvr_score", sep = " ")
-		} else if (table == "pita") {
-			qry <- paste(qry, "AND i.ddG <=", score.cutoff, "ORDER BY i.ddG",
-					   sep = " ")
-		} else if (table == "targetscan") {
-			# qry <- paste(qry, 'AND i.site_type == 3', sep=' ')
-			qry <- paste(qry, "AND i.context_plus_score <=", score.cutoff,
-					   "ORDER BY i.context_plus_score", 
-					   sep = " ")
-		}
-	}
+    qry_list <- qry_list[do.call(c, lapply(qry_list, function(x) !is.na(x)))]
+    qry      <- paste(qry_list[[1]], paste(do.call(c, qry_list[-1]), collapse = " AND ")) 
 
 	return(qry)
 }
@@ -575,7 +431,7 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
 #'
 query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"), 
 						  mirna, target, org, mirna.table, target.table,
-						  disease.drug) {
+						  disease.drug, ...) {
 
 	table <- match.arg(table)
     if (table %in% c("mir2disease", "phenomir") & 
@@ -620,10 +476,11 @@ query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"),
     #   phenomir: base +  disease.drug + org + mirna
     qry_list <- list(qry_base, qry_target, qry_diseasedrug, qry_org, qry_mirna)
     qry_list <- qry_list[do.call(c, lapply(qry_list, function(x) x != ""))]
-    qry <- paste(qry_list[[1]], paste(do.call(c, qry_list[-1]), collapse = " AND ")) 
+    qry      <- paste(qry_list[[1]], paste(do.call(c, qry_list[-1]), collapse = " AND ")) 
 
 	return(qry)
 }
+
 
 
 #' Internal function for building mirna/target portion of query
@@ -699,16 +556,131 @@ subquery_conserved <- function(predicted.site, table, org) {
                                     targetscan = "'N'"))
 
         name <- paste(table, org, conserv_args$suffix, sep = ".")
-        qry_conserve <- paste(do.call(c, conserv_args[-1]), collapse = " ")
+        qry  <- paste(do.call(c, conserv_args[-1]), collapse = " ")
     } else {
         name <- paste(table, org, sep = ".")
-        qry_conserve <- ""
+        qry  <- ""
     }
 
-    return(list(name = name, qry_conserve = qry_conserve))
+    return(list(`name` = name, `query` = qry))
+
+}
+
+#' Internal function for creating the portion of the query for filtering based
+#' on score
+#' 
+#' Depends on query_predicted() for input arguments.
+#'
+#' @param table
+#' @param predicted.cutoff.type
+#' @param predicted.cutoff
+#' @param name
+#' @param score_vars
+#' @keywords internal
+subquery_cutoff <- function(table, predicted.cutoff.type, predicted.cutoff,
+                            name, score_vars) {
+
+	cutoffs          <- get.multimir.cutoffs()
+    tbl_count        <- cutoffs[[name]][["count"]]
+    count_min        <- 10000
+    count_max        <- 300000
+    cutoff_too_small <- paste("Number predicted cutoff (predicted.cutoff)",
+                              predicted.cutoff, "may be too small. A cutoff",
+                              "of 10000 will be used instead.\n")
+    cutoff_too_large <- paste0("Number predicted cutoff (predicted.cutoff) ",
+                               predicted.cutoff, " is larger than the total ",
+                               "number of records in table ", table, 
+                               ". All records will be queried.\n")
+
+	# get dataset-specific score cutoff
+	if (predicted.cutoff.type == "p") {
+        score.cutoff <- cutoffs[[name]][[paste0(predicted.cutoff, "%")]]
+	} else if (predicted.cutoff.type == "n") {
+        if (predicted.cutoff < count_min) message(cutoff_too_small)
+        if (predicted.cutoff > tbl_count) message(cutoff_too_large)
+
+        cut_pred.cutoff <- cut(predicted.cutoff, labels = FALSE,
+                               breaks = c(0, count_min, tbl_count))
+        adj.pred.cutoff <- switch(as.character(cut_pred.cutoff), 
+                                  '1' = count_min, '2' = predicted.cutoff, 
+                                  '3' = tbl_count, NA)
+        adj.pred.cutoff <- ifelse(tbl_count < adj.pred.cutoff & 
+                                  tbl_count >= count_min, 
+                                  tbl_count, adj.pred.cutoff)
+        score.cutoff    <- ifelse(is.na(adj.pred.cutoff), NA,
+                                  cutoffs[[name]][[as.character(adj.pred.cutoff)]])
+    }
+
+    operator <- ifelse(table %in% c("miranda", "pita", "targetscan"), "<=", ">=")
+    qry      <- ifelse(is.na(score.cutoff), NA, 
+                       paste(score_vars, ">=", score.cutoff, "ORDER BY",
+                             score_vars, "DESC"))
+	return(qry)
 
 }
 
 
-
-
+# #' Get Validated microRNA-target Interactions from the multiMiR Package
+# #' 
+# #' This is an internal multiMiR function that is not intended to be used
+# #' directly.  Please use \code{get.multimir}.
+# #' 
+# # @examples
+# # 	 get.multimir.validated(mirna = "hsa-miR-18a-3p")
+# # 
+# get.multimir.validated <- function(url = NULL, org = "hsa", 
+#                                    mirna = NULL, target = NULL) {
+# 
+#     if (!is.null(url)) deprecate_arg("url")
+#     if (is.null(mirna) & is.null(target)) return(NULL)
+# 
+#     # get.multimir.by.table for each table in c() 
+# 	rtn <- lapply(c("mirecords", "mirtarbase", "tarbase"), get.multimir.by.table, 
+# 				  url = url, org = org, mirna = mirna, target = target)
+# 	do.call(rbind, rtn)
+# 
+# }
+# 
+# #' Get Predicted microRNA-target Interactions from the multiMiR Package
+# #' 
+# #' This is an internal multiMiR function that is not intended to be used
+# #' directly.  Please use \code{get.multimir}.
+# #' 
+# get.multimir.predicted <- function(url = NULL, org = "hsa", mirna = NULL, 
+#                                    target = NULL, cutoff = NULL, 
+# 								   cutoff.type = "p", site = "conserved") {
+# 
+#     if (!is.null(url)) deprecate_arg("url")
+#     if (is.null(mirna) & is.null(target)) return(NULL)
+# 
+#     # get.multimir.by.table for each table in c() 
+# 	rtn <- lapply(c("diana_microt", "elmmo", "microcosm", "miranda", "mirdb",
+# 					"pictar", "pita", "targetscan"),
+# 				  get.multimir.by.table, org = org, mirna = mirna, 
+# 				  target = target, predicted.cutoff = cutoff,
+# 				  predicted.cutoff.type = cutoff.type, predicted.site = site)
+# 	do.call(rbind, rtn)
+# 
+# }
+# 
+# #' Get microRNA-disease/drug interactions from the multiMiR Package
+# #' 
+# #' This is an internal multiMiR function that is not intended to be used
+# #' directly.  Please use \code{get.multimir}.
+# #' 
+# get.multimir.disease <- function(url = NULL,
+#                                  org = "hsa",
+#                                  mirna = NULL,
+#                                  target = NULL,
+#                                  disease.drug = NULL) {
+# 
+#     if (!is.null(url)) deprecate_arg("url")
+# 	if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL)
+# 
+#     # get.multimir.by.table for each table in c() 
+# 	rtn <- lapply(c("mir2disease", "pharmaco_mir", "phenomir"),
+# 				  get.multimir.by.table, org = org, mirna = mirna, 
+# 				  target = target, disease.drug = disease.drug)
+# 	do.call(rbind, rtn)
+# 
+# }
