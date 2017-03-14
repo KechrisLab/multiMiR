@@ -240,11 +240,6 @@ subquery_conserved <- function(predicted.site, table, org) {
 #' 
 #' Depends on query_predicted() for input arguments.
 #'
-#' @param table
-#' @param predicted.cutoff.type
-#' @param predicted.cutoff
-#' @param name
-#' @param score_vars
 #' @keywords internal
 subquery_cutoff <- function(table, predicted.cutoff.type, predicted.cutoff,
                             name, score_vars) {
