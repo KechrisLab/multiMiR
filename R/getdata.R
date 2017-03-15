@@ -72,13 +72,13 @@
 #' @param summary logical. Whether to summarize the result (default = FALSE).
 #' @param add.link logical. Whether to add link to external database for each
 #' result entry.
+#' 
 #' @return \code{get.multimir} returns a list with several data frames
 #' containing results from a given external database (e.g., if
 #' \code{table="targetscan"}), the predicted (if \code{table= "predicted"}),
 #' validated (if \code{table="validated"}), and disease and drug (if
 #' \code{table="disease.drug"}) components of multiMiR, and a summary (if
 #' \code{summary=TRUE}).
-#' @author Yuanbin Ru \email{ruyuanbin@@gmail.com}
 #' @keywords utilities database
 #' @examples
 #' 
@@ -176,18 +176,24 @@ get.multimir <- function(url = NULL,
     sqlargs$predicted.cutoff <- predicted.cutoff
 
     get_query <- function(x, ...) {
-        cl <- do.call(x[["query_name"]], c(table = x[["table"]], ...))
+        this_query <- do.call(x[["query_name"]], c(table = x[["table"]], ...))
+        c(x, "query" = this_query)
+        
     }
 
-    cat("Searching", table, "...\n")
     tbls_to_query <- table_query_lookup(table)
     my_queries    <- lapply(tbls_to_query, get_query, sqlargs)
-    names(my_queries) <- do.call(c, lapply(tbls_to_query, function(x) x$table))
 
-    result <- lapply(my_queries, search.multimir)
+    # NOTE: Commented out for testing -- comparing queries w/ old vers
+#     result <- lapply(my_queries, function(x) {
+#                          cat("Searching", x$table, "...\n")
+#                          search.multimir(x$query)
+#                                            })
+#     return(list(.query = my_queries, .data = result))
+    return(my_queries)
 
-    return(list(.query = my_queries, .data = result))
 
+    # TODO:
     # 1) add table name to each dataset (with varname='database'), 
     # 2) rbind all requested tables, 
     # 3) if add.link add link  
@@ -208,7 +214,6 @@ get.multimir <- function(url = NULL,
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #'
-#' @param tbl_arg PLACEHOLDER
 #' @keywords internal
 table_query_lookup <- function(tbl_arg) {
 
@@ -232,17 +237,17 @@ table_query_lookup <- function(tbl_arg) {
 
 	# Create list of tables to query (input value has to be length 1L, handled above)
 	tables <- switch(tolower(tbl_arg),
-			   validated    = c("mirecords", "mirtarbase", "tarbase"),
-			   predicted    = c("diana_microt", "elmmo", "microcosm",
-								"miranda", "mirdb", "pictar", "pita",
-								"targetscan"),
-			   disease.drug = c("mir2disease", "pharmaco_mir", "phenomir"),
-			   all 		    = c("mirecords", "mirtarbase", "tarbase",
-								"diana_microt", "elmmo", "microcosm",
-								"miranda", "mirdb", "pictar", "pita",
-								"targetscan", "mir2disease", "pharmaco_mir",
-								"phenomir"),
-			   tolower(tbl_arg))
+                     validated    = c("mirecords", "mirtarbase", "tarbase"),
+                     predicted    = c("diana_microt", "elmmo", "microcosm",
+                                      "miranda", "mirdb", "pictar", "pita",
+                                      "targetscan"),
+                     disease.drug = c("mir2disease", "pharmaco_mir", "phenomir"),
+                     all 		  = c("mirecords", "mirtarbase", "tarbase",
+                                      "diana_microt", "elmmo", "microcosm",
+                                      "miranda", "mirdb", "pictar", "pita",
+                                      "targetscan", "mir2disease", "pharmaco_mir",
+                                      "phenomir"),
+                     tolower(tbl_arg))
 
     rtn <- subset(table_query_lookup, table %in% tables)
     rtn <- split(rtn, seq(nrow(rtn)))

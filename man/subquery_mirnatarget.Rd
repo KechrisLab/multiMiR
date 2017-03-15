@@ -2,7 +2,7 @@
 % Please edit documentation in R/querybuilders.R
 \name{subquery_mirnatarget}
 \alias{subquery_mirnatarget}
-\title{Internal function for building mirna/target portion of query}
+\title{WHERE: mirna/target portion of query}
 \usage{
 subquery_mirnatarget(mirna = NULL, target = NULL)
 }
@@ -12,6 +12,6 @@ subquery_mirnatarget(mirna = NULL, target = NULL)
 \item{target}{see ?get.multimir}
 }
 \description{
-Internal function for building mirna/target portion of query
+WHERE: mirna/target portion of query
 }
 \keyword{internal}

@@ -30,6 +30,7 @@ query_validated <- function(table = c("mirecords", "mirtarbase", "tarbase"),
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #'
+#' @keywords internal
 query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
                                       "miranda", "mirdb", "pictar", "pita",
                                       "targetscan"), 
@@ -77,7 +78,7 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
              conserved    = conserved_list$query,
              cutoff       = subquery_cutoff(table, predicted.cutoff.type, 
                                             predicted.cutoff,
-                                            conserve_list$name, score_vars))
+                                            conserved_list$name, score_vars))
 
     query_list <- query_list[do.call(c, lapply(query_list, function(x) !is.na(x)))]
     qry        <- paste(query_list[[1]], paste(do.call(c, query_list[-1]),
@@ -93,6 +94,7 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #'
+#' @keywords internal
 query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"), 
 						  mirna = NULL, target = NULL, org, mirna.table, target.table,
 						  disease.drug, ...) {
@@ -129,10 +131,9 @@ query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"),
                                                    "i.disease_class IN", disease.drug, ")"))
     query_diseasedrug <- ifelse(is.null(disease.drug), "", query_diseasedrug)
 
-    query_org    <- subquery_org(table = table, org = org)
-    query_target <- ifelse(table != "pharmaco_mir", "",
-                           subquery_mirnatarget(target = target))
-    query_mirna  <- subquery_mirnatarget(mirna = mirna)
+    query_org    <- ifelse(is.null(org), "", subquery_org(table = table, org = org))
+    query_target <- ifelse(!is.null(target) & table == "pharmaco_mir", subquery_mirnatarget(target = target), "")
+    query_mirna  <- ifelse(is.null(mirna), "", subquery_mirnatarget(mirna = mirna))
     
     # Basic SQL structure is:
     #   mir2disease: base + disease.drug + org + mirna
@@ -149,7 +150,7 @@ query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"),
 
 
 
-#' Internal function for building mirna/target portion of query
+#' WHERE: mirna/target portion of query
 #'
 #' @param mirna see ?get.multimir
 #' @param target see ?get.multimir
@@ -176,7 +177,8 @@ subquery_mirnatarget <- function(mirna = NULL, target = NULL) {
 
 }
 
-#' Internal function for building org portion of query
+
+#' WHERE: org portion of query
 #' 
 #' @param table One of the validate, predict, or disease tables
 #' @param org One of the 3 organisms (hsa, mmu, rno)
@@ -193,7 +195,8 @@ subquery_org <- function(table, org) {
 
 }
 
-#' Internal function for building conserved (predicted.site) portion of query
+
+#' WHERE: conserved (predicted.site) portion of query
 #' 
 #' Process conserved/nonconserved sites in miranda, pita & targetscan
 #' (other tables don't have conserved/nonconserved annotation)
@@ -235,8 +238,8 @@ subquery_conserved <- function(predicted.site, table, org) {
 
 }
 
-#' Internal function for creating the portion of the query for filtering based
-#' on score
+
+#' WHERE: filtering based on score
 #' 
 #' Depends on query_predicted() for input arguments.
 #'
@@ -247,7 +250,7 @@ subquery_cutoff <- function(table, predicted.cutoff.type, predicted.cutoff,
 	cutoffs          <- get.multimir.cutoffs()
     tbl_count        <- cutoffs[[name]][["count"]]
     count_min        <- 10000
-    count_max        <- 300000
+    #count_max        <- 300000
     cutoff_too_small <- paste("Number predicted cutoff (predicted.cutoff)",
                               predicted.cutoff, "may be too small. A cutoff",
                               "of 10000 will be used instead.\n")
@@ -266,7 +269,8 @@ subquery_cutoff <- function(table, predicted.cutoff.type, predicted.cutoff,
         cut_pred.cutoff <- cut(predicted.cutoff, labels = FALSE,
                                breaks = c(0, count_min, tbl_count))
         adj.pred.cutoff <- switch(as.character(cut_pred.cutoff), 
-                                  '1' = count_min, '2' = predicted.cutoff, 
+                                  '1' = count_min, 
+                                  '2' = predicted.cutoff, 
                                   '3' = tbl_count, NA)
         adj.pred.cutoff <- ifelse(tbl_count < adj.pred.cutoff & 
                                   tbl_count >= count_min, 

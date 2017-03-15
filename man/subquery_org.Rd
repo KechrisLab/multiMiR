@@ -2,7 +2,7 @@
 % Please edit documentation in R/querybuilders.R
 \name{subquery_org}
 \alias{subquery_org}
-\title{Internal function for building org portion of query}
+\title{WHERE: org portion of query}
 \usage{
 subquery_org(table, org)
 }
@@ -12,6 +12,6 @@ subquery_org(table, org)
 \item{org}{One of the 3 organisms (hsa, mmu, rno)}
 }
 \description{
-Internal function for building org portion of query
+WHERE: org portion of query
 }
 \keyword{internal}

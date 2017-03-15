@@ -117,8 +117,5 @@ break up the list into smaller batches and submit them sequentially.
   head(example2$disease.drug)
 
 }
-\author{
-Yuanbin Ru \email{ruyuanbin@gmail.com}
-}
 \keyword{database}
 \keyword{utilities}

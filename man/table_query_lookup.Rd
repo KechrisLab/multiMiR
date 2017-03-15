@@ -6,9 +6,6 @@
 \usage{
 table_query_lookup(tbl_arg)
 }
-\arguments{
-\item{tbl_arg}{PLACEHOLDER}
-}
 \description{
 This is an internal multiMiR function that is not intended to be used
 directly.  Please use \code{get.multimir}.

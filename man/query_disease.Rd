@@ -12,3 +12,4 @@ query_disease(table = c("mir2disease", "pharmaco_mir", "phenomir"),
 This is an internal multiMiR function that is not intended to be used
 directly.  Please use \code{get.multimir}.
 }
+\keyword{internal}

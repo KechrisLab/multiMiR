@@ -13,3 +13,4 @@ query_predicted(table = c("diana_microt", "elmmo", "microcosm", "miranda",
 This is an internal multiMiR function that is not intended to be used
 directly.  Please use \code{get.multimir}.
 }
+\keyword{internal}

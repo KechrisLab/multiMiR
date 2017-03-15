@@ -31,7 +31,8 @@
 #' @param url Deprecated. Use global option \code{multimir.url} instead. 
 #' @param schema.file Deprecated. Option exists as \code{multimir.schema},
 #' but it should not need to be set directly.
-#' @return \code{multimir_dbCount}: a data frame with the count of records in
+#' @return 
+#' \code{multimir_dbCount}: a data frame with the count of records in
 #' each of the tables in the multiMiR database.
 #' 
 #' \code{multimir_dbInfo}: a data frame with information about the multiMiR
@@ -44,7 +45,6 @@
 #' 
 #' \code{multimir_dbTables}: a data frame with table names in the multiMiR
 #' database.
-#' @author Yuanbin Ru \email{ruyuanbin@@gmail.com}
 #' @keywords utilities database
 #' @examples
 #' 
@@ -62,7 +62,7 @@
 #' 
 #'   db_tables <- multimir_dbTables()
 #' 
-#' @export multimir_dbInfo multimir_dbInfoVersions multimir_dbSchema multimir_dbTables multimir_dbCount
+#' @export 
 multimir_dbInfo <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
@@ -71,7 +71,9 @@ multimir_dbInfo <- function(url = NULL) {
 
 }
 
-# To display database information on DB versions
+
+#' @rdname multimir_dbInfo
+#' @export
 multimir_dbInfoVersions <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
@@ -80,7 +82,8 @@ multimir_dbInfoVersions <- function(url = NULL) {
     submit_request(query = qry)
 }
 
-# To display database schema
+#' @rdname multimir_dbInfo
+#' @export
 multimir_dbSchema <- function(schema.file = NULL) {
 
     if (!is.null(schema.file)) deprecate_arg("schema.file")
@@ -89,7 +92,8 @@ multimir_dbSchema <- function(schema.file = NULL) {
 
 }
 
-# To show tables in the multimir database
+#' @rdname multimir_dbInfo
+#' @export
 multimir_dbTables <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("db.tables")
@@ -97,7 +101,8 @@ multimir_dbTables <- function(url = NULL) {
 
 }
 
-# To count records in the database 
+#' @rdname multimir_dbInfo
+#' @export
 multimir_dbCount <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")

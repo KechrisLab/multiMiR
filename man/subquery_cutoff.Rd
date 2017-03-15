@@ -2,8 +2,7 @@
 % Please edit documentation in R/querybuilders.R
 \name{subquery_cutoff}
 \alias{subquery_cutoff}
-\title{Internal function for creating the portion of the query for filtering based
-on score}
+\title{WHERE: filtering based on score}
 \usage{
 subquery_cutoff(table, predicted.cutoff.type, predicted.cutoff, name,
   score_vars)

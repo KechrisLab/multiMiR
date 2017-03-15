@@ -2,7 +2,7 @@
 % Please edit documentation in R/querybuilders.R
 \name{subquery_conserved}
 \alias{subquery_conserved}
-\title{Internal function for building conserved (predicted.site) portion of query}
+\title{WHERE: conserved (predicted.site) portion of query}
 \usage{
 subquery_conserved(predicted.site, table, org)
 }

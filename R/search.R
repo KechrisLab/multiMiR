@@ -7,12 +7,9 @@
 #' directly, users will need to be familiar with MySQL and multiMiR table
 #' structures. Users are advised to use \code{get.multimir} instead.
 #' 
-#' 
-#' @param url Deprecated. Use global option \code{multimir.url} instead. 
 #' @param query a character string for the MySQL query.
 #' @return \code{search.multimir} returns a data frame containing results from
 #' the multiMiR web server.
-#' @author Yuanbin Ru \email{ruyuanbin@@gmail.com}
 #' @keywords utilities database
 #' @examples
 #' 
@@ -32,7 +29,7 @@
 #'                "WHERE m.mature_mirna_id='hsa-miR-18a-3p'")
 #'   result <- search.multimir(query = qry)
 #' 
-#' @export search.multimir
+#' @export
 search.multimir <- function(query) {
     # To search the multiMiR database on the web server given a MySQL query
     # NOTE: Can only be used after version is set?? due to dbName arg?
@@ -48,8 +45,7 @@ search.multimir <- function(query) {
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #' 
-#' 
-#' @export submit_request
+#' @keywords internal
 submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 
     request <- RCurl::postForm(url, query = query, ...)
@@ -65,8 +61,7 @@ submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #' 
-#' 
-#' @export parse_response
+#' @keywords internal
 parse_response <- function(HTML.response) {
     # To parse the response from the multimir web server.  Two tables should
     # return. The first table (response[[1]]) is the summary. And the second table

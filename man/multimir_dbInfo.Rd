@@ -6,10 +6,22 @@
 \alias{multimir_dbInfoVersions}
 \alias{multimir_dbSchema}
 \alias{multimir_dbTables}
+\alias{multimir_dbInfoVersions}
+\alias{multimir_dbSchema}
+\alias{multimir_dbTables}
+\alias{multimir_dbCount}
 \title{Collect Information About the Web Server And Database of the multiMiR
 Package}
 \usage{
 multimir_dbInfo(url = NULL)
+
+multimir_dbInfoVersions(url = NULL)
+
+multimir_dbSchema(schema.file = NULL)
+
+multimir_dbTables(url = NULL)
+
+multimir_dbCount(url = NULL)
 }
 \arguments{
 \item{url}{Deprecated. Use global option \code{multimir.url} instead.}
@@ -74,9 +86,6 @@ database.
 
   db_tables <- multimir_dbTables()
 
-}
-\author{
-Yuanbin Ru \email{ruyuanbin@gmail.com}
 }
 \keyword{database}
 \keyword{utilities}

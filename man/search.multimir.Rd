@@ -8,8 +8,6 @@ search.multimir(query)
 }
 \arguments{
 \item{query}{a character string for the MySQL query.}
-
-\item{url}{Deprecated. Use global option \code{multimir.url} instead.}
 }
 \value{
 \code{search.multimir} returns a data frame containing results from
@@ -40,9 +38,6 @@ structures. Users are advised to use \code{get.multimir} instead.
                "WHERE m.mature_mirna_id='hsa-miR-18a-3p'")
   result <- search.multimir(query = qry)
 
-}
-\author{
-Yuanbin Ru \email{ruyuanbin@gmail.com}
 }
 \keyword{database}
 \keyword{utilities}

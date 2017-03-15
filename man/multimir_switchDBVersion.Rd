@@ -41,8 +41,5 @@ switching to previous version is desired.
   multimir_switchDBVersion(db_version="2.0.0")
 
 }
-\author{
-Yuanbin Ru \email{ruyuanbin@gmail.com}
-}
 \keyword{database}
 \keyword{utilities}

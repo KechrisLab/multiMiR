@@ -25,7 +25,6 @@
 #' multiMiR database versions.
 #' 
 #' \code{multimir_switchDBVersion}: none (invisible \code{NULL}).
-#' @author Yuanbin Ru \email{ruyuanbin@@gmail.com}
 #' @keywords utilities database
 #' @examples
 #' 
