@@ -59,7 +59,7 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
 
     # Create subquery_conserved and 'name' variable 
     conserved_list <- subquery_conserved(predicted.site = predicted.site, 
-                                        table = table, org = org)
+                                         table = table, org = org)
 
 
     # Basic SQL structure:
@@ -96,12 +96,13 @@ query_predicted <- function(table = c("diana_microt", "elmmo", "microcosm",
 #'
 #' @keywords internal
 query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"), 
-						  mirna = NULL, target = NULL, org, mirna.table, target.table,
-						  disease.drug, ...) {
+                          mirna = NULL, target = NULL, org, mirna.table,
+                          target.table, disease.drug, ...) {
 
 	table <- match.arg(table)
     if (table %in% c("mir2disease", "phenomir") & 
         is.null(mirna) & is.null(disease.drug)) return(NULL)
+    disease.drug <- parens_wrap(disease.drug)
 
     query_base <- 
         switch(table,
@@ -124,15 +125,17 @@ query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"),
                                     "target_ensembl, i.disease AS disease_drug, i.pubmed_id AS",
                                     "paper_pubmedID FROM", mirna.table, "AS m INNER JOIN", table, 
                                     "AS i ON (m.mature_mirna_uid=i.mature_mirna_uid) WHERE"))
-    query_diseasedrug <- switch(table, 
-                              mir2disease  = paste("i.disease IN", disease.drug),
-                              pharmaco_mir = paste("i.drug IN", disease.drug),
-                              phenomir     = paste("(i.disease IN", disease.drug, "OR",
-                                                   "i.disease_class IN", disease.drug, ")"))
+    query_diseasedrug <- 
+        switch(table, 
+               mir2disease  = paste("i.disease IN", disease.drug),
+               pharmaco_mir = paste("i.drug IN", disease.drug),
+               phenomir     = paste("(i.disease IN", disease.drug, "OR",
+                                    "i.disease_class IN", disease.drug, ")"))
     query_diseasedrug <- ifelse(is.null(disease.drug), "", query_diseasedrug)
 
     query_org    <- ifelse(is.null(org), "", subquery_org(table = table, org = org))
-    query_target <- ifelse(!is.null(target) & table == "pharmaco_mir", subquery_mirnatarget(target = target), "")
+    query_target <- ifelse(!is.null(target) & table == "pharmaco_mir",
+                           subquery_mirnatarget(target = target), "")
     query_mirna  <- ifelse(is.null(mirna), "", subquery_mirnatarget(mirna = mirna))
     
     # Basic SQL structure is:
@@ -162,6 +165,8 @@ subquery_mirnatarget <- function(mirna = NULL, target = NULL) {
              "for the selected table")
     }
 
+    mirna      <- parens_wrap(mirna)
+    target     <- parens_wrap(target)
     query_list <- 
         list(mirna  = paste("( m.mature_mirna_acc IN", mirna, 
                             "OR m.mature_mirna_id IN", mirna, ")"),

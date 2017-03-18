@@ -27,7 +27,7 @@
     if (any(toset)) options(op.multimir[toset])
 
     # Set database version options 
-    vers_table <- query_dbversions()
+    vers_table <- multimir_dbInfoVersions()
     curr_vers  <- vers_table[1, ] # only choose top row (sorted in queryDBVersions)
     set_dbversion(dbversion_row = curr_vers)
 

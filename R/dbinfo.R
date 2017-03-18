@@ -23,8 +23,10 @@
 #' \code{multimir_dbSchema} prints the schema definition of the multiMiR
 #' database.
 #' 
-#' \code{multimir_dbTables} returns the list of tables in the multiMiR
-#' database.
+#' \code{multimir_dbTables} returns the vector of tables in the multiMiR
+#' database and saves it to the global option \code{multimir.tables.list}. This
+#' function is automatically run when get.multimir is called if the
+#' \code{multimir.tables.list} is NULL.
 #' 
 #' @aliases multimir_dbCount multimir_dbInfo multimir_dbInfoVersions
 #' multimir_dbSchema multimir_dbTables
@@ -97,7 +99,9 @@ multimir_dbSchema <- function(schema.file = NULL) {
 multimir_dbTables <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("db.tables")
-    readLines(full_url("multimir.db.tables"))
+    tbls <- as.character(readLines(full_url("multimir.db.tables")))
+    options("multimir.tables.list" = tbls)
+    return(tbls)
 
 }
 

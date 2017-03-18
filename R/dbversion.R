@@ -37,33 +37,19 @@ multimir_switchDBVersion <- function(db_version, url = NULL) {
     if (!is.null(url)) deprecate_arg("url")
 
     old_vers   <- getOption("multimir.db.version")
-    vers_table <- query_dbversions()
+    vers_table <- multimir_dbInfoVersions()
     new_vers   <- subset(vers_table, vers_table$VERSION == db_version)
 
     if (nrow(new_vers) == 0) stop("DB version ", db_version, " not found. ",
                                   "Please use the full version as displayed ",
                                   "in multimir_dbInfoVersions().")
-    if (nrow(new_vers) > 1) stop("Multiple matching DB versions.  Consider ",
-                                 "submitting an issue on Github repository.")
+    if (nrow(new_vers) > 1)  stop("Multiple matching DB versions.  Consider ",
+                                  "submitting an issue on Github repository.")
 
     set_dbversion(dbversion_row = new_vers, overwrite = TRUE)
     message(paste0("Now using database version: ", getOption("multimir.db.version")))
 
 }
-
-
-
-
-# Internal function
-# @param NONE 
-query_dbversions <- function() {
-
-    qry     <- paste("SELECT * FROM multimir_versions.version",
-                     "WHERE public=1 ORDER BY version DESC")
-    submit_request(query = qry, .cgifields = c("query"))
-
-}
-
 
 
 

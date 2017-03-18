@@ -172,3 +172,9 @@ quote_wrap <- function(x) gsub("\\b", "'", x, perl = TRUE)
 
 
 
+#' Prep certain names for use in SQL query by adding parens
+#'
+#' @keywords internal
+parens_wrap <- function(x) {
+    if (!is.null(x)) paste0("('", paste(x, collapse = "','"), "')")
+}

@@ -4,7 +4,7 @@
 \alias{table_query_lookup}
 \title{Create/filter lookup table for all SQL tables to query}
 \usage{
-table_query_lookup(tbl_arg)
+table_query_lookup(tbl_arg, mirna, target)
 }
 \description{
 This is an internal multiMiR function that is not intended to be used

@@ -4,7 +4,8 @@
 \alias{submit_request}
 \title{General workhorse function for submitting and returning queries}
 \usage{
-submit_request(url = full_url("multimir.queries"), query, ...)
+submit_request(url = full_url("multimir.queries"), query,
+  .cgifields = c("query"), ...)
 }
 \description{
 This is an internal multiMiR function that is not intended to be used

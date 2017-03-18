@@ -108,12 +108,13 @@ get.multimir <- function(url = NULL,
                          add.link = FALSE) {
 
     if (!is.null(url)) deprecate_arg("url")
+    if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
 
     # Don't use scientific notation in fn environment 
     #   for converting num to char where "3e4" != "30000"
     scipen.orig <- getOption("scipen")
     options(scipen = 999)
-    on.exit( options(scipen = scipen.orig) )
+    on.exit(options(scipen = scipen.orig))
 
     # Collect args for use in query builders
     my_args  <- mget(names(formals()), sys.frame(sys.nframe()))
@@ -122,67 +123,36 @@ get.multimir <- function(url = NULL,
                         "predicted.site"), names(my_args), 0L)
     sqlargs  <- as.list(my_args[c(argmatch)])
 
-    # Other default table names
-    sqlargs$mirna.table  <- "mirna"
-    sqlargs$target.table <- "target"
+    # Argument parsing and checking
+    check_tables(table)
+    org              <- parse_orgs(org)
+    predicted.cutoff <- default_cutoff(predicted.cutoff.type, predicted.cutoff)
 
-    # Prep table argument for inclusion in sql query
-	stopifnot(!is.null(table), length(table) == 1L) 
-    multimir.tables <- c(setdiff(as.character(multimir_dbTables()),
-                                 c("map_counts", "map_metadata", "metadata")),
-                         "validated", "predicted", "disease.drug", "all")
-    if (!table %in% multimir.tables) {
-        stop(paste("Table", table, "does not exist!\n", "Please use",
-                   "'multimir_dbTables()' to see a list of available",
-                   "tables.\n"))
-    } 
-
-    if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
-
-	# Currently only allows single string (TODO: same as old version?).
-    if (!is.null(org)) {
-        org <- gsub("hsa|human|homo sapiens", "hsa", org, ignore.case = TRUE)
-        org <- gsub("mmu|mouse|mus musculus", "mmu", org, ignore.case = TRUE)
-        org <- gsub("rno|rat|rattus norvegicus", "rno", org, ignore.case = TRUE)
-		if (!(org %in% c("hsa", "mmu", "rno"))) {
-			stop("Organism ", org,  " is not in multiMiR. Current options ",
-				 "are 'hsa' (human), 'mmu' (mouse) and 'rno' (rat).\n")
-        } 	
-    } 
-
-    # Prep these names for use in SQL query
-    wrap_in_parens <- function(x) {
-        if (!is.null(x)) paste0("('", paste(x, collapse = "','"), "')")
-    }
-    mirna        <- wrap_in_parens(mirna)
-    target       <- wrap_in_parens(target)
-    disease.drug <- wrap_in_parens(disease.drug)
-
-	# Set default predicted.cutoff 
-    if (!is.null(predicted.cutoff.type) & is.null(predicted.cutoff))  {
-        predicted.cutoff <- switch(predicted.cutoff.type, 
-                                           p = 20, n = 300000)
-	}
-	if (predicted.cutoff.type == "p" & (predicted.cutoff < 1 | predicted.cutoff > 100)) {
-		stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
-				   "between 1 and 100.\n"))
-	}
-
-    # Reassign changed args
+    # Other default table names and reassign changed args
+    sqlargs$mirna.table      <- "mirna"
+    sqlargs$target.table     <- "target"
     sqlargs$org              <- org
     sqlargs$mirna            <- mirna        
     sqlargs$target           <- target       
     sqlargs$disease.drug     <- disease.drug 
     sqlargs$predicted.cutoff <- predicted.cutoff
 
+#     get_query <- function(x, ...) {
+#         this_query <- do.call(x[["query_name"]], c(table = x[["table"]], ...))
+#         c(x, "query" = this_query)
+#         
+#     }
+
+    # NOTE: Testing version
     get_query <- function(x, ...) {
         this_query <- do.call(x[["query_name"]], c(table = x[["table"]], ...))
-        c(x, "query" = this_query)
-        
+        #c(x, "query" = this_query)
+        this_query
     }
 
-    tbls_to_query <- table_query_lookup(table)
+    tbls_to_query <- table_query_lookup(table, mirna, target)
     my_queries    <- lapply(tbls_to_query, get_query, sqlargs)
+    names(my_queries) <- do.call(c, lapply(tbls_to_query, function(x) x$table))
 
     # NOTE: Commented out for testing -- comparing queries w/ old vers
 #     result <- lapply(my_queries, function(x) {
@@ -190,6 +160,8 @@ get.multimir <- function(url = NULL,
 #                          search.multimir(x$query)
 #                                            })
 #     return(list(.query = my_queries, .data = result))
+    # NOTE: Restructuring for testing
+
     return(my_queries)
 
 
@@ -198,6 +170,8 @@ get.multimir <- function(url = NULL,
     # 2) rbind all requested tables, 
     # 3) if add.link add link  
     # 4) if summary add summary.
+    # 5) set type, query_name, and table as attributes
+
 #    if (add.link & !is.null(result[[table]])) 
 #        result[[table]] <- add.multimir.links(result[[table]], org)
 #    }
@@ -215,7 +189,7 @@ get.multimir <- function(url = NULL,
 #' directly.  Please use \code{get.multimir}.
 #'
 #' @keywords internal
-table_query_lookup <- function(tbl_arg) {
+table_query_lookup <- function(tbl_arg, mirna, target) {
 
     factor_op <- getOption("stringsAsFactors")
     options(stringsAsFactors = FALSE)
@@ -235,8 +209,16 @@ table_query_lookup <- function(tbl_arg) {
                          table      = c("mir2disease", "pharmaco_mir",
                                         "phenomir")))
 
+    tbl_arg <- tolower(tbl_arg)
+    # Either mirna or target required for predicted and validated tables 
+    if (is.null(mirna) & is.null(target) & tbl_arg == "all") {
+        message("Predicted and validated tables require either mirna or target",
+                "arguments. Only disease/drug tables will be returned.")
+        tbl_arg <- "disease.drug" 
+    }
+
 	# Create list of tables to query (input value has to be length 1L, handled above)
-	tables <- switch(tolower(tbl_arg),
+	tables <- switch(tbl_arg,
                      validated    = c("mirecords", "mirtarbase", "tarbase"),
                      predicted    = c("diana_microt", "elmmo", "microcosm",
                                       "miranda", "mirdb", "pictar", "pita",
@@ -256,5 +238,73 @@ table_query_lookup <- function(tbl_arg) {
 }
 
 
+#' Each org can be specified in one of 3 ways -- this standardizes the argument
+#' into the 3 char abbreviation.
+#'
+#' @keywords internal
+parse_orgs <- function(org) {
+
+	# Currently only allows single string (TODO: same as old version?).
+    if (!is.null(org)) {
+        org <- gsub("hsa|human|homo sapiens", "hsa", org, ignore.case = TRUE)
+        org <- gsub("mmu|mouse|mus musculus", "mmu", org, ignore.case = TRUE)
+        org <- gsub("rno|rat|rattus norvegicus", "rno", org, ignore.case = TRUE)
+
+		if (!(org %in% c("hsa", "mmu", "rno"))) {
+			stop("Organism ", org,  " is not in multiMiR. Current options ",
+				 "are 'hsa' (human), 'mmu' (mouse) and 'rno' (rat).\n")
+        } 	
+    } 
+
+    return(org)
+}
+
+
+
+
+#' Check table argument matches valid table name
+#'
+#' @keywords internal
+check_tables <- function(table, force_update = FALSE) {
+
+	stopifnot(!is.null(table), length(table) == 1L) 
+
+    tbl_lst <- getOption("multimir.tables.list")
+
+    if (force_update | is.null(tbl_lst)) tbl_lst <- multimir_dbTables()
+
+    valid_tbls <- c(setdiff(tbl_lst, c("map_counts", "map_metadata", "metadata")), 
+                    "validated", "predicted", "disease.drug", "all")
+
+    if (!table %in% valid_tbls) {
+        stop(paste("Table", table, "does not exist!\n", "Please use",
+                   "'multimir_dbTables()' to see a list of available",
+                   "tables.\n"))
+    } else {
+        invisible()
+    }
+
+}
+
+
+#' If null, set default predicted.cutoff 
+#'
+#' @keywords internal
+default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
+
+    if (!is.null(predicted.cutoff.type) & is.null(predicted.cutoff))  {
+        predicted.cutoff <- switch(predicted.cutoff.type, 
+                                   p = 20, 
+                                   n = 300000)
+	}
+
+	if (predicted.cutoff.type == "p" & (predicted.cutoff < 1 | predicted.cutoff > 100)) {
+		stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
+				   "between 1 and 100.\n"))
+	}
+
+    return(predicted.cutoff)
+
+}
 
 
