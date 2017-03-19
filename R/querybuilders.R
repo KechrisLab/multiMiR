@@ -232,7 +232,7 @@ subquery_conserved <- function(predicted.site, table, org) {
                                     miranda    = ifelse(org == "mmu", "0.566", "0.57"),
                                     targetscan = "'N'"))
 
-        name <- paste(table, org, conserv_args$suffix, sep = ".")
+        name <- paste(c(table, org, conserv_args$suffix), collapse = ".")
         qry  <- paste(do.call(c, conserv_args[-1]), collapse = " ")
     } else {
         name <- paste(table, org, sep = ".")
