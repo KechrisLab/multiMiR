@@ -212,7 +212,7 @@ table_query_lookup <- function(tbl_arg, mirna, target) {
     tbl_arg <- tolower(tbl_arg)
     # Either mirna or target required for predicted and validated tables 
     if (is.null(mirna) & is.null(target) & tbl_arg == "all") {
-        message("Predicted and validated tables require either mirna or target",
+        message("Predicted and validated tables require either mirna or target ",
                 "arguments. Only disease/drug tables will be returned.")
         tbl_arg <- "disease.drug" 
     }
