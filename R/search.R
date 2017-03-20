@@ -46,10 +46,9 @@ search.multimir <- function(query) {
 #' directly.  Please use \code{get.multimir}.
 #' 
 #' @keywords internal
-submit_request <- function(url = full_url("multimir.queries"), query, 
-                           .cgifields = c("query"), ...) {
+submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 
-    request <- RCurl::postForm(url, query = query, .cgifields = .cgifields, ...)
+    request <- RCurl::postForm(url, query = query, ... )
     result  <- XML::readHTMLTable(request)
     parse_response(result)
 
