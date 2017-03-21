@@ -189,49 +189,46 @@ get.multimir <- function(url = NULL,
 #' directly.  Please use \code{get.multimir}.
 #'
 #' @keywords internal
-table_query_lookup <- function(tbl_arg, mirna, target) {
+table_query_lookup <- function(.table, mirna, target) {
 
     factor_op <- getOption("stringsAsFactors")
     options(stringsAsFactors = FALSE)
     on.exit(options(stringsAsFactors = factor_op))
 
+    .table <- tolower(.table)
+
+    validated    <- c("mirecords", "mirtarbase", "tarbase")
+    predicted    <- c("diana_microt", "elmmo", "microcosm", "miranda", "mirdb",
+                      "pictar", "pita", "targetscan")
+    associations <- c("mir2disease", "pharmaco_mir", "phenomir")
+
     table_query_lookup <- 
         rbind(data.frame(type       = c("validated"), 
                          query_name = c("query_validated"), 
-                         table      = c("mirecords", "mirtarbase", "tarbase")),
+                         table      = validated),
               data.frame(type       = c("predicted"), 
                          query_name = c("query_predicted"), 
-                         table      = c("diana_microt", "elmmo", "microcosm",
-                                        "miranda", "mirdb", "pictar", "pita",
-                                        "targetscan")),
+                         table      = predicted),
               data.frame(type       = c("disease.drug"), 
                          query_name = c("query_disease"),
-                         table      = c("mir2disease", "pharmaco_mir",
-                                        "phenomir")))
+                         table      = associations))
 
-    tbl_arg <- tolower(tbl_arg)
     # Either mirna or target required for predicted and validated tables 
-    if (is.null(mirna) & is.null(target) & tbl_arg == "all") {
+    if (is.null(mirna) & is.null(target) & .table == "all") {
         message("Predicted and validated tables require either mirna or target ",
                 "arguments. Only disease/drug tables will be returned.")
-        tbl_arg <- "disease.drug" 
+        .table <- "disease.drug" 
     }
 
 	# Create list of tables to query (input value has to be length 1L, handled above)
-	tables <- switch(tbl_arg,
-                     validated    = c("mirecords", "mirtarbase", "tarbase"),
-                     predicted    = c("diana_microt", "elmmo", "microcosm",
-                                      "miranda", "mirdb", "pictar", "pita",
-                                      "targetscan"),
-                     disease.drug = c("mir2disease", "pharmaco_mir", "phenomir"),
-                     all 		  = c("mirecords", "mirtarbase", "tarbase",
-                                      "diana_microt", "elmmo", "microcosm",
-                                      "miranda", "mirdb", "pictar", "pita",
-                                      "targetscan", "mir2disease", "pharmaco_mir",
-                                      "phenomir"),
-                     tolower(tbl_arg))
+	tables <- switch(.table,
+                     validated    = validated,
+                     predicted    = predicted,
+                     disease.drug = associations,
+                     all 		  = c(validated, predicted, associations),
+                     tolower(.table))
 
-    rtn <- subset(table_query_lookup, table %in% tables)
+    rtn <- subset(table_query_lookup, rtable %in% tables)
     rtn <- split(rtn, seq(nrow(rtn)))
     return(rtn)
 
