@@ -198,8 +198,9 @@ query_metadata <-
                           "i.ddG"                = "pita",
                           "i.context_plus_score" = "targetscan") %>% as.character,
            score_var = score_var %>% ifelse(. == table_name, NA, .),
-           as_score = if_else(table_name %in% c("microcosm", "mirdb", "pictar"),
-                              FALSE, TRUE)) 
+           as_score = ifelse(type == "predicted", TRUE, NA) %>%
+                      if_else(table_name %in% c("microcosm", "mirdb", "pictar") & 
+                              type == "predicted", FALSE, .)) 
 # Add disease_drug info
 query_metadata <- 
     query_metadata %>%
