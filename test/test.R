@@ -207,3 +207,6 @@ qry_disease     <- get.multimir(table = "mir2disease", mirna = "hsa-miR-199a-3p"
                                 disease.drug = "cisplatin")
 
 
+
+
+

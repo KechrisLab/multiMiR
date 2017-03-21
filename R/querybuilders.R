@@ -1,33 +1,3 @@
-# Feature of all
-.target <- function(table_name) {
-
-    no_target <- c("mir2disease", "phenomir")
-    if (table_name %in% no_target) {
-        .select = "'NA' AS"
-        .tuid = ""
-        where_target = FALSE
-    } else {
-        .select = ""
-        .tuid = "AND i.target_uid=t.target_uid"
-        where_target = TRUE
-    }
-
-    return(list(.select = .select, .tuid = .tuid, where_target))
-}
-
-
-expand_select <- function(select_cols) {
-    select_cols <- c(c("m.mature_mirna_acc", "m.mature_mirna_id", "%s
-                       t.target_symbol", "%s t.target_entrez", "%s
-                       t.target_ensembl"), x) 
-    select_tbls <- c(mirna.table, table, target.table)
-    paste("SELECT", paste(select_cols, collapse = ", "),
-          "FROM mirna AS m INNER JOIN", table, 
-          "AS i INNER JOIN target", 
-          "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
-          "i.target_uid=t.target_uid) WHERE")
-}
-
 
 #' Prepare query for validated target table
 #' 
@@ -148,15 +118,17 @@ query_disease <- function(table = c("mir2disease", "pharmaco_mir", "phenomir"),
                                    "target_symbol, 'NA' AS target_entrez, 'NA' AS",
                                    "target_ensembl, i.disease AS disease_drug,",
                                    "CONCAT_WS('. ', i.year, i.title)",
-                                   "AS paper_pubmedID FROM", 
-                                   mirna.table, "AS m INNER JOIN", table, 
-                                   "AS i ON (m.mature_mirna_uid=i.mature_mirna_uid) WHERE"),
+                                   "AS paper_pubmedID", 
+                                   "FROM mirna AS m INNER JOIN", 
+                                   table, "AS i", 
+                                   "ON (m.mature_mirna_uid=i.mature_mirna_uid) WHERE"),
                pharmaco_mir = paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
                                     "t.target_symbol, t.target_entrez, t.target_ensembl,",
                                     "i.drug AS disease_drug, i.pubmed_id AS paper_pubmedID",
-                                    "FROM", mirna.table, "AS m INNER JOIN", table, 
-                                    "AS i INNER JOIN", target.table, 
-                                    "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
+                                    "FROM mirna AS m INNER JOIN", 
+                                    table, "AS i INNER JOIN", 
+                                    "target.table AS t", 
+                                    "ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
                                     "i.target_uid=t.target_uid) WHERE"),
                phenomir     = paste("SELECT m.mature_mirna_acc, m.mature_mirna_id, 'NA' AS",
                                     "target_symbol, 'NA' AS target_entrez, 'NA' AS",
