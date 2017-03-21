@@ -236,7 +236,7 @@ subquery_conserved <- function(predicted.site, table, org) {
         qry  <- paste(do.call(c, conserv_args[-1]), collapse = " ")
     } else {
         name <- paste(table, org, sep = ".")
-        qry  <- ""
+        qry  <- NA
     }
 
     return(list(`name` = name, `query` = qry))
