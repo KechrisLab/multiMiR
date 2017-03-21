@@ -75,8 +75,8 @@ paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
 # predicted
 paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
       "t.target_symbol, t.target_entrez, t.target_ensembl,",
-      score_vars,
-      "AS score FROM", mirna.table, "AS m INNER JOIN", table, 
+      score_vars, "AS score", 
+      "FROM", mirna.table, "AS m INNER JOIN", table, 
       "AS i INNER JOIN", target.table, 
       "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid",
       "AND i.target_uid=t.target_uid) WHERE")
@@ -84,9 +84,8 @@ paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
 paste("SELECT m.mature_mirna_acc, m.mature_mirna_id, 'NA' AS",
       "target_symbol, 'NA' AS target_entrez, 'NA' AS",
       "target_ensembl, i.disease AS disease_drug,",
-      "CONCAT_WS('. ', i.year, i.title)",
-      "AS paper_pubmedID FROM", 
-      mirna.table, "AS m INNER JOIN", table, 
+      "CONCAT_WS('. ', i.year, i.title) AS paper_pubmedID",
+      "FROM", mirna.table, "AS m INNER JOIN", table, 
       "AS i ON (m.mature_mirna_uid=i.mature_mirna_uid) WHERE")
 # pharmaco_mir 
 paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",

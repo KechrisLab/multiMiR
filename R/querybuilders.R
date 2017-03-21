@@ -1,3 +1,34 @@
+# Feature of all
+.target <- function(table_name) {
+
+    no_target <- c("mir2disease", "phenomir")
+    if (table_name %in% no_target) {
+        .select = "'NA' AS"
+        .tuid = ""
+        where_target = FALSE
+    } else {
+        .select = ""
+        .tuid = "AND i.target_uid=t.target_uid"
+        where_target = TRUE
+    }
+
+    return(list(.select = .select, .tuid = .tuid, where_target))
+}
+
+
+expand_select <- function(select_cols) {
+    select_cols <- c(c("m.mature_mirna_acc", "m.mature_mirna_id", "%s
+                       t.target_symbol", "%s t.target_entrez", "%s
+                       t.target_ensembl"), x) 
+    select_tbls <- c(mirna.table, table, target.table)
+    paste("SELECT", paste(select_cols, collapse = ", "),
+          "FROM mirna AS m INNER JOIN", table, 
+          "AS i INNER JOIN target", 
+          "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
+          "i.target_uid=t.target_uid) WHERE")
+}
+
+
 #' Prepare query for validated target table
 #' 
 #' This is an internal multiMiR function that is not intended to be used
@@ -10,12 +41,19 @@ query_validated <- function(table = c("mirecords", "mirtarbase", "tarbase"),
                             target.table, ...) {
 
 	table <- match.arg(table)
+    vars <- c("i.experiment, i.support_type, i.pubmed_id")
+    target_vals <- .target(table)
+
+    list(select = expand_select(vars, mirna.table, target.table),
+         where  = list(subquery_mirnatarget(mirna, target),
+                       subquery_org(table, org)))
+
 
     paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
           "t.target_symbol, t.target_entrez, t.target_ensembl,",
           "i.experiment, i.support_type, i.pubmed_id",
-          "FROM", mirna.table, "AS m INNER JOIN", table, 
-          "AS i INNER JOIN", target.table, 
+          "FROM mirna AS m INNER JOIN", table, 
+          "AS i INNER JOIN target", 
           "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
           "i.target_uid=t.target_uid) WHERE",
           subquery_mirnatarget(mirna, target), 

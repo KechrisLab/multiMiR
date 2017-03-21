@@ -82,15 +82,20 @@ expand_select <- function(.col_select) {
 
 
 .score <- function(table_name) {
-    switch(table_name,
-           diana_microt = "i.miTG_score",
-           elmmo        = "i.p",
-           microcosm    = "i.score",
-           mirdb        = "i.score",
-           pictar       = "i.score",
-           miranda      = "i.mirsvr_score",
-           pita         = "i.ddG",
-           targetscan  =  "i.context_plus_score")
+
+    score_var <- switch(table_name,
+                        diana_microt = "i.miTG_score",
+                        elmmo        = "i.p",
+                        microcosm    = "i.score",
+                        mirdb        = "i.score",
+                        pictar       = "i.score",
+                        miranda      = "i.mirsvr_score",
+                        pita         = "i.ddG",
+                        targetscan  =  "i.context_plus_score",
+                        NULL)
+
+    return(list(.select = sprintf("%s AS score", score_var)))
+
 }
 
 # Feature of all
@@ -99,16 +104,17 @@ expand_select <- function(.col_select) {
     no_target <- c("mir2disease", "phenomir")
     if (table_name %in% no_target) {
         .select = "'NA' AS"
-        .uid = ""
+        .tuid = ""
         where_target = FALSE
     } else {
         .select = ""
-        .uid = "AND i.target_uid=t.target_uid"
+        .tuid = "AND i.target_uid=t.target_uid"
         where_target = TRUE
     }
 
-    return(list(.select = .select, .uid = .uid, where_target))
+    return(list(.select = .select, .tuid = .tuid, where_target))
 }
+
 
 .diseasedrug <- function(table_name) {
     .select <- switch(table_name,
@@ -117,22 +123,23 @@ expand_select <- function(.col_select) {
     .pubmed <- switch(table_name,
                       mir2disease = "CONCAT_WS('. ', i.year, i.title)",
                       "i.pubmed_id")
-    .query  <- switch(table_name, 
-                      mir2disease  = structure(c("i.disease IN"),class = "where_or"),
-                      pharmaco_mir = structure(c("i.drug IN"), class = "where_or"),
-                      phenomir     = structure(c("i.disease IN", "i.disease_class IN"),
-                                               class = "sqlwhere", "in", "or"))
-    
-    list(.select = .select, .pubmed = .pubmed, .query = .query)
+    .wherevar <- .select
+    .select   <- sprintf("%s AS disease_drug", .select)
+    .pubmed   <- sprintf("%s AS paper_pubmedID", .pubmed)
+
+    list(.select = .select, .pubmed = .pubmed, .wherevar = .wherevar)
 }
 
 
 
 
+collapse_vec <- function(x, sep = ", ") {
+
+}
 
 # wrap each WHERE arg in quotes, then all of them in parentheses
 where_value_in <- function(values) {
-    paste0("(", paste( paste0("'", values, "'"), collapse = ", "), ")")
+    wrap_parens(paste( paste0("'", values, "'"), collapse = ", "))
 }
 
 # Combine and collapse WHERE ... IN (...) OR statements....
