@@ -113,10 +113,17 @@ pad <- function(x) paste0(" ", x, " ")
 
 
 
-this_table <- "mir2disease" %>% query_features
+this_table  <- 
+    "diana_microt" %>% 
+    #"mir2disease" %>% 
+    query_features
 select_list <- this_table %>% transpose %>% .$.select
-from_list <- this_table %>% transpose %>% .$.from
+from_list   <- this_table %>% transpose %>% .$.from
+on_list     <- this_table %>% transpose %>% .$.on
 
+paste(expand_select(select_list),
+      expand_from(from_list),
+      expand_on(on_list))
 
 ############################################################
 # SQL query features
@@ -130,21 +137,26 @@ from_list <- this_table %>% transpose %>% .$.from
 ############################################################
 require(purrr)
 
-validated <- function(table_name) {
-    if (table_name %in% c("mirecords", "mirtarbase", "tarbase")) {
-       .select <- c("i.experiment, i.support_type, i.pubmed_id") 
-    } else {
-        .select <- NULL
-    }
-    .from   <- NULL
+validated <- function(.table) {
+
+    these_tables <- c("mirecords", "mirtarbase", "tarbase")
+    this_type <- .table %in% these_tables
+
+    .select <- if (this_type) c("i.experiment, i.support_type, i.pubmed_id")  else NULL
+    .from   <- if (this_type) "%s AS i" else NULL
     .on     <- NULL
     .where  <- NULL
 
     return(list(.select = .select, .from = .from, .on = .on, .where = .where))
 }
 
-predicted <- function(table_name) {
-    score_var <- switch(table_name,
+predicted <- function(.table) {
+
+    these_tables <- c("diana_microt", "elmmo", "microcosm", "miranda",
+                      "mirdb", "pictar", "pita", "targetscan")
+    this_type <- .table %in% these_tables
+
+    score_var <- switch(.table,
                         diana_microt = "i.miTG_score",
                         elmmo        = "i.p",
                         microcosm    = "i.score",
@@ -152,33 +164,36 @@ predicted <- function(table_name) {
                         pictar       = "i.score",
                         miranda      = "i.mirsvr_score",
                         pita         = "i.ddG",
-                        targetscan  =  "i.context_plus_score",
-                        NULL)
-    .select <- if (is.null(score_var)) NULL else sprintf("%s AS score", score_var)
-    .from   <- NULL
+                        targetscan  =  "i.context_plus_score")
+
+    .select <- if (this_type) sprintf("%s AS score", score_var) else NULL
+    .from   <- if (this_type) sprintf("%s AS i", .table) else NULL
     .on     <- NULL
     .where  <- TRUE
 
     return(list(.select = .select, .from = .from, .on = .on, .where = .where))
 }
 
-associations <- function(table_name) {
+associations <- function(.table) {
     
-    assoc   <- switch(table_name,
-                      pharmaco_mir = "i.drug",
-                      "i.disease")
-    pubmed  <- switch(table_name,
+    these_tables <- c("mir2disease", "pharmaco_mir", "phenomir")
+    this_type <- .table %in% these_tables
+
+    assoc   <- switch(.table, pharmaco_mir = "i.drug", "i.disease")
+    pubmed  <- switch(.table,
                       mir2disease = "CONCAT_WS('. ', i.year, i.title)",
                       "i.pubmed_id")
     .select <- sprintf("%s AS disease_drug, %s AS paper_pubmedID", assoc, pubmed)
-    .from   <- NULL
+
+    .select <- if (!this_type) NULL else .select
+    .from   <- if (!this_type) NULL else sprintf("%s AS i", .table)
     .on     <- NULL
     .where  <- TRUE
 
     return(list(.select = .select, .from = .from, .on = .on, .where = .where))
 }
 
-mirna <- function(table_name) {
+mirna <- function() {
     .select <- c("m.mature_mirna_acc, m.mature_mirna_id")
     .from   <- "mirna AS m"
     .on     <- "m.mature_mirna_uid = i.mature_mirna_uid"
@@ -186,7 +201,7 @@ mirna <- function(table_name) {
     return(list(.select = .select, .from = .from, .on = .on, .where = .where))
 }
 
-org <- function(table_name, target_where) {
+org <- function(target_where) {
     .select <- NULL
     .from   <- NULL
     .on     <- NULL
@@ -195,39 +210,34 @@ org <- function(table_name, target_where) {
     return(list(.select = .select, .from = .from, .on = .on, .where = .where))
 }
 
-target <- function(table_name) {
-    no_target <- c("mir2disease", "phenomir")
+target <- function(.table) {
 
-    .select <- c("%st.target_symbol, %st.target_entrez, %st.target_ensembl")
-    na_txt <- "'NA' AS "
+    tables_wo_target <- c("mir2disease", "phenomir")
+    no_target        <- .table %in% tables_wo_target
 
-    if (table_name %in% no_target) {
-        .select <- sprintf(.select, na_txt, na_txt, na_txt)
-        .from   <- NULL
-        .on     <- NULL
-        .where  <- NULL
-    } else {
-        .select <- sprintf(.select, "", "")
-        .from   <- "target AS t"
-        .on     <- "i.target_uid = t.target_uid"
-        .where  <- c("t.target_symbol", "t.target_entrez", "t.target_ensembl")
-    }
+    vars    <- c("t.target_symbol", "t.target_entrez", "t.target_ensembl")
+    .select <- paste(paste0("%1$s", vars), collapse = ", ")
+    na_txt  <- "'NA' AS "
 
+    .select <- if (no_target) sprintf(.select, na_txt) else sprintf(.select, "")
+    .from   <- if (no_target) NULL else "target AS t"
+    .on     <- if (no_target) NULL else "i.target_uid = t.target_uid"
+    .where  <- if (no_target) NULL else vars
 
     return(list(.select = .select, .from = .from, .on = .on, .where = .where))
 }
 
 
 
-query_features <- function(table_name){ 
-        validated    <- validated(table_name)
-        predicted    <- predicted(table_name)
-        associations <- associations(table_name)
-        mirna        <- mirna(table_name)
-        target       <- target(table_name)
-        org          <- org(table_name, target$.where)
+query_features <- function(.table){ 
+        validated    <- validated(.table)
+        predicted    <- predicted(.table)
+        associations <- associations(.table)
+        mirna        <- mirna()
+        target       <- target(.table)
+        org          <- org(target$.where)
 
-        rtn <- list(this_table   = table_name, 
+        rtn <- list(#this_table   = .table, 
                     mirna        = mirna,
                     target       = target,
                     validated    = validated,
@@ -241,15 +251,23 @@ expand_select <- function(select_list) {
     paste("SELECT", paste(unlist(select_list), collapse = ", "))
 }
 
-expand_from <- function(table_name, from_list) {
-# NOTE: issue here is where to get the table_name from... Do we add it to the
-    # query_features list as a separate item (as i did for now), or should it be
-    # defined in validated(), predicted(), and associations()???
-    # Kind of depends on what happens with the other queries: query_predicted()
-    # etc. and the table lookup
+expand_from <- function(from_list) {
+
+    from_list <- merge_order(from_list)
+    paste("FROM", paste(unlist(from_list), collapse = ", "))
+
 }
 
-expand_in <- function(in_list) {
+expand_on <- function(on_list) {
 
+    on_list <- merge_order(on_list)
+    paste0("ON (", paste(unlist(on_list), collapse = " AND "), ")")
+
+}
+
+merge_order <- function(.list) {
+    c(.list["mirna"],
+      .list[c("validated", "predicted", "associations")],
+      .list["target"])
 }
 
