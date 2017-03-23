@@ -36,7 +36,7 @@ library(multiMiR)
 # all function names use multimirold instead of multimir
 ########################################
 
-#install_github("mmulvahill/multiMiRold", ref = "refactor")
+install_github("mmulvahill/multiMiRold", ref = "refactor")
 library(multiMiRold)
 
 ########################################
@@ -163,7 +163,10 @@ getargs <- list("validated" = list(table = "validated", mirna = "hsa-miR-199a-3p
                                      target = "TP53", org = "rno", disease.drug = "cisplatin"),
                 "disease.drug" = list(table = "disease.drug", mirna = "hsa-miR-199a-3p",
                                       #target = "TP53",
-                                      org = "rno", disease.drug = "cisplatin"))
+                                      org = "rno", disease.drug = "cisplatin"),
+                "validated" = list(table = "predicted", mirna = "hsa-miR-199a-3p",
+                                   target = "TP53", org = "rno", predicted.cutoff.type = "p",
+                                   predicted.cutoff = 70, predicted.site = "all"))
 # Test org parsing
 arg_test_org <- 
     data_frame(table = "validated", 
@@ -206,7 +209,25 @@ qry_disease     <- get.multimir(table = "mir2disease", mirna = "hsa-miR-199a-3p"
                                 target = "TP53", org = "rno", 
                                 disease.drug = "cisplatin")
 
+list(data.frame(table = "predicted", mirna = "hsa-miR-199a-3p",
+                target = "TP53", org = "rno", predicted.cutoff.type = "p",
+                predicted.cutoff = 70, predicted.site = "all")) %>%
+map(test_arg_df)
 
+new_pred <- get.multimir(org = "mmu", 
+                         target  = "Gnb1",
+                         table   = "predicted",
+                         summary = TRUE,
+                         predicted.cutoff      = 35,
+                         predicted.cutoff.type = "p",
+                         predicted.site        = "all")
+old_pred <- get.multimirold(org = "mmu", 
+                            target  = "Gnb1",
+                            table   = "targetscan",
+                            summary = TRUE,
+                            predicted.cutoff      = 35,
+                            predicted.cutoff.type = "p",
+                            predicted.site        = "conserved")
 
 
 
