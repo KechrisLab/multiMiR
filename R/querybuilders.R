@@ -218,13 +218,14 @@ subquery_org <- function(table, org) {
 #'   - 2 objects created: 'name' and 'query'
 #'   - subquery_conserved structure: conserved_var + operator + cut_value
 #'
-#' @param predicted.site see ?get.multimir
+#' @param predicted.site see ?get.multimir ("conserved", "nonconserved", "all")
 #' @param table see ?get.multimir
 #' @param org see ?get.multimir
 #' @keywords internal
 subquery_conserved <- function(predicted.site, table, org) {
 
-    if (table %in% c("miranda", "pita", "targetscan")) {
+    if (predicted.site %in% c("conserved", "nonconserved") & 
+        table %in% c("miranda", "pita", "targetscan")) {
         conserv_args <- 
             list(suffix    = switch(predicted.site,
                                     conserved    = "c1",
@@ -240,7 +241,9 @@ subquery_conserved <- function(predicted.site, table, org) {
                  cut_value = switch(table,
                                     pita       = "0.9",
                                     miranda    = ifelse(org == "mmu", "0.566", "0.57"),
-                                    targetscan = "'N'"))
+                                    targetscan = switch(predicted.site,
+                                                        conserved = "'N'",
+                                                        nonconserved = "'Y'")))
 
         name <- paste(c(table, org, conserv_args$suffix), collapse = ".")
         qry  <- paste(do.call(c, conserv_args[-1]), collapse = " ")
@@ -262,8 +265,8 @@ subquery_conserved <- function(predicted.site, table, org) {
 subquery_cutoff <- function(table, predicted.cutoff.type, predicted.cutoff,
                             name, score_vars) {
 
-	cutoffs          <- get.multimir.cutoffs()
-    tbl_count        <- cutoffs[[name]][["count"]]
+	cutoffs          <- get.multimir.cutoffs()[[name]]
+    tbl_count        <- cutoffs[["count"]]
     count_min        <- 10000
     #count_max        <- 300000
     cutoff_too_small <- paste("Number predicted cutoff (predicted.cutoff)",
@@ -276,7 +279,7 @@ subquery_cutoff <- function(table, predicted.cutoff.type, predicted.cutoff,
 
 	# get dataset-specific score cutoff
 	if (predicted.cutoff.type == "p") {
-        score.cutoff <- cutoffs[[name]][[paste0(predicted.cutoff, "%")]]
+        score.cutoff <- cutoffs[[paste0(predicted.cutoff, "%")]]
 	} else if (predicted.cutoff.type == "n") {
         if (predicted.cutoff < count_min) message(cutoff_too_small)
         if (predicted.cutoff > tbl_count) message(cutoff_too_large)
@@ -291,12 +294,12 @@ subquery_cutoff <- function(table, predicted.cutoff.type, predicted.cutoff,
                                   tbl_count >= count_min, 
                                   tbl_count, adj.pred.cutoff)
         score.cutoff    <- ifelse(is.na(adj.pred.cutoff), NA,
-                                  cutoffs[[name]][[as.character(adj.pred.cutoff)]])
+                                  cutoffs[[as.character(adj.pred.cutoff)]])
     }
 
     operator <- ifelse(table %in% c("miranda", "pita", "targetscan"), "<=", ">=")
     qry      <- ifelse(is.na(score.cutoff), NA, 
-                       paste(score_vars, ">=", score.cutoff, "ORDER BY",
+                       paste(score_vars, operator, score.cutoff, "ORDER BY",
                              score_vars, "DESC"))
 	return(qry)
 
