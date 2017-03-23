@@ -7,7 +7,7 @@
 #' @param cutoff.file Deprecated. Set path to cutoffs file with the global
 #' option \code{multimir.cutoffs}.
 #' @keywords internal
-get.multimir.cutoffs <- function(cutoff.file = NULL) {
+get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
     # To load pre-calculated score cutoffs
     # NOTE: should this fn be exported? (NO)
 
@@ -18,7 +18,11 @@ get.multimir.cutoffs <- function(cutoff.file = NULL) {
     on.exit(close(url.file))
     load(url.file)
 
-    return(multimir_cutoffs)
+    if (is.null(name)) {
+        return(multimir_cutoffs)
+    } else {
+        return(mutlimir_cutoffs[[name]])
+    }
 
 }
 
