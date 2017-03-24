@@ -228,7 +228,7 @@ table_query_lookup <- function(.table, mirna, target) {
                      all 		  = c(validated, predicted, associations),
                      tolower(.table))
 
-    rtn <- subset(table_query_lookup, rtable %in% tables)
+    rtn <- subset(table_query_lookup, table %in% tables)
     rtn <- split(rtn, seq(nrow(rtn)))
     return(rtn)
 
