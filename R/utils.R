@@ -182,3 +182,8 @@ quote_wrap <- function(x) gsub("\\b", "'", x, perl = TRUE)
 parens_wrap <- function(x) {
     if (!is.null(x)) paste0("('", paste(x, collapse = "','"), "')")
 }
+
+#' Pad single space on each side of an input 
+#'
+#' @keywords internal
+pad <- function(x) paste0(" ", x, " ") 
