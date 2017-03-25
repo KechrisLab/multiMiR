@@ -5,6 +5,8 @@
 #' target column \code{tables_wo_target} and those with conserved target sites
 #' \code{conserved_tables}.
 #'
+#' @param .table a table name
+#'
 #' @aliases all_tables, validated_tables, predicted_tables, associations_tables,
 #' tables_wo_target
 #' @keywords tables

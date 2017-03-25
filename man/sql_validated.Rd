@@ -2,9 +2,10 @@
 % Please edit documentation in R/sqltables.R
 \name{sql_validated}
 \alias{sql_validated}
-\alias{sql,}
-\alias{tables,}
-\alias{table_types}
+\alias{sql_predicted}
+\alias{sql_associations}
+\alias{sql_mirna}
+\alias{sql_target}
 \alias{sql_predicted}
 \alias{sql_associations}
 \alias{sql_mirna}
@@ -27,11 +28,11 @@ sql_target(.table, target)
 The three types of tables are predicted, validated, and associations
 (disease/drug).
 }
-\keyword{associations,}
-\keyword{disease,}
+\keyword{associations}
+\keyword{disease}
 \keyword{drug}
 \keyword{internal}
-\keyword{predicted,}
+\keyword{predicted}
 \keyword{tables}
-\keyword{types,}
-\keyword{validated,}
+\keyword{types}
+\keyword{validated}

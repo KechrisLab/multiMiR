@@ -21,7 +21,7 @@ get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
     if (is.null(name)) {
         return(multimir_cutoffs)
     } else {
-        return(mutlimir_cutoffs[[name]])
+        return(multimir_cutoffs[[name]])
     }
 
 }

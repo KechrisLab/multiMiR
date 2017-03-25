@@ -4,8 +4,9 @@
 #' The three types of tables are predicted, validated, and associations
 #' (disease/drug). 
 #' 
-#' @aliases sql, tables, table_types
-#' @keywords tables types, predicted, validated, associations, disease, drug
+#' @aliases sql_org, where_org, where_associations, where_conserved,
+#' where_cutoff create_cutoff_name cutoff_to_score
+#' @keywords tables types predicted validated associations disease drug
 #' 
 #' @keywords internal
 sql_org <- function(.table, org) { 

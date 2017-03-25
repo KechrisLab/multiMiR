@@ -22,7 +22,7 @@ build_mmquery <- function(.table, org,
 
     sql_parts       <- purrr::transpose(features)
     sql_parts$limit <- limit
-    sql_parts_trim  <- map(sql_parts, purrr::compact)
+    sql_parts_trim  <- purrr::map(sql_parts, purrr::compact)
     
     structure(list(query = expand_query(sql_parts_trim)),
               class = "mmquery",
@@ -64,7 +64,7 @@ expand_on <- function(x) {
 #' @rdname build_mmquery
 #' @keywords internal
 expand_where_list <- function(x) {
-    paste("WHERE", paste(unlist(map(flatten(x), expand_where)), collapse = " AND "))
+    paste("WHERE", paste(unlist(purrr::map(purrr::flatten(x), expand_where)), collapse = " AND "))
 
 }
 

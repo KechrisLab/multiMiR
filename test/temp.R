@@ -23,3 +23,11 @@ example1 = get.multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
 assertWarning()
 assertWarning()
 
+list(org = "mmu", 
+     target  = "Gnb1",
+     table   = "miranda",
+     summary = TRUE,
+     predicted.cutoff      = 35,
+     predicted.cutoff.type = "p",
+     predicted.site        = "all") %>% list2env(env=globalenv())
+

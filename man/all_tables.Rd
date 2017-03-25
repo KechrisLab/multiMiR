@@ -29,6 +29,9 @@ conserved_tables()
 
 get_score_var(.table)
 }
+\arguments{
+\item{.table}{a table name}
+}
 \description{
 One of three types: predicted, validated, or associations (disease/drug).
 Additionally two functions define characteristics of tables: those without a

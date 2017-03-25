@@ -136,7 +136,7 @@ get.multimir <- function(url = NULL,
                           predicted.cutoff.type = predicted.cutoff.type,
                           predicted.cutoff      = predicted.cutoff)
 
-    # tables <- purrr::map(queries, ~ search.multimir(.x$queries))
+    tables <- purrr::map(queries, ~ search.multimir(.x$queries))
 
     # note: Commented out for testing -- comparing queries w/ old vers
 #     result <- lapply(my_queries, function(x) {

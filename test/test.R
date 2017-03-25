@@ -19,7 +19,7 @@ library(stringr)
 
 setwd("~/Projects/KechrisLab/multiMiR")
 devtools::document()
-#devtools::check()
+devtools::check()
 devtools::install("../multiMiR", build_vignettes = TRUE)
 library(multiMiR)
 

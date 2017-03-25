@@ -4,8 +4,9 @@
 #' The three types of tables are predicted, validated, and associations
 #' (disease/drug). 
 #' 
-#' @aliases sql, tables, table_types
-#' @keywords tables types, predicted, validated, associations, disease, drug
+#' @aliases sql_validated sql_predicted sql_associations sql_mirna
+#' sql_target
+#' @keywords tables types predicted validated associations disease drug
 #' 
 #' @keywords internal
 sql_validated <- function(.table) {

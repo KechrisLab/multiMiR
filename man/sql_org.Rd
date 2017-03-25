@@ -2,9 +2,13 @@
 % Please edit documentation in R/sqlclauses.R
 \name{sql_org}
 \alias{sql_org}
-\alias{sql,}
-\alias{tables,}
-\alias{table_types}
+\alias{sql_org,}
+\alias{where_org,}
+\alias{where_associations,}
+\alias{where_conserved,}
+\alias{where_cutoff}
+\alias{create_cutoff_name}
+\alias{cutoff_to_score}
 \alias{where_org}
 \alias{where_associations}
 \alias{where_conserved}
@@ -32,11 +36,11 @@ cutoff_to_score(.table, cutoff_name, predicted.cutoff.type, predicted.cutoff)
 The three types of tables are predicted, validated, and associations
 (disease/drug).
 }
-\keyword{associations,}
-\keyword{disease,}
+\keyword{associations}
+\keyword{disease}
 \keyword{drug}
 \keyword{internal}
-\keyword{predicted,}
+\keyword{predicted}
 \keyword{tables}
-\keyword{types,}
-\keyword{validated,}
+\keyword{types}
+\keyword{validated}
