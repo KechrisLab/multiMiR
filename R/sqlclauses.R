@@ -1,25 +1,49 @@
-
-
-sql_org <- function(.table) { 
-    where <- where_org(.table)
+#' Generate mmsql objects for each of the three types of tables, as well as the
+#' mirna and target tables.
+#'
+#' The three types of tables are predicted, validated, and associations
+#' (disease/drug). 
+#' 
+#' @aliases sql, tables, table_types
+#' @keywords tables types, predicted, validated, associations, disease, drug
+#' 
+#' @keywords internal
+sql_org <- function(.table, org) { 
+    where <- where_org(.table, org)
     as_mmsql(.where_list = as_where_list(where))
 }
 
-where_org <- function(.table) {
+#' @rdname sql_org
+#' @keywords internal
+where_org <- function(.table, org) {
     no_target <- .table %in% tables_wo_target()
     as_where(.vars     = if (no_target) "m.org" else c("m.org", "t.org"),
              .connect  = "AND",
-             .operator = "=")
+             .operator = "=",
+             .value    = quote_wrap(org))
 }
 
-sql_conserved <- function(.table, org, predicted.site) {
-    where <- where_conserved(.table, org, predicted.site)
-    as_mmsql(.where_list = as_where_list(where))
+
+#' @rdname sql_org
+#' @keywords internal
+where_associations <- function(.table, disease.drug) {
+    wherevar <- switch(.table,
+                       pharmaco_mir = "i.drug",
+                       mir2disease = "i.disease", 
+                       phenomir = c("i.disease", "i.disease_class"))
+    .where  <- as_where(.vars = wherevar, 
+                        .connect  = "OR", 
+                        .operator = "IN",
+                        .value = disease.drug)
+
 }
 
+
+#' @rdname sql_org
+#' @keywords internal
 where_conserved <- function(.table, org, predicted.site) {
 
-    miranda_cut    <- if (org == "mmu") 0.566 else 0.57
+    miranda_cut    <- switch(org, mmu = 0.566, 0.57)
     targetscan_cut <- if (predicted.site == "conserved") "'N'" else "'Y'"
     pita_cut       <- 0.9
 
@@ -30,43 +54,40 @@ where_conserved <- function(.table, org, predicted.site) {
                         miranda    = miranda_cut,
                         targetscan = targetscan_cut,
                         pita       = pita_cut)
-    operator  <- paste(operator, cut_value)
 
     has_conserved <- (.table %in% conserved_tables() & predicted.site != "all")
 
-    as_where(.vars     = if (!has_conserved) NULL else vars,
-             .operator = if (!has_conserved) NULL else operator)
+    if (!has_conserved) 
+        NULL
+    else {
+        as_where(.vars = vars, .operator = operator, .value = cut_value)
+    }
 
 }
 
-sql_cutoff <- function(.table, org, predicted.site, predicted.cutoff.type,
-                       predicted.cutoff) {
 
-    score_var    <- get_score_var(.table)
-    cutoff_name  <- create_cutoff_name(.table, org, predicted.site)
-    score_cutoff <- cutoff_to_score(.table, cutoff_name, predicted.cutoff.type,
-                                    predicted.cutoff)
-    clause_cutoff(.table, score_var, score_cutoff)
+#' @rdname sql_org
+#' @keywords internal
+where_cutoff <- function(.table, score_var, score_cutoff) {
 
-}
-
-clause_cutoff <- function(.table, score_var, score_cutoff) {
-
-    operator <- switch(.table, miranda = "<=", pita = "<=", targetscan = "<=", ">")
-    where    <- as_where(.vars = score_var, .operator = operator) #, .value = score_cutoff)
     # NOTE: Check what the .value should be here. wasn't gettting same value
     # from example3 in vignette
-    
-    as_mmsql(.where = as_where_list(where),
-             .orderby = as_orderby(.vars = score_var, .order = "DESC"))
+    operator <- switch(.table, miranda = "<=", pita = "<=", targetscan = "<=", ">")
+    as_where(.vars = score_var, .operator = operator, .value = score_cutoff)
 
 }
 
+
+#' @rdname sql_org
+#' @keywords internal
 create_cutoff_name <- function(.table, org, predicted.site) {
     suffix <- switch(predicted.site, conserved = "c1", nonconserved = "c0", NULL)
     paste(c(.table, org, suffix), collapse = ".")
 }
 
+
+#' @rdname sql_org
+#' @keywords internal
 cutoff_to_score <- function(.table, cutoff_name, predicted.cutoff.type, predicted.cutoff) {
 
     scipen.orig <- getOption("scipen")
@@ -102,17 +123,5 @@ cutoff_to_score <- function(.table, cutoff_name, predicted.cutoff.type, predicte
 
 }
 
-get_score_var <- function(.table) {
-    switch(.table,
-           diana_microt = "i.miTG_score",
-           elmmo        = "i.p",
-           microcosm    = "i.score",
-           mirdb        = "i.score",
-           pictar       = "i.score",
-           miranda      = "i.mirsvr_score",
-           pita         = "i.ddG",
-           targetscan  =  "i.context_plus_score",
-           NULL)
-}
 
 

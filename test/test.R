@@ -19,7 +19,7 @@ library(stringr)
 
 setwd("~/Projects/KechrisLab/multiMiR")
 devtools::document()
-devtools::check()
+#devtools::check()
 devtools::install("../multiMiR", build_vignettes = TRUE)
 library(multiMiR)
 
@@ -36,7 +36,7 @@ library(multiMiR)
 # all function names use multimirold instead of multimir
 ########################################
 
-install_github("mmulvahill/multiMiRold", ref = "refactor")
+# install_github("mmulvahill/multiMiRold", ref = "refactor")
 library(multiMiRold)
 
 ########################################
@@ -57,7 +57,13 @@ library(multiMiRold)
 ########################################
 # Check one single validated table
 # qry_tarbase_old <- get.multimirold(table = "tarbase", mirna = "hsa-miR-199a-3p")
-qry_tarbase     <- get.multimir(table = "tarbase", mirna = "hsa-miR-199a-3p")
+
+
+
+#qry_tarbase     <- get.multimir(table = "tarbase", mirna = "hsa-miR-199a-3p")
+
+
+
 # Check all validated tables
 # qry_valid_old   <- get.multimirold(table = "validated", mirna = "hsa-miR-199a-3p")
 # qry_valid       <- get.multimir(table = "validated", mirna = "hsa-miR-199a-3p")
@@ -81,47 +87,47 @@ qry_tarbase     <- get.multimir(table = "tarbase", mirna = "hsa-miR-199a-3p")
 # All possible options to get.multimir()
 ##############################
 
-# TEST 2: Is disease.drug case-insensitive? 
-disease.drug <- c(NULL, "bladder cancer", "cisplatin", "CiSplatin",
-                  "blaDDER Cancer"),
-# TEST 3: Do individual table queries combined equal combined categories?
-table <- c("validated", "predicted", "disease.drug", "all", "mirecords",
-           "mirtarbase", "tarbase", "diana_microt", "elmmo", "microcosm",
-           "miranda", "mirdb", "pictar", "pita", "targetscan", "mir2disease",
-           "pharmaco_mir", "phenomir"),
-
-args_get.multimir <- 
-    expand.grid(org = c("hsa", "mmu","rno"),
-                # vector of mature miRNA accession #s or mature miRNA IDs, or
-                # combo -- just an example
-                mirna = c(NULL, "MIMAT0000072", "hsa-miR-199a-3p"),
-                # target -- vector of gene symbols, Entrez gene IDs, Ensembl
-                # gene IDs, or combo -- just an example
-                target = c(NULL, "TP53", 578, "ENSG00000171791"),
-                # disease or drug -- vector of diseases and/or drugs
-                # just an example, should be case-insensitive
-                disease.drug = c(NULL, "bladder cancer", "cisplatin"),
-                # Table type or table name -- all possible options, if table
-                # name only 1 allowed
-                table = c("validated", "predicted", "disease.drug")
-            ) %>% tbl_df
-
-# Prediction score cutoffs -- 0:100 if p=percent, or > 10000 if
-# n=count
-
-pred <- 
-    data.frame(predicted.cutoff      = c(0, 50, 100, 101, 9999, 10000, 500000),
-               predicted.cutoff.type = c(rep("p", 4), rep("n", 3)), 
-               # type of predicted target site to search -- only works for
-               # miranda, pita, and targetscan
-               predicted.site = rep(c("conserved", "nonconserved", "all"), 
-                                    each = 7)) %>% tbl_df
-
-# non-query options
-summary <- c(TRUE, FALSE)
-add.link <- c(TRUE, FALSE)
-url <- NULL
-
+# # TEST 2: Is disease.drug case-insensitive? 
+# disease.drug <- c(NULL, "bladder cancer", "cisplatin", "CiSplatin",
+#                   "blaDDER Cancer"),
+# # TEST 3: Do individual table queries combined equal combined categories?
+# table <- c("validated", "predicted", "disease.drug", "all", "mirecords",
+#            "mirtarbase", "tarbase", "diana_microt", "elmmo", "microcosm",
+#            "miranda", "mirdb", "pictar", "pita", "targetscan", "mir2disease",
+#            "pharmaco_mir", "phenomir"),
+# 
+# args_get.multimir <- 
+#     expand.grid(org = c("hsa", "mmu","rno"),
+#                 # vector of mature miRNA accession #s or mature miRNA IDs, or
+#                 # combo -- just an example
+#                 mirna = c(NULL, "MIMAT0000072", "hsa-miR-199a-3p"),
+#                 # target -- vector of gene symbols, Entrez gene IDs, Ensembl
+#                 # gene IDs, or combo -- just an example
+#                 target = c(NULL, "TP53", 578, "ENSG00000171791"),
+#                 # disease or drug -- vector of diseases and/or drugs
+#                 # just an example, should be case-insensitive
+#                 disease.drug = c(NULL, "bladder cancer", "cisplatin"),
+#                 # Table type or table name -- all possible options, if table
+#                 # name only 1 allowed
+#                 table = c("validated", "predicted", "disease.drug")
+#             ) %>% tbl_df
+# 
+# # Prediction score cutoffs -- 0:100 if p=percent, or > 10000 if
+# # n=count
+# 
+# pred <- 
+#     data.frame(predicted.cutoff      = c(0, 50, 100, 101, 9999, 10000, 500000),
+#                predicted.cutoff.type = c(rep("p", 4), rep("n", 3)), 
+#                # type of predicted target site to search -- only works for
+#                # miranda, pita, and targetscan
+#                predicted.site = rep(c("conserved", "nonconserved", "all"), 
+#                                     each = 7)) %>% tbl_df
+# 
+# # non-query options
+# summary <- c(TRUE, FALSE)
+# add.link <- c(TRUE, FALSE)
+# url <- NULL
+# 
 
 ########################################
 # Test functions for new vs old pkg
@@ -147,26 +153,25 @@ qryequal <- function(newold_list) {
     new <- newold_list[[1]]
     old <- newold_list[[2]]
     if (length(old) == length(new)) {
-        rtn <- 
-            lapply(1:length(old), function(x) {
-                       old[[x]] %>% str_replace_all(" ", "") == 
-                           new[[x]] %>% str_replace_all(" ", "")
-            })
-
+        rtn <- lapply(1:length(old), compare_qrys, new = new, old = old)
     } else stop("differing lengths")
 
     return(rtn)
 }
-
-getargs <- list("validated" = list(table = "validated", mirna = "hsa-miR-199a-3p"),
-                "mir2disease" = list(table = "mir2disease", mirna = "hsa-miR-199a-3p", 
-                                     target = "TP53", org = "rno", disease.drug = "cisplatin"),
-                "disease.drug" = list(table = "disease.drug", mirna = "hsa-miR-199a-3p",
-                                      #target = "TP53",
-                                      org = "rno", disease.drug = "cisplatin"),
-                "validated" = list(table = "predicted", mirna = "hsa-miR-199a-3p",
-                                   target = "TP53", org = "rno", predicted.cutoff.type = "p",
-                                   predicted.cutoff = 70, predicted.site = "all"))
+compare_qrys <- function(x, new, old) {
+    remove_spaces(old[[x]]) == remove_spaces(new[[x]]$query)
+}
+remove_spaces <- function(x) str_replace_all(x, " ", "")
+ 
+# getargs <- list("validated" = list(table = "validated", mirna = "hsa-miR-199a-3p"),
+#                 "mir2disease" = list(table = "mir2disease", mirna = "hsa-miR-199a-3p", 
+#                                      target = "TP53", org = "rno", disease.drug = "cisplatin"),
+#                 "disease.drug" = list(table = "disease.drug", mirna = "hsa-miR-199a-3p",
+#                                       #target = "TP53",
+#                                       org = "rno", disease.drug = "cisplatin"),
+#                 "validated" = list(table = "predicted", mirna = "hsa-miR-199a-3p",
+#                                    target = "TP53", org = "rno", predicted.cutoff.type = "p",
+#                                    predicted.cutoff = 70, predicted.site = "all"))
 # Test org parsing
 arg_test_org <- 
     data_frame(table = "validated", 
@@ -182,7 +187,7 @@ arg_test_disease.drug <-
                 org = "rno", 
                 disease.drug = c("bladder cancer", "cisplatin", "CiSplatin",
                                  "blaDDER Cancer"),
-                stringsAsFactors = FALSE) %>% tbl_df
+                stringsAsFactors = FALSE) %>% 
     test_arg_df
 
 # Test multiple disease.drug, mirna, or target
@@ -201,7 +206,7 @@ arg_test_multiples <-
 
 old <- get.multimirold(table = "disease.drug", 
                        #org = c("mmu", "hsa", "rno"),
-                       disease.drug = c("cisplatin", "bladder cancer"))
+                       disease.drug = c("cisplatin", "bladder cancer")
 
 
 
@@ -216,15 +221,15 @@ map(test_arg_df)
 
 new_pred <- get.multimir(org = "mmu", 
                          target  = "Gnb1",
-                         table   = "predicted",
-                         summary = TRUE,
+                         table   = "targetscan",
+                         #summary = TRUE,
                          predicted.cutoff      = 35,
                          predicted.cutoff.type = "p",
                          predicted.site        = "all")
 old_pred <- get.multimirold(org = "mmu", 
                             target  = "Gnb1",
                             table   = "targetscan",
-                            summary = TRUE,
+                            #summary = TRUE,
                             predicted.cutoff      = 35,
                             predicted.cutoff.type = "p",
                             predicted.site        = "conserved")

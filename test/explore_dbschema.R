@@ -1,4 +1,118 @@
 
+
+
+
+########################################
+# Test/explore new s3 approach 
+
+this_table  <- 
+    #"diana_microt" %>% 
+    #"mir2disease" %>% 
+    #"targetscan" %>% 
+sql_features(.table = "targetscan", org, predicted.site, 
+             predicted.cutoff.type = "p", 
+             predicted.cutoff = 35)
+
+select_list <- this_table %>% transpose %>% .$.select
+from_list   <- this_table %>% transpose %>% .$.from
+on_list     <- this_table %>% transpose %>% .$.on
+where_list  <- this_table %>% transpose %>% .$.where
+
+paste(expand_select(select_list),
+      expand_from(from_list),
+      expand_on(on_list))
+
+combine_wheres(where_list)
+
+
+
+example3 <- get.multimir(org = "mmu", 
+                         target  = "Gnb1",
+                         table   = "miranda",
+                         summary = TRUE,
+                         predicted.cutoff      = 35,
+                         predicted.cutoff.type = "p",
+                         predicted.site        = "all")
+org <- "mmu" 
+target  <- "Gnb1"
+table   <- "miranda"
+summary <- TRUE
+predicted.cutoff      <- 35
+predicted.cutoff.type <- "p"
+predicted.site        <- "all"
+
+build_mmquery(.table = table, org = "mmu", mirna = NULL, target = target, 
+              predicted.cutoff      = predicted.cutoff, 
+              predicted.cutoff.type = predicted.cutoff.type,
+              predicted.site        = predicted.site)
+
+build_mmquery(.table = "targetscan")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # VALIDATED: 
 #   base + (mirna and/or target) + org
 # DISEASE: Basic SQL structure is:

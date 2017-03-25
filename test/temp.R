@@ -1,14 +1,25 @@
-install.packages("RMySQL")
-library(DBI)
-library(RMySQL)
-library(dplyr)
 
-mm_url <- "http://multimir.ucdenver.edu/multiMiR_dbTables.txt"
+# get.multimirold(
+example3 <- get.multimir(org = "mmu", 
+                         target  = "Gnb1",
+                         table   = "miranda",
+                         summary = TRUE,
+                         predicted.cutoff      = 35,
+                         predicted.cutoff.type = "p",
+                         predicted.site        = "all")
 
-RMySQL::MySQL()
-con <- dbConnect
+example3 <- get.multimir(org = "mmu", 
+                         target  = "Gnb1",
+                         table   = "predicted",
+                         summary = TRUE,
+                         predicted.cutoff      = 35,
+                         predicted.cutoff.type = "p",
+                         predicted.site        = "all")
 
-src_mysql(dbname = "multimir", host = "http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl") 
+example2 = get.multimir(disease.drug='cisplatin', table='disease.drug')
+example1 = get.multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
 
-tbl(
+
+assertWarning()
+assertWarning()
 

@@ -2,11 +2,11 @@
 % Please edit documentation in R/utils.R
 \name{parens_wrap}
 \alias{parens_wrap}
-\title{Prep certain names for use in SQL query by adding parens}
+\title{Collapse a vector to a single comma-separated string and wrap in parentheses}
 \usage{
 parens_wrap(x)
 }
 \description{
-Prep certain names for use in SQL query by adding parens
+Collapse a vector to a single comma-separated string and wrap in parentheses
 }
 \keyword{internal}

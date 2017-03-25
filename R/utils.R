@@ -172,18 +172,28 @@ deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.fi
 #'
 #' @param x a string to be wrapped in single quotes.
 #' @keywords internal
-quote_wrap <- function(x) gsub("\\b", "'", x, perl = TRUE)
+quote_wrap <- function(x) paste0("'", x, "'")
 
 
 
 #' Prep certain names for use in SQL query by adding parens
 #'
 #' @keywords internal
+parens_quote <- function(x) {
+    if (!is.null(x)) parens_wrap(quote_wrap(x))
+}
+
+#' Collapse a vector to a single comma-separated string and wrap in parentheses 
+#'
+#' @keywords internal
 parens_wrap <- function(x) {
-    if (!is.null(x)) paste0("('", paste(x, collapse = "','"), "')")
+    paste0("(", paste(x, collapse = ", "), ")")
 }
 
 #' Pad single space on each side of an input 
 #'
 #' @keywords internal
 pad <- function(x) paste0(" ", x, " ") 
+
+
+
