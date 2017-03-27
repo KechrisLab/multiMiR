@@ -40,6 +40,8 @@ search.multimir <- function(query) {
 }
 
 
+
+
 #' General workhorse function for submitting and returning queries
 #' 
 #' This is an internal multiMiR function that is not intended to be used
@@ -53,6 +55,7 @@ submit_request <- function(url = full_url("multimir.queries"), query, ...) {
     parse_response(result)
 
 }
+
 
 
 

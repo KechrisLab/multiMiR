@@ -1,17 +1,17 @@
-#' Generate mmsql objects for each of the three types of tables, as well as the
-#' mirna and target tables.
+#' Generate individual mmsql components for each of the three types of tables,
+#' as well as the mirna and target tables.
 #'
-#' The three types of tables are predicted, validated, and associations
+#' The three types of tables are predicted, validated, and diseasedrug
 #' (disease/drug). 
 #' 
-#' @aliases sql_org, where_org, where_associations, where_conserved,
+#' @aliases sql_org, where_org, where_diseasedrug, where_conserved,
 #' where_cutoff create_cutoff_name cutoff_to_score
-#' @keywords tables types predicted validated associations disease drug
+#' @keywords tables types predicted validated diseasedrug disease drug
 #' 
 #' @keywords internal
 sql_org <- function(.table, org) { 
     where <- where_org(.table, org)
-    as_mmsql(.where_list = as_where_list(where))
+    as_mmsql_components(.where_list = as_where_list(where))
 }
 
 #' @rdname sql_org
@@ -27,15 +27,19 @@ where_org <- function(.table, org) {
 
 #' @rdname sql_org
 #' @keywords internal
-where_associations <- function(.table, disease.drug) {
+where_diseasedrug <- function(.table, disease.drug) {
     wherevar <- switch(.table,
                        pharmaco_mir = "i.drug",
                        mir2disease = "i.disease", 
                        phenomir = c("i.disease", "i.disease_class"))
-    .where  <- as_where(.vars = wherevar, 
-                        .connect  = "OR", 
-                        .operator = "IN",
-                        .value = disease.drug)
+    if (is.null(disease.drug)) {
+        NULL
+    } else {
+        as_where(.vars = wherevar, 
+                 .connect  = "OR", 
+                 .operator = "IN",
+                 .value = disease.drug)
+    }
 
 }
 

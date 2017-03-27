@@ -25,9 +25,11 @@ assertWarning()
 
 list(org = "mmu", 
      target  = "Gnb1",
-     table   = "miranda",
+     table   = "predicted",
      summary = TRUE,
      predicted.cutoff      = 35,
      predicted.cutoff.type = "p",
-     predicted.site        = "all") %>% list2env(env=globalenv())
+     predicted.site        = "all",
+     mirna = NULL,
+     disease.drug = NULL) %>% list2env(env=globalenv())
 

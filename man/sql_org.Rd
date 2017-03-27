@@ -4,25 +4,25 @@
 \alias{sql_org}
 \alias{sql_org,}
 \alias{where_org,}
-\alias{where_associations,}
+\alias{where_diseasedrug,}
 \alias{where_conserved,}
 \alias{where_cutoff}
 \alias{create_cutoff_name}
 \alias{cutoff_to_score}
 \alias{where_org}
-\alias{where_associations}
+\alias{where_diseasedrug}
 \alias{where_conserved}
 \alias{where_cutoff}
 \alias{create_cutoff_name}
 \alias{cutoff_to_score}
-\title{Generate mmsql objects for each of the three types of tables, as well as the
-mirna and target tables.}
+\title{Generate individual mmsql components for each of the three types of tables,
+as well as the mirna and target tables.}
 \usage{
 sql_org(.table, org)
 
 where_org(.table, org)
 
-where_associations(.table, disease.drug)
+where_diseasedrug(.table, disease.drug)
 
 where_conserved(.table, org, predicted.site)
 
@@ -33,11 +33,11 @@ create_cutoff_name(.table, org, predicted.site)
 cutoff_to_score(.table, cutoff_name, predicted.cutoff.type, predicted.cutoff)
 }
 \description{
-The three types of tables are predicted, validated, and associations
+The three types of tables are predicted, validated, and diseasedrug
 (disease/drug).
 }
-\keyword{associations}
 \keyword{disease}
+\keyword{diseasedrug}
 \keyword{drug}
 \keyword{internal}
 \keyword{predicted}

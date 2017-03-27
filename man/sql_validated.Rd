@@ -3,14 +3,14 @@
 \name{sql_validated}
 \alias{sql_validated}
 \alias{sql_predicted}
-\alias{sql_associations}
+\alias{sql_diseasedrug}
 \alias{sql_mirna}
 \alias{sql_target}
 \alias{sql_predicted}
-\alias{sql_associations}
+\alias{sql_diseasedrug}
 \alias{sql_mirna}
 \alias{sql_target}
-\title{Generate mmsql objects for each of the three types of tables, as well as the
+\title{Generate mmsql_components objects for each of the three types of tables, as well as the
 mirna and target tables.}
 \usage{
 sql_validated(.table)
@@ -18,18 +18,18 @@ sql_validated(.table)
 sql_predicted(.table, org, predicted.site, predicted.cutoff.type,
   predicted.cutoff)
 
-sql_associations(.table, disease.drug)
+sql_diseasedrug(.table, disease.drug)
 
 sql_mirna(mirna)
 
 sql_target(.table, target)
 }
 \description{
-The three types of tables are predicted, validated, and associations
+The three types of tables are predicted, validated, and diseasedrug
 (disease/drug).
 }
-\keyword{associations}
 \keyword{disease}
+\keyword{diseasedrug}
 \keyword{drug}
 \keyword{internal}
 \keyword{predicted}

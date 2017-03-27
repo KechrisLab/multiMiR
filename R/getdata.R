@@ -110,7 +110,7 @@ get.multimir <- function(url = NULL,
     if (!is.null(url)) deprecate_arg("url")
     if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
 
-    # Argument parsing and checking
+    # Argument checking
     if (!table %in% c(all_tables(), "predicted", "validated", "disease.drug", "all")) {
         stop("Invalid table value. See help for options.")
     }
@@ -119,15 +119,28 @@ get.multimir <- function(url = NULL,
                 "arguments. Only disease/drug tables will be returned.")
         table <- "disease.drug" 
     }
+
+    # Parse arguments
     org              <- parse_orgs(org)
     predicted.cutoff <- default_cutoff(predicted.cutoff.type, predicted.cutoff)
-    table <- switch(table,
-                    all          = all_tables(),
-                    validated    = validated_tables(),
-                    predicted    = predicted_tables(),
-                    disease.drug = associations_tables(),
-                    table)
-    queries <- purrr::map(table, build_mmquery, 
+    .table <- switch(table,
+                     all          = all_tables(),
+                     validated    = validated_tables(),
+                     predicted    = predicted_tables(),
+                     disease.drug = diseasedrug_tables(),
+                     table)
+
+    # Don't build queries for tables that don't apply to provided arguments
+    if (org == "rno") {
+        .table <- remove_table(.table, c("diana_microt", "pictar", "pita",
+                                         "targetscan"))
+    }
+    if (is.null(mirna) & is.null(disease.drug)) {
+        .table <- remove_table(.table, c("mir2disease", "phenomir"))
+    }
+
+    # Build queries and request from server
+    queries <- purrr::map(.table, multiMiR:::build_mmsql, 
                           org                   = org,
                           mirna                 = mirna,
                           target                = target,
@@ -135,8 +148,15 @@ get.multimir <- function(url = NULL,
                           predicted.site        = predicted.site,
                           predicted.cutoff.type = predicted.cutoff.type,
                           predicted.cutoff      = predicted.cutoff)
+    .data   <- purrr::map(queries, ~ multiMiR:::query.multimir(.x))
 
-    tables <- purrr::map(queries, ~ search.multimir(.x$queries))
+    queries <- setNames(queries, .table)
+    .data   <- setNames(.data, .table)
+    map2(queries, .data, ~ list(.x, .y)) %>% str
+
+    # NOTE: this needs to be done by table type  -- try map_if or lmap_if
+    combined_data <- do.call(rbind, .data)
+
 
     # note: Commented out for testing -- comparing queries w/ old vers
 #     result <- lapply(my_queries, function(x) {
@@ -208,6 +228,120 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 
 }
 
-#' Wrapper for search.multimir for printing notification to console
+#' Wrapper for search.multimir for adding feature (printing notification to
+#' console)
 #' @keywords internal
+query.multimir <- function(x) {
+    cat("Searching", attr(x, "table"), "...\n")
+    list(search.multimir(x$query))
+}
+
+#' Remove tables x from a vector of table names tables.
+#'
+#' Typically used when a set of arguments don't apply to a table or would return
+#' an error/empty response
+#'
+#' @keywords internal
+remove_table <- function(tables, x) tables[!tables %in% x]
+
+
+
+
+
+#' Summarize microRNA/target Information from the multiMiR Package
+#' 
+#' This is an internal multiMiR function that is not intended to be used
+#' directly.  Please use \code{get.multimir}.
+#' 
+#' @param result     PLACEHOLDER
+#' @param pair.index PLACEHOLDER
+#' @param order.by   PLACEHOLDER
+#' @keywords internal
+multimir.summary <- function(result, 
+                             pair.index = 2:6, 
+                             order.by = "all.sum") {
+    # To summarize the result from functions get.multimir*
+    len <- length(pair.index)
+    r   <- NULL
+    for (n in names(result)) {
+        r <- rbind(r, cbind(result[[n]][, pair.index],
+                            matrix(result[[n]]$database, ncol = 1)))
+    }
+
+    if (is.null(r)) return(NULL)
+    
+    info <- table(apply(r[, 1:len], 1, function(x) {
+                            paste(x, collapse = "|")
+                            }), r[, len + 1])
+    info.ncol <- ncol(info)
+    if (info.ncol > 1) {
+        all.sum <- apply(info, 1, function(x) {
+                             sum(x > 0)
+                             })
+        cols <- colnames(info)
+        p.m <- match(cols, c("diana_microt", "elmmo", "microcosm", "miranda",
+                             "mirdb", "pictar", "pita", "targetscan"))
+        if (sum(!is.na(p.m)) > 1) {
+            p.sum <- apply(matrix(info[, !is.na(p.m)], ncol = sum(!is.na(p.m))),
+                           1, function(x) {
+                               sum(x > 0)
+                           })
+            info <- cbind(info, predicted.sum = p.sum)
+        } else if (sum(!is.na(p.m)) == 1) {
+            p.sum <- as.integer(info[, !is.na(p.m)] > 0)
+            info  <- cbind(info, predicted.sum = p.sum)
+        }
+        v.m <- match(cols, c("mirecords", "mirtarbase", "tarbase"))
+        if (sum(!is.na(v.m)) > 1) {
+            v.sum <- apply(matrix(info[, !is.na(v.m)], ncol = sum(!is.na(v.m))),
+                           1, function(x) {
+                               sum(x > 0)
+                           })
+            info <- cbind(info, validated.sum = v.sum)
+        } else if (sum(!is.na(v.m)) == 1) {
+            v.sum <- as.integer(info[, !is.na(v.m)] > 0)
+            info  <- cbind(info, validated.sum = v.sum)
+        }
+        d.m <- match(cols, c("mir2disease", "pharmaco_mir", "phenomir"))
+        if (sum(!is.na(d.m)) > 1) {
+            d.sum <- apply(matrix(info[, !is.na(d.m)], ncol = sum(!is.na(d.m))),
+                           1, function(x) {
+                               sum(x > 0)
+                           })
+            info <- cbind(info, disease.sum = d.sum)
+        } else if (sum(!is.na(d.m)) == 1) {
+            d.sum <- as.integer(info[, !is.na(d.m)] > 0)
+            info <- cbind(info, disease.sum = d.sum)
+        }
+        info <- cbind(info, all.sum = all.sum)
+    }
+    
+    s <- NULL
+    for (i in 1:nrow(info)) {
+        row.name = rownames(info)[i]
+        row.name = sub("\\|$", "\\|\\|", row.name)
+        pair <- strsplit(row.name, "\\|")[[1]]
+        pair <- c(pair, info[i, ])
+        s <- rbind(s, pair)
+    }
+    colnames(s) <- c(colnames(result[[1]])[pair.index], colnames(info))
+    s <- data.frame(s, row.names = NULL)
+    
+    m <- match(order.by, colnames(s))
+    if (is.na(m)) {
+        s <- s[order(as.numeric(as.character(s[, ncol(s)])), decreasing = TRUE), ]
+    } else {
+        s <- s[order(as.numeric(as.character(s[, m])), decreasing = TRUE), ]
+    }
+    s <- data.frame(s, row.names = NULL)
+    
+    n.s <- ncol(s)
+    n.i <- ncol(info)
+    for (n in (n.s - n.i + 1):n.s) {
+        s[, n] <- as.numeric(as.character(s[, n]))
+    }
+    
+    return(s)
+}
+
 

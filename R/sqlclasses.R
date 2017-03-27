@@ -1,5 +1,5 @@
-#' S3 Class constructors for objects defining SQL query parts
-#' and a collection of these parts (\code{mmsql}). 
+#' S3 Class constructors for objects defining SQL query components
+#' and a collection of these parts (\code{mmsql_components}). 
 #'
 #' The collection object has a defined set of components that match the multiMiR
 #' database and defined options in \code{get.multimir()}. Conceptually this is
@@ -9,11 +9,12 @@
 #' resolved as strings (or character vectors) in the functions defining handling
 #' of each sql table (\code{sql_} prefix).
 #' 
-#' @aliases as_mmsql, as_where_list, as_where, as_orderby, is_where_list
+#' @aliases as_mmsql_components, as_where_list, as_where, as_orderby, is_where_list
 #' 
 #' @keywords internal
-as_mmsql <- function(.select = NULL, .from = NULL, .on = NULL, 
-                     .where_list = NULL, .orderby = NULL) {
+as_mmsql_components <- function(.select = NULL, .from = NULL, .on = NULL, 
+                                .where_list = NULL, .orderby = NULL,
+                                typeattr = NULL) {
 
     if (!is.null(.where_list)) stopifnot(inherits(.where_list, "where_list"))
     if (!is.null(.orderby)) stopifnot(inherits(.orderby, "orderby"))
@@ -23,11 +24,11 @@ as_mmsql <- function(.select = NULL, .from = NULL, .on = NULL,
                    .on         = .on,
                    .where_list = .where_list,
                    .orderby    = .orderby),
-              class = c("mmsql"))
+              class = c("mmsql_components"))
 
 }
 
-#' @rdname build_mmquery
+#' @rdname as_mmsql_components
 #' @keywords internal
 as_where_list <- function(...) {
     wlist <- purrr::compact(list(...))
@@ -35,7 +36,7 @@ as_where_list <- function(...) {
     structure(wlist, class = "where_list")
 }
 
-#' @rdname build_mmquery
+#' @rdname as_mmsql_components
 #' @keywords internal
 as_where <- function(.vars, .connect = NULL, .operator, .value = "%s") {
     structure(list(.vars     = .vars,
@@ -45,16 +46,16 @@ as_where <- function(.vars, .connect = NULL, .operator, .value = "%s") {
               class = c("where"))
 }
 
-#' @rdname build_mmquery
+#' @rdname as_mmsql_components
 #' @keywords internal
 is_where <- function(x) inherits(x, "where")
 
-#' @rdname build_mmquery
+#' @rdname as_mmsql_components
 #' @keywords internal
 as_orderby <- function(.vars, .order) {
     stopifnot(.order %in% c("ASC", "DESC"))
     structure(list(.vars = .vars, .order = .order),
-              class = c("mmsql", "orderby"))
+              class = c("orderby"))
 }
 
 

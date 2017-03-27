@@ -5,11 +5,11 @@
 \alias{all_tables,}
 \alias{validated_tables,}
 \alias{predicted_tables,}
-\alias{associations_tables,}
+\alias{diseasedrug_tables,}
 \alias{tables_wo_target}
 \alias{validated_tables}
 \alias{predicted_tables}
-\alias{associations_tables}
+\alias{diseasedrug_tables}
 \alias{tables_wo_target}
 \alias{conserved_tables}
 \alias{get_score_var}
@@ -21,7 +21,7 @@ validated_tables()
 
 predicted_tables()
 
-associations_tables()
+diseasedrug_tables()
 
 tables_wo_target()
 
@@ -33,7 +33,7 @@ get_score_var(.table)
 \item{.table}{a table name}
 }
 \description{
-One of three types: predicted, validated, or associations (disease/drug).
+One of three types: predicted, validated, or diseasedrug.
 Additionally two functions define characteristics of tables: those without a
 target column \code{tables_wo_target} and those with conserved target sites
 \code{conserved_tables}.

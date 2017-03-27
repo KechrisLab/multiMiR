@@ -1,17 +1,17 @@
 #' Functions defining the category each table belongs to.  
 #' 
-#' One of three types: predicted, validated, or associations (disease/drug).
+#' One of three types: predicted, validated, or diseasedrug.
 #' Additionally two functions define characteristics of tables: those without a
 #' target column \code{tables_wo_target} and those with conserved target sites
 #' \code{conserved_tables}.
 #'
 #' @param .table a table name
 #'
-#' @aliases all_tables, validated_tables, predicted_tables, associations_tables,
+#' @aliases all_tables, validated_tables, predicted_tables, diseasedrug_tables,
 #' tables_wo_target
 #' @keywords tables
 #' @export
-all_tables <- function() c(validated_tables(), predicted_tables(), associations_tables())
+all_tables <- function() c(validated_tables(), predicted_tables(), diseasedrug_tables())
 
 #' @rdname all_tables
 #' @export
@@ -25,7 +25,7 @@ predicted_tables <- function() c("diana_microt", "elmmo", "microcosm",
 
 #' @rdname all_tables
 #' @export
-associations_tables <- function() c("mir2disease", "pharmaco_mir", "phenomir")
+diseasedrug_tables <- function() c("mir2disease", "pharmaco_mir", "phenomir")
 
 #' @rdname all_tables
 #' @export
@@ -50,4 +50,15 @@ get_score_var <- function(.table) {
            NULL)
 }
 
+#' #rdname all_tables
+#' @export
+reverse_table_lookup <- function(.table) {
+    if (.table %in% validated_tables()) {
+        "validated"
+    } else if (.table %in% predicted_tables()) {
+        "predicted"
+    } else if (.table %in% diseasedrug_tables()) {
+        "disease.drug"
+    }
+}
 

@@ -351,13 +351,13 @@ target any of the 47 genes.
 
 ```{r Example5_part2, eval=FALSE, echo=FALSE}
 # search all tables & top 10% predictions
-example5 <- get.multimir(org = "hsa",
-                         mirna = DE.miRNA.up,
-                         target = DE.entrez.dn,
-                         table = "all",
-                         summary = TRUE,
-                         predicted.cutoff.type = "p",
-                         predicted.cutoff = 10)
+example5 <- get.multimirold(org = "hsa",
+                            mirna = "DE.miRNA.up",
+                            target = "DE.entrez.dn",
+                            table = "all",
+                            summary = TRUE,
+                            predicted.cutoff.type = "p",
+                            predicted.cutoff = 10)
 ```
 ```{r eval = FALSE}
 # Searching diana_microt ...
@@ -435,9 +435,9 @@ length(unique(example5$predicted$target_entrez))
 
 
 ```{r Example5_part7, eval=FALSE, echo=TRUE}
-unique.pairs = unique(data.frame(miRNA.ID =
-                                 as.character(example5$predicted$mature_mirna_id),
-target.Entrez=as.character(example5$predicted$target_entrez)))
+unique.pairs <- 
+    unique(data.frame(miRNA.ID = as.character(example5$predicted$mature_mirna_id),
+                      target.Entrez <- as.character(example5$predicted$target_entrez)))
 nrow(unique.pairs)
 ```
 ```{r, eval=FALSE}
@@ -463,7 +463,7 @@ from best to worst.
 
 
 ```{r Example5_part9, eval=FALSE, echo=FALSE}
-example5.split = split(example5$predicted, example5$predicted$database)
+example5.split <- split(example5$predicted, example5$predicted$database)
 ```
 
 
@@ -527,22 +527,21 @@ the currently set version.
 To show the structure of table *diana\_microt*:
 
 ```{r Direct_query1}
-direct2 = search.multimir(query="describe diana_microt")
+direct2 <- search.multimir(query = "describe diana_microt")
 direct2
 ```
 
 To search for validated target genes of hsa-miR-18a-3p in miRecords:
 
 ```{r Direct_query2}
-direct3 <- 
-    search.multimir(query = 
-                        "SELECT m.mature_mirna_acc, m.mature_mirna_id,
-                         t.target_symbol, t.target_entrez, t.target_ensembl,
-                         i.experiment, i.support_type, i.pubmed_id FROM mirna AS
-                         m INNER JOIN mirecords AS i INNER JOIN target AS t ON
-                         (m.mature_mirna_uid=i.mature_mirna_uid and
-                          i.target_uid=t.target_uid) WHERE
-                         m.mature_mirna_id='hsa-miR-18a-3p'")
+qry <- "SELECT m.mature_mirna_acc, m.mature_mirna_id, t.target_symbol,
+               t.target_entrez, t.target_ensembl, i.experiment, i.support_type,
+               i.pubmed_id 
+        FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t 
+        ON (m.mature_mirna_uid=i.mature_mirna_uid and 
+            i.target_uid=t.target_uid) 
+        WHERE m.mature_mirna_id='hsa-miR-18a-3p'"
+direct3 <- search.multimir(query = qry)
 direct3
 ```
 

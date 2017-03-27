@@ -12,7 +12,8 @@ Maintainer: Yuanbin Ru <ruyuanbin@gmail.com>
 Depends: R (>= 3.3)
 Imports: XML, RCurl, purrr
 VignetteBuilder: knitr
-Suggests: BiocStyle, knitr, rmarkdown
+Suggests: BiocStyle, knitr, rmarkdown,
+    testthat
 License: file LICENSE
 Packaged: 2016-12-08 04:19:34 UTC; smahaffey
 LazyData: true
