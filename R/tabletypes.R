@@ -37,6 +37,17 @@ conserved_tables    <- function() c("miranda", "pita", "targetscan")
 
 #' @rdname all_tables
 #' @export
+reverse_table_lookup <- function(.table) {
+    if (.table %in% validated_tables()) {
+        "validated"
+    } else if (.table %in% predicted_tables()) {
+        "predicted"
+    } else if (.table %in% diseasedrug_tables()) {
+        "disease.drug"
+    }
+}
+
+#' @keywords internal
 get_score_var <- function(.table) {
     switch(.table,
            diana_microt = "i.miTG_score",
@@ -48,17 +59,5 @@ get_score_var <- function(.table) {
            pita         = "i.ddG",
            targetscan  =  "i.context_plus_score",
            NULL)
-}
-
-#' @rdname all_tables
-#' @export
-reverse_table_lookup <- function(.table) {
-    if (.table %in% validated_tables()) {
-        "validated"
-    } else if (.table %in% predicted_tables()) {
-        "predicted"
-    } else if (.table %in% diseasedrug_tables()) {
-        "disease.drug"
-    }
 }
 

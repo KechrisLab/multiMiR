@@ -76,8 +76,8 @@ db.ver
 To switch between versions we can use `multimir_switchDBVersion`.
 
 ```{r multimir_switchDBVersion,echo=TRUE}
-library(multiMiR)
 multimir_switchDBVersion(db_version = "2.0.0")
+multimir_switchDBVersion(db_version = "2.1.0")
 ```
 
 The remaining functions will query the selected version until the package is reloaded 
@@ -87,7 +87,6 @@ Information from each external database is stored in a table in the *multiMiR* d
 To see a list of the tables, we can use the `multimir_dbTables` function.
 
 ```{r multimir_dbTables}
-library(multiMiR)
 db.tables = multimir_dbTables()
 db.tables
 ```
@@ -164,7 +163,6 @@ release date, link to download the data, and the corresponding table in
 *multiMiR*.
 
 ```{r multimir_dbInfo}
-library(multiMiR)
 db.info = multimir_dbInfo()
 db.info
 ```

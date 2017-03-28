@@ -7,7 +7,7 @@
 get.multimir(url = NULL, org = "hsa", mirna = NULL, target = NULL,
   disease.drug = NULL, table = "validated", predicted.cutoff = NULL,
   predicted.cutoff.type = "p", predicted.site = "conserved",
-  summary = FALSE, add.link = FALSE, use.tibble = FALSE)
+  summary = FALSE, add.link = FALSE, use.tibble = FALSE, limit = NULL)
 }
 \arguments{
 \item{url}{Deprecated. The URL for queries is now defined by the package
@@ -69,6 +69,9 @@ tibble package for returned dataframes.  The key benefit for large datasets is
 more restrictive printing to the console (first 10 rows and only the number
 of columns that will fit \code{getOption('width')}). See
 \code{?tible::data_frame} for more information.}
+
+\item{limit}{a positive integer. Limits the number of records returned from
+each table.  Useful in testing potentially large queries.}
 }
 \value{
 \code{get.multimir} returns a list with several data frames

@@ -7,8 +7,8 @@
     msg <- paste0("Welcome to multiMiR.\n\n", 
                   "multiMiR database URL has been set to the \n",
                   "default value: ", getOption("multimir.url"),"\n")
-    msg <- paste0(msg,"\nDatabase Version:", getOption("multimir.db.version"), 
-                  "  Updated:",getOption("multimir.db.updated"),"\n")
+    msg <- paste0(msg,"\nDatabase Version: ", getOption("multimir.db.version"), 
+                  "  Updated: ",getOption("multimir.db.updated"),"\n")
 
     packageStartupMessage(msg)
 

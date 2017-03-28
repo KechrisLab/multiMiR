@@ -77,6 +77,8 @@
 #' more restrictive printing to the console (first 10 rows and only the number
 #' of columns that will fit \code{getOption('width')}). See
 #' \code{?tible::data_frame} for more information. 
+#' @param limit a positive integer. Limits the number of records returned from
+#' each table.  Useful in testing potentially large queries.
 #' 
 #' @return \code{get.multimir} returns a list with several data frames
 #' containing results from a given external database (e.g., if
@@ -111,7 +113,8 @@ get.multimir <- function(url = NULL,
                          predicted.site = "conserved",
                          summary = FALSE,
                          add.link = FALSE,
-                         use.tibble = FALSE) {
+                         use.tibble = FALSE,
+                         limit = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
     if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
@@ -160,7 +163,8 @@ get.multimir <- function(url = NULL,
                           disease.drug          = disease.drug,
                           predicted.site        = predicted.site,
                           predicted.cutoff.type = predicted.cutoff.type,
-                          predicted.cutoff      = predicted.cutoff)
+                          predicted.cutoff      = predicted.cutoff,
+                          limit                 = limit)
     queries   <- stats::setNames(queries, .table)
     # Request data
     .data     <- purrr::map(queries, query.multimir, org = org, 

@@ -21,7 +21,7 @@ build_mmsql <- function(.table, org,
                        org          = sql_org(.table, org))
 
     sql_parts       <- purrr::transpose(components)
-    sql_parts$limit <- limit
+    sql_parts$.limit <- limit
     sql_parts_trim  <- purrr::map(sql_parts, purrr::compact)
     table_type      <- reverse_table_lookup(.table)
 

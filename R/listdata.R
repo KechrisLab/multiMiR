@@ -32,7 +32,7 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
     if (!is.null(url)) deprecate_arg("url")
     x   <- match.arg(x)
 
-	# Set chosen query and submit/request from server 
+    # Set chosen query and submit/request from server 
     qry <- switch(x,
                   mirna   = list("SELECT * FROM mirna"),
                   gene    = list("SELECT * FROM target"),
@@ -41,9 +41,9 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
                                  "SELECT DISTINCT(disease) FROM phenomir"))
     result <- lapply(qry, search.multimir)
 
-	stopifnot(length(result) %in% 1:2)
+    stopifnot(length(result) %in% 1:2)
 
-	# Clean up result and return
+    # Clean up result and return
     if (length(result) == 2) {
 		    stopifnot(names(result[[1]]) == names(result[[2]]))
 		    nm      <- names(result[[1]])

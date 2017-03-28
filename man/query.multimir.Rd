@@ -5,7 +5,7 @@
 \title{Wrapper for search.multimir for adding feature (printing notification to
 console)}
 \usage{
-query.multimir(x, org, add.link, use.tibble)
+\method{query}{multimir}(x, org, add.link, use.tibble)
 }
 \description{
 Wrapper for search.multimir for adding feature (printing notification to

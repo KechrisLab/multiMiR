@@ -13,7 +13,6 @@
 \alias{diseasedrug_tables}
 \alias{tables_wo_target}
 \alias{conserved_tables}
-\alias{get_score_var}
 \alias{reverse_table_lookup}
 \title{Functions defining the category each table belongs to.}
 \usage{
@@ -28,8 +27,6 @@ diseasedrug_tables()
 tables_wo_target()
 
 conserved_tables()
-
-get_score_var(.table)
 
 reverse_table_lookup(.table)
 }
