@@ -1,8 +1,8 @@
-#' Generate individual mmsql components for each of the three types of tables,
-#' as well as the mirna and target tables.
+#' Functions defining the WHERE clauses.
 #'
-#' The three types of tables are predicted, validated, and diseasedrug
-#' (disease/drug). 
+#' Functions defining filtering by organism (org), disease/drug, conserved, and
+#' cutoff  Filtering by mirna and target are defined within their \code{sql_...}
+#' functions.
 #' 
 #' @aliases sql_org, where_org, where_diseasedrug, where_conserved,
 #' where_cutoff create_cutoff_name cutoff_to_score

@@ -8,7 +8,7 @@
 #' @param .table a table name
 #'
 #' @aliases all_tables, validated_tables, predicted_tables, diseasedrug_tables,
-#' tables_wo_target
+#' tables_wo_target, reverse_table_lookup
 #' @keywords tables
 #' @export
 all_tables <- function() c(validated_tables(), predicted_tables(), diseasedrug_tables())
@@ -50,7 +50,7 @@ get_score_var <- function(.table) {
            NULL)
 }
 
-#' #rdname all_tables
+#' @rdname all_tables
 #' @export
 reverse_table_lookup <- function(.table) {
     if (.table %in% validated_tables()) {

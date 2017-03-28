@@ -26,7 +26,8 @@ sql_target(.table, target)
 }
 \description{
 The three types of tables are predicted, validated, and diseasedrug
-(disease/drug).
+(disease/drug). Additionally, mirna and target portions of the SQL statements
+are defined, including their filter clauses (\code{WHERE}).
 }
 \keyword{disease}
 \keyword{diseasedrug}

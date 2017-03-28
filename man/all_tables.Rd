@@ -6,13 +6,15 @@
 \alias{validated_tables,}
 \alias{predicted_tables,}
 \alias{diseasedrug_tables,}
-\alias{tables_wo_target}
+\alias{tables_wo_target,}
+\alias{reverse_table_lookup}
 \alias{validated_tables}
 \alias{predicted_tables}
 \alias{diseasedrug_tables}
 \alias{tables_wo_target}
 \alias{conserved_tables}
 \alias{get_score_var}
+\alias{reverse_table_lookup}
 \title{Functions defining the category each table belongs to.}
 \usage{
 all_tables()
@@ -28,6 +30,8 @@ tables_wo_target()
 conserved_tables()
 
 get_score_var(.table)
+
+reverse_table_lookup(.table)
 }
 \arguments{
 \item{.table}{a table name}

@@ -11,14 +11,14 @@ build_mmsql <- function(.table, org,
                         predicted.cutoff      = NULL,
                         limit                 = NULL) {
 
-    components <- list(mirna        = multiMiR:::sql_mirna(mirna),
-                       target       = multiMiR:::sql_target(.table, target),
-                       validated    = multiMiR:::sql_validated(.table),
-                       predicted    = multiMiR:::sql_predicted(.table, org, predicted.site,
+    components <- list(mirna        = sql_mirna(mirna),
+                       target       = sql_target(.table, target),
+                       validated    = sql_validated(.table),
+                       predicted    = sql_predicted(.table, org, predicted.site,
                                                     predicted.cutoff.type,
                                                     predicted.cutoff),
-                       diseasedrug = multiMiR:::sql_diseasedrug(.table, disease.drug),
-                       org          = multiMiR:::sql_org(.table, org))
+                       diseasedrug  = sql_diseasedrug(.table, disease.drug),
+                       org          = sql_org(.table, org))
 
     sql_parts       <- purrr::transpose(components)
     sql_parts$limit <- limit

@@ -4,11 +4,11 @@
 \alias{as_mmquery}
 \title{Constructor and methods for object returned by \code{get.multimir()}.}
 \usage{
-as_mmquery()
+as_mmquery(outlist, org, .args, summary = FALSE, use.tibble = FALSE)
 }
 \description{
 This package's primary user-facing object. Contains the SQL statement and the
-returned data query, as well as summary and link objects depending on
-specified options
+returned data query, as well as a summary table depending on
+specified option.
 }
 \keyword{internal}

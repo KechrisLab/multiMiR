@@ -15,8 +15,7 @@
 \alias{where_cutoff}
 \alias{create_cutoff_name}
 \alias{cutoff_to_score}
-\title{Generate individual mmsql components for each of the three types of tables,
-as well as the mirna and target tables.}
+\title{Functions defining the WHERE clauses.}
 \usage{
 sql_org(.table, org)
 
@@ -33,8 +32,9 @@ create_cutoff_name(.table, org, predicted.site)
 cutoff_to_score(.table, cutoff_name, predicted.cutoff.type, predicted.cutoff)
 }
 \description{
-The three types of tables are predicted, validated, and diseasedrug
-(disease/drug).
+Functions defining filtering by organism (org), disease/drug, conserved, and
+cutoff  Filtering by mirna and target are defined within their \code{sql_...}
+functions.
 }
 \keyword{disease}
 \keyword{diseasedrug}

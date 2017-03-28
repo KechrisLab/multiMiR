@@ -2,7 +2,7 @@
 % Please edit documentation in R/getdata.R
 \name{remove_table}
 \alias{remove_table}
-\title{Remove tables x from a vector of table names tables.}
+\title{Remove tables x from a vector of table names.}
 \usage{
 remove_table(tables, x)
 }

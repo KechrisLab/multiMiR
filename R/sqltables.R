@@ -2,7 +2,8 @@
 #' mirna and target tables.
 #'
 #' The three types of tables are predicted, validated, and diseasedrug
-#' (disease/drug). 
+#' (disease/drug). Additionally, mirna and target portions of the SQL statements
+#' are defined, including their filter clauses (\code{WHERE}).
 #' 
 #' @aliases sql_validated sql_predicted sql_diseasedrug sql_mirna
 #' sql_target
