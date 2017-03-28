@@ -4,12 +4,16 @@
 \alias{list.multimir}
 \title{List microRNAs, Genes, Drugs Or Diseases in the multiMiR Package}
 \usage{
-list.multimir(x = c("mirna", "gene", "drug", "disease"), url = NULL)
+list.multimir(x = c("mirna", "gene", "drug", "disease"), limit = NULL,
+  url = NULL)
 }
 \arguments{
 \item{x}{a character string indicating what to list. This must be one of the
 strings \code{"mirna"} (default), \code{"gene"}, \code{"drug"}, or
 \code{"disease"}. This can be abbreviated and is case insensitive.}
+
+\item{limit}{a positive integer. Limits the number of records returned from
+each table.  Useful in testing potentially large queries.}
 
 \item{url}{Deprecated. Use global option \code{multimir.url} instead.}
 }

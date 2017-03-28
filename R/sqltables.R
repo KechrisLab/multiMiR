@@ -98,7 +98,7 @@ sql_target <- function(.table, target) {
     vars      <- purrr::map_chr(c("%1$starget_symbol", "%1$starget_entrez",
                                   "%1$starget_ensembl"), sprintf, prefix)
     .select   <- paste(paste0("%1$s", vars), collapse = ", ")
-    if (no_target) {
+    if (is.null(target) | no_target) {
         .where_list <- NULL
     } else {
         .where <- as_where(.vars     = if (no_target) NULL else vars,

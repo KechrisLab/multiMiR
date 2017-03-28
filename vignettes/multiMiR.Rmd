@@ -436,7 +436,7 @@ length(unique(example5$predicted$target_entrez))
 ```{r Example5_part7, eval=FALSE, echo=TRUE}
 unique.pairs <- 
     unique(data.frame(miRNA.ID = as.character(example5$predicted$mature_mirna_id),
-                      target.Entrez <- as.character(example5$predicted$target_entrez)))
+                      target.Entrez = as.character(example5$predicted$target_entrez)))
 nrow(unique.pairs)
 ```
 ```{r, eval=FALSE}
