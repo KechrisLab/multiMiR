@@ -26,11 +26,10 @@ build_mmsql <- function(.table, org,
     table_type      <- reverse_table_lookup(.table)
 
     
-    structure(query = expand_query(sql_parts_trim),
-                   #sqlparts = sql_parts_trim),
-              class = "mmsql",
-              table = .table,
-              type  = table_type)
+    list(query = expand_query(sql_parts_trim),
+         #sqlparts = sql_parts_trim,
+         table = .table,
+         type  = table_type)
 
 }
 
