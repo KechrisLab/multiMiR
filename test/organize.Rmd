@@ -1,0 +1,74 @@
+
+# Layout structure of functions
+
+#### dbversion 
+multimir_switchDBVersion
+    - depends: RCurl, XML
+    - options: multimir.url, multimir.db.version,
+    - multimir: [none]
+
+#### dbinfo
+**one help file for these 4**
+multimir_dbInfo
+    - options: multimir.url
+    - multimir: *search.multimir*
+multimir_dbInfoVersions
+    - options: multimir.url
+    - multimir: *search.multimir*
+multimir_dbSchema
+    - options: multimir.schema.url
+multimir_dbTables
+    - options: multimir.db.tables
+
+#### utils
+myurlencode **internal**
+get.multimir.cutoffs  **internal**
+    - options: multimir.cutoffs.url
+multimir.summary **internal**
+multimir_dbCount
+    - options: multimir.url
+    - multimir: *search.multimir*
+
+#### search [DONE]
+search.multimir
+    - depends: RCurl, XML
+    - options: multimir.db.name, multimir.url
+    - multimir: *parse.multimir*
+parse.multimir   **internal**
+
+#### externallinks
+add.multimir.links **internal**
+
+
+#### listdata [DONE]
+list.multimir
+    - depends: [none]
+    - options: multimir.url
+    - multimir: *search.multimir* (x3)
+
+#### getdata
+get.multimir
+    - options: multimir.url, 
+    - multimir: get.multimir.predicted, get.multimir.validated,
+                get.multimir.disease, get.multimir.by.table, 
+                add.multimir.links, multimir.summary
+get.multimir.validated
+    - multimir: *get.multimir.by.table*
+get.multimir.predicted
+    - multimir: *get.multimir.by.table*
+get.multimir.disease
+    - multimir: *get.multimir.by.table*
+get.multimir.by.table (WORKHORSE)
+    - multimir: *multimir_dbTables, get.multimir.cutoffs, search.multimir*
+
+
+
+
+## Repeated code blocks
+
+- web requests: RCurl::postForm(), then XML::readHTMLTable()
+    - search.multimir, multimir_switchDBVersion, onAttach()
+- setting/changing most global options (except main url option(s?))
+    - onAttach(), multimir_switchDBVersion
+- 
+

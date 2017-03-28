@@ -10,10 +10,11 @@ Version: 0.98.0.1
 Author: Yuanbin Ru <ruyuanbin@gmail.com> and Katerina Kechris <Katerina.Kechris@ucdenver.edu>
 Maintainer: Yuanbin Ru <ruyuanbin@gmail.com>
 Depends: R (>= 3.3)
-Imports: XML, RCurl
+Imports: XML, RCurl, purrr
 VignetteBuilder: knitr
-Suggests: BiocStyle, knitr, rmarkdown
+Suggests: BiocStyle, knitr, rmarkdown, testthat, tibble
 License: file LICENSE
 Packaged: 2016-12-08 04:19:34 UTC; smahaffey
 LazyData: true
 NeedsCompilation: no
+RoxygenNote: 6.0.1
