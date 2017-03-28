@@ -27,6 +27,7 @@
 #' 
 #' @export list.multimir
 list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
+                          limit = NULL,
                           url = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
@@ -39,6 +40,7 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
                   drug    = list("SELECT DISTINCT(drug) FROM pharmaco_mir"),
                   disease = list("SELECT DISTINCT(disease) FROM mir2disease",
                                  "SELECT DISTINCT(disease) FROM phenomir"))
+    if (!is.null(limit)) qry <- purrr::map(qry, ~ paste(.x, "LIMIT", limit))
     result <- lapply(qry, search.multimir)
 
     stopifnot(length(result) %in% 1:2)
