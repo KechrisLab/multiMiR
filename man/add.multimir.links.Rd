@@ -7,9 +7,9 @@
 add.multimir.links(x, org)
 }
 \arguments{
-\item{x}{PLACEHOLDER}
+\item{x}{table/dataset returned by multimir db}
 
-\item{org}{PLACEHOLDER}
+\item{org}{Organism (see \code{get.multimir})}
 }
 \description{
 This is an internal multiMiR function that is not intended to be used

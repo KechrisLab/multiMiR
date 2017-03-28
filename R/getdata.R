@@ -72,6 +72,11 @@
 #' @param summary logical. Whether to summarize the result (default = FALSE).
 #' @param add.link logical. Whether to add link to external database for each
 #' result entry.
+#' @param use.tibble logical. Whether to use the data_frame class from the
+#' tibble package for returned dataframes.  The key benefit for large datasets is
+#' more restrictive printing to the console (first 10 rows and only the number
+#' of columns that will fit \code{getOption('width')}). See
+#' \code{?tible::data_frame} for more information. 
 #' 
 #' @return \code{get.multimir} returns a list with several data frames
 #' containing results from a given external database (e.g., if
@@ -103,139 +108,78 @@ get.multimir <- function(url = NULL,
                          table = "validated",
                          predicted.cutoff = NULL,
                          predicted.cutoff.type = "p",
-                         predicted.site = "conserved", 
-                         summary = FALSE, 
-                         add.link = FALSE) {
+                         predicted.site = "conserved",
+                         summary = FALSE,
+                         add.link = FALSE,
+                         use.tibble = FALSE) {
 
     if (!is.null(url)) deprecate_arg("url")
     if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
 
-    # Don't use scientific notation in fn environment 
-    #   for converting num to char where "3e4" != "30000"
-    scipen.orig <- getOption("scipen")
-    options(scipen = 999)
-    on.exit(options(scipen = scipen.orig))
+    # Argument checking
+    if (!table %in% c(all_tables(), "predicted", "validated", "disease.drug", "all")) {
+        stop("Invalid table value. See help for options.")
+    }
+    if (is.null(mirna) & is.null(target) & table == "all") {
+        message("Predicted and validated tables require either mirna or target ",
+                "arguments. Only disease/drug tables will be returned.")
+        table <- "disease.drug" 
+    }
 
-    # Collect args for use in query builders
+    # Grab argument for storing in return object
     my_args  <- mget(names(formals()), sys.frame(sys.nframe()))
-    argmatch <- match(c("org", "mirna", "target", "disease.drug",
+    argmatch <- match(c("table", "org", "mirna", "target", "disease.drug",
                         "predicted.cutoff", "predicted.cutoff.type",
                         "predicted.site"), names(my_args), 0L)
     sqlargs  <- as.list(my_args[c(argmatch)])
 
-    # Argument parsing and checking
-    check_tables(table)
+    # Parse arguments
     org              <- parse_orgs(org)
     predicted.cutoff <- default_cutoff(predicted.cutoff.type, predicted.cutoff)
+    .table <- switch(table,
+                     all          = all_tables(),
+                     validated    = validated_tables(),
+                     predicted    = predicted_tables(),
+                     disease.drug = diseasedrug_tables(),
+                     table)
 
-    # Other default table names and reassign changed args
-    sqlargs$mirna.table      <- "mirna"
-    sqlargs$target.table     <- "target"
-    sqlargs$org              <- org
-    sqlargs$mirna            <- mirna        
-    sqlargs$target           <- target       
-    sqlargs$disease.drug     <- disease.drug 
-    sqlargs$predicted.cutoff <- predicted.cutoff
-
-#     get_query <- function(x, ...) {
-#         this_query <- do.call(x[["query_name"]], c(table = x[["table"]], ...))
-#         c(x, "query" = this_query)
-#         
-#     }
-
-    # NOTE: Testing version
-    get_query <- function(x, ...) {
-        this_query <- do.call(x[["query_name"]], c(table = x[["table"]], ...))
-        #c(x, "query" = this_query)
-        this_query
+    # Don't build queries for tables that don't apply to provided arguments
+    if (org == "rno") {
+        .table <- remove_table(.table, c("diana_microt", "pictar", "pita",
+                                         "targetscan"))
+    }
+    if (is.null(mirna) & is.null(disease.drug)) {
+        .table <- remove_table(.table, c("mir2disease", "phenomir"))
     }
 
-    tbls_to_query <- table_query_lookup(table, mirna, target)
-    my_queries    <- lapply(tbls_to_query, get_query, sqlargs)
-    names(my_queries) <- do.call(c, lapply(tbls_to_query, function(x) x$table))
+    # Build queries and request from server
+    queries <- purrr::map(.table, build_mmsql, 
+                          org                   = org,
+                          mirna                 = mirna,
+                          target                = target,
+                          disease.drug          = disease.drug,
+                          predicted.site        = predicted.site,
+                          predicted.cutoff.type = predicted.cutoff.type,
+                          predicted.cutoff      = predicted.cutoff)
+    queries   <- stats::setNames(queries, .table)
+    # Request data
+    .data     <- purrr::map(queries, query.multimir, org = org, 
+                            add.link = add.link, use.tibble = use.tibble)
+    # Restructure data and related info for returning
+    rtnobject <- as_mmquery(outlist = .data, org = org, summary = summary,
+                            use.tibble = use.tibble, .args = sqlargs)
 
-    # NOTE: Commented out for testing -- comparing queries w/ old vers
-#     result <- lapply(my_queries, function(x) {
-#                          cat("Searching", x$table, "...\n")
-#                          search.multimir(x$query)
-#                                            })
-#     return(list(.query = my_queries, .data = result))
-    # NOTE: Restructuring for testing
-
-    return(my_queries)
-
-
-    # TODO:
-    # 1) add table name to each dataset (with varname='database'), 
-    # 2) rbind all requested tables, 
-    # 3) if add.link add link  
-    # 4) if summary add summary.
-    # 5) set type, query_name, and table as attributes
-
-#    if (add.link & !is.null(result[[table]])) 
-#        result[[table]] <- add.multimir.links(result[[table]], org)
-#    }
-#    if (summary) {
-#        result[["summary"]] <- multimir.summary(result)
-#    }
-#    return(result)
-}
-
-
-
-#' Create/filter lookup table for all SQL tables to query
-#' 
-#' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
-#'
-#' @keywords internal
-table_query_lookup <- function(tbl_arg, mirna, target) {
-
-    factor_op <- getOption("stringsAsFactors")
-    options(stringsAsFactors = FALSE)
-    on.exit(options(stringsAsFactors = factor_op))
-
-    table_query_lookup <- 
-        rbind(data.frame(type       = c("validated"), 
-                         query_name = c("query_validated"), 
-                         table      = c("mirecords", "mirtarbase", "tarbase")),
-              data.frame(type       = c("predicted"), 
-                         query_name = c("query_predicted"), 
-                         table      = c("diana_microt", "elmmo", "microcosm",
-                                        "miranda", "mirdb", "pictar", "pita",
-                                        "targetscan")),
-              data.frame(type       = c("disease.drug"), 
-                         query_name = c("query_disease"),
-                         table      = c("mir2disease", "pharmaco_mir",
-                                        "phenomir")))
-
-    tbl_arg <- tolower(tbl_arg)
-    # Either mirna or target required for predicted and validated tables 
-    if (is.null(mirna) & is.null(target) & tbl_arg == "all") {
-        message("Predicted and validated tables require either mirna or target ",
-                "arguments. Only disease/drug tables will be returned.")
-        tbl_arg <- "disease.drug" 
+    if (add.link) {
+        message(paste("Some of the links to external databases may be broken due",
+                      "to outdated identifiers in these databases. Please refer",
+                      "to Supplementary Table 2 in the multiMiR paper for details",
+                      "of the issue.\n"))
     }
 
-	# Create list of tables to query (input value has to be length 1L, handled above)
-	tables <- switch(tbl_arg,
-                     validated    = c("mirecords", "mirtarbase", "tarbase"),
-                     predicted    = c("diana_microt", "elmmo", "microcosm",
-                                      "miranda", "mirdb", "pictar", "pita",
-                                      "targetscan"),
-                     disease.drug = c("mir2disease", "pharmaco_mir", "phenomir"),
-                     all 		  = c("mirecords", "mirtarbase", "tarbase",
-                                      "diana_microt", "elmmo", "microcosm",
-                                      "miranda", "mirdb", "pictar", "pita",
-                                      "targetscan", "mir2disease", "pharmaco_mir",
-                                      "phenomir"),
-                     tolower(tbl_arg))
-
-    rtn <- subset(table_query_lookup, table %in% tables)
-    rtn <- split(rtn, seq(nrow(rtn)))
-    return(rtn)
+    return(rtnobject)
 
 }
+
 
 
 #' Each org can be specified in one of 3 ways -- this standardizes the argument
@@ -244,7 +188,7 @@ table_query_lookup <- function(tbl_arg, mirna, target) {
 #' @keywords internal
 parse_orgs <- function(org) {
 
-	# Currently only allows single string (TODO: same as old version?).
+	# only allows single string (TODO: same as old version?).
     if (!is.null(org)) {
         org <- gsub("hsa|human|homo sapiens", "hsa", org, ignore.case = TRUE)
         org <- gsub("mmu|mouse|mus musculus", "mmu", org, ignore.case = TRUE)
@@ -257,33 +201,6 @@ parse_orgs <- function(org) {
     } 
 
     return(org)
-}
-
-
-
-
-#' Check table argument matches valid table name
-#'
-#' @keywords internal
-check_tables <- function(table, force_update = FALSE) {
-
-	stopifnot(!is.null(table), length(table) == 1L) 
-
-    tbl_lst <- getOption("multimir.tables.list")
-
-    if (force_update | is.null(tbl_lst)) tbl_lst <- multimir_dbTables()
-
-    valid_tbls <- c(setdiff(tbl_lst, c("map_counts", "map_metadata", "metadata")), 
-                    "validated", "predicted", "disease.drug", "all")
-
-    if (!table %in% valid_tbls) {
-        stop(paste("Table", table, "does not exist!\n", "Please use",
-                   "'multimir_dbTables()' to see a list of available",
-                   "tables.\n"))
-    } else {
-        invisible()
-    }
-
 }
 
 
@@ -306,5 +223,39 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
     return(predicted.cutoff)
 
 }
+
+
+#' Wrapper for search.multimir for adding feature (printing notification to
+#' console)
+#' @keywords internal
+query.multimir <- function(x, org, add.link, use.tibble) {
+
+    cat("Searching", x$table, "...\n")
+    x$data <- search.multimir(x$query)
+
+    if (!is.null(x$data)) {
+        x$data <- cbind('database' = x$table, x$data)
+        if (add.link) {
+           x$data <- add.multimir.links(x$data, org)
+        }
+    } else {
+        x$data <- data.frame()
+    }
+    if (use.tibble) x$data <- tibble::as_data_frame(x$data)
+
+    return(x)
+
+}
+
+
+#' Remove tables x from a vector of table names.
+#'
+#' Typically used when a set of arguments don't apply to a table or would return
+#' an error/empty response
+#'
+#' @keywords internal
+remove_table <- function(tables, x) tables[!tables %in% x]
+
+
 
 
