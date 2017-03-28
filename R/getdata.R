@@ -246,6 +246,7 @@ query.multimir <- function(x, org, add.link, use.tibble) {
         x$data <- data.frame()
     }
     if (use.tibble) x$data <- tibble::as_data_frame(x$data)
+    if (x$table %in% diseasedrug_tables()) x$data <- unique(x$data)
 
     return(x)
 
