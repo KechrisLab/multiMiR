@@ -10,6 +10,8 @@
 #' @param x a character string indicating what to list. This must be one of the
 #' strings \code{"mirna"} (default), \code{"gene"}, \code{"drug"}, or
 #' \code{"disease"}. This can be abbreviated and is case insensitive.
+#' @param limit a positive integer. Limits the number of records returned from
+#' each table.  Useful in testing potentially large queries.
 #' @param url Deprecated. Use global option \code{multimir.url} instead. 
 #' @return \code{list.multimir} returns a data frame with information of
 #' microRNAs (microRNA unique ID, organism, mature microRNA accession number,

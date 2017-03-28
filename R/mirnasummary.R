@@ -30,6 +30,17 @@ multimir.summary <- function(result,
                              sum(x > 0)
                              })
         cols <- colnames(info)
+        d.m <- match(cols, c("mir2disease", "pharmaco_mir", "phenomir"))
+        if (sum(!is.na(d.m)) > 1) {
+            d.sum <- apply(matrix(info[, !is.na(d.m)], ncol = sum(!is.na(d.m))),
+                           1, function(x) {
+                               sum(x > 0)
+                           })
+            info <- cbind(info, disease.sum = d.sum)
+        } else if (sum(!is.na(d.m)) == 1) {
+            d.sum <- as.integer(info[, !is.na(d.m)] > 0)
+            info <- cbind(info, disease.sum = d.sum)
+        }
         p.m <- match(cols, c("diana_microt", "elmmo", "microcosm", "miranda",
                              "mirdb", "pictar", "pita", "targetscan"))
         if (sum(!is.na(p.m)) > 1) {
@@ -52,17 +63,6 @@ multimir.summary <- function(result,
         } else if (sum(!is.na(v.m)) == 1) {
             v.sum <- as.integer(info[, !is.na(v.m)] > 0)
             info  <- cbind(info, validated.sum = v.sum)
-        }
-        d.m <- match(cols, c("mir2disease", "pharmaco_mir", "phenomir"))
-        if (sum(!is.na(d.m)) > 1) {
-            d.sum <- apply(matrix(info[, !is.na(d.m)], ncol = sum(!is.na(d.m))),
-                           1, function(x) {
-                               sum(x > 0)
-                           })
-            info <- cbind(info, disease.sum = d.sum)
-        } else if (sum(!is.na(d.m)) == 1) {
-            d.sum <- as.integer(info[, !is.na(d.m)] > 0)
-            info <- cbind(info, disease.sum = d.sum)
         }
         info <- cbind(info, all.sum = all.sum)
     }
