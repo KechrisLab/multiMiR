@@ -49,7 +49,7 @@ where_diseasedrug <- function(.table, disease.drug) {
 where_conserved <- function(.table, org, predicted.site) {
 
     miranda_cut    <- switch(org, mmu = 0.566, 0.57)
-    targetscan_cut <- if (predicted.site == "conserved") "'N'" else "'Y'"
+    targetscan_cut <- if (predicted.site == "conserved") "'Y'" else "'N'"
     pita_cut       <- 0.9
 
     vars      <- switch(.table, targetscan = "i.conserved_site", "i.conservation")
@@ -86,7 +86,11 @@ where_cutoff <- function(.table, score_var, score_cutoff) {
 #' @rdname sql_org
 #' @keywords internal
 create_cutoff_name <- function(.table, org, predicted.site) {
-    suffix <- switch(predicted.site, conserved = "c1", nonconserved = "c0", NULL)
+    if (.table %in% conserved_tables()) {
+        suffix <- switch(predicted.site, conserved = "c1", nonconserved = "c0", NULL)
+    } else {
+        suffix <- NULL
+    }
     paste(c(.table, org, suffix), collapse = ".")
 }
 
@@ -121,6 +125,7 @@ cutoff_to_score <- function(.table, cutoff_name, predicted.cutoff.type, predicte
         if (predicted.cutoff > tbl_count) message(too_large)
 
         adj_pred_cutoff <- max(min(tbl_count, predicted.cutoff), count_min)
+        adj_pred_cutoff <- as.integer(as.integer(adj_pred_cutoff / 10000) * 10000)
         score_cutoff    <- cutoffs[[as.character(adj_pred_cutoff)]]
     }
 
