@@ -4,12 +4,12 @@ author: Yuanbin Ru (ruyuanbin@gmail.com)
 date: "`r doc_date()`"
 package: "`r pkg_ver('BiocStyle')`"
 output: 
-  BiocStyle::html_document:
+  BiocStyle::html_document2:
     toc: true
     code_folding: show
 vignette: >
   %\VignetteIndexEntry{The multiMiR user's guide}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 ---
 
@@ -30,27 +30,32 @@ variety of algorithms. Several online resources provide collections of multiple
 databases but need to be imported into other software, such as R, for
 processing, tabulation, graphing and computation. Currently available miRNA
 target site packages in R are limited in the number of databases, types of
-databases and flexibility. The R package *multiMiR*, with web server at
-[http://multimir.ucdenver.edu](http://multimir.ucdenver.edu), is a
-comprehensive collection of predicted and validated miRNA-target interactions
-and their associations with diseases and drugs. *multiMiR* includes
-several novel features not available in existing R packages: 1) compilation of
-14 different databases, more than any other collection; 2) expansion of
-databases to those based on disease annotation and drug response, in addition
-to many experimental and computational databases; and 3) user-defined cutoffs
-for predicted binding strength to provide the most confident selection. The
-*multiMiR* package enables retrieval of miRNA-target interactions from
-14 external databases in R without the need to visit all these databases.
-Advanced users can also submit SQL queries to the web server to retrieve
-results.  The database is now versioned so it is possible to use previous 
-versions of databases from the current R package, however the package defaults
-to the most recent version.
+databases and flexibility. 
+
+The R package *multiMiR*, with web server at
+[http://multimir.ucdenver.edu](http://multimir.ucdenver.edu), is a comprehensive
+collection of predicted and validated miRNA-target interactions and their
+associations with diseases and drugs. *multiMiR* includes several novel features
+not available in existing R packages: 
+
+1. Compilation of 14 different databases, more than any other collection
+2. Expansion of databases to those based on disease annotation and drug
+   response, in addition to many experimental and computational databases
+3. User-defined cutoffs for predicted binding strength to provide the most
+   confident selection. 
+
+The *multiMiR* package enables retrieval of miRNA-target interactions from 14
+external databases in R without the need to visit all these databases.  Advanced
+users can also submit SQL queries to the web server to retrieve results.  The
+database is now versioned so it is possible to use previous versions of
+databases from the current R package, however the package defaults to the most
+recent version.
 
 
 # Getting to know the multiMiR database
 
 ```{r annotate, echo=FALSE}
-#library(knitr)
+library(knitr)
 options(width=100)
 opts_chunk$set(echo       = TRUE,
                message    = TRUE,
@@ -58,14 +63,15 @@ opts_chunk$set(echo       = TRUE,
                eval       = TRUE)
 ```
 
-The *multiMiR* web server (\url{http://multimir.ucdenver.edu}) hosts a
-database containing miRNA-target interactions from external databases. The
-package *multiMiR* provides functions to communicate with the
-*multiMiR* web server and its database. The *multiMiR* database is now versioned
-by default *multiMiR* will use the most recent version each time *multiMiR* is loaded.
-However it is now possible to switch between database versions and get information 
-about the *multiMiR* database versions. `multimir_dbInfoVersions` returns a dataframe
-with the available versions.
+The *multiMiR* web server
+[http://multimir.ucdenver.edu](http://multimir.ucdenver.edu) hosts a database
+containing miRNA-target interactions from external databases. The package
+*multiMiR* provides functions to communicate with the *multiMiR* web server and
+its database. The *multiMiR* database is now versioned. By default *multiMiR*
+will use the most recent version each time *multiMiR* is loaded.  However it is
+now possible to switch between database versions and get information about the
+*multiMiR* database versions. `multimir_dbInfoVersions()` returns a dataframe with
+the available versions.
 
 ```{r multimir_dbInfoVersions}
 library(multiMiR)
@@ -73,9 +79,9 @@ db.ver = multimir_dbInfoVersions()
 db.ver
 ```
 
-To switch between versions we can use `multimir_switchDBVersion`.
+To switch between versions we can use `multimir_switchDBVersion()`.
 
-```{r multimir_switchDBVersion,echo=TRUE}
+```{r multimir_switchDBVersion, echo=TRUE}
 multimir_switchDBVersion(db_version = "2.0.0")
 multimir_switchDBVersion(db_version = "2.1.0")
 ```
@@ -84,14 +90,14 @@ The remaining functions will query the selected version until the package is rel
 or until we switch to another version.
 
 Information from each external database is stored in a table in the *multiMiR* database.
-To see a list of the tables, we can use the `multimir_dbTables` function.
+To see a list of the tables, we can use the `multimir_dbTables()` function.
 
 ```{r multimir_dbTables}
 db.tables = multimir_dbTables()
 db.tables
 ```
 
-To display the database schema, we can use the `multimir_dbSchema`
+To display the database schema, we can use the `multimir_dbSchema()`
 function.  Following is only a portion of the full output.
 
 ```{sql, eval=FALSE}
@@ -157,10 +163,9 @@ purpose.)
 
 ```
 
-The function `multimir_dbInfo` will display information of external
-miRNA and miRNA-target databases in *multiMiR*, including version,
-release date, link to download the data, and the corresponding table in
-*multiMiR*.
+The function `multimir_dbInfo()` will display information about the external
+miRNA and miRNA-target databases in *multiMiR*, including version, release date,
+link to download the data, and the corresponding table in *multiMiR*.
 
 ```{r multimir_dbInfo}
 db.info = multimir_dbInfo()
@@ -172,7 +177,15 @@ miRanda, miRDB, PicTar, PITA, and TargetScan) contain predicted miRNA-target
 interactions. Three of them (miRecords, miRTarBase, and TarBase) have
 experimentally validated miRNA-target interactions. The remaining three
 databases (miR2Disease, Pharmaco-miR, and PhenomiR) contain miRNA-drug/disease
-associations.
+associations. To check these categories and databases from within R,
+we have a set of four helper functions:
+
+```{r multimir-tabletype}
+predicted_tables()
+validated_tables()
+diseasedrug_tables()
+reverse_table_lookup("targetscan")
+```
 
 To see how many records are in these 14 external databases we refer to the
 `multimir_dbCount` function.
@@ -188,41 +201,38 @@ The current version of *multiMiR* contains nearly 50 million records.
 # List miRNAs, genes, drugs and diseases in the multiMiR database}
 
 In addition to functions displaying database and table information, the
-*multiMiR* package also provides the `list.multimir` function
-to list all the unique miRNAs, target genes, drugs, and diseases in the
-*multiMiR* database.
+*multiMiR* package also provides the `list.multimir()` function to list all the
+unique miRNAs, target genes, drugs, and diseases in the *multiMiR* database. An
+option for limiting the number of returned records has been added to help with
+testing and exploration.
 
 ```{r list.multimir, eval=FALSE}
-miRNAs = list.multimir("mirna", limit = 10)
-dim(miRNAs)
-head(miRNAs)
-genes = list.multimir("gene", limit = 10)
-dim(genes)
-head(genes)
-drugs = list.multimir("drug", limit = 10)
-dim(drugs)
-head(drugs)
-diseases = list.multimir("disease", limit = 10) 
+miRNAs   = list.multimir("mirna", limit = 10)
+genes    = list.multimir("gene", limit = 10)
+drugs    = list.multimir("drug", limit = 10)
+diseases = list.multimir("disease", limit = 10)
 # executes 2 separate queries, giving 20 results
-dim(diseases)
+head(miRNAs)
+head(genes)
+head(drugs)
 head(diseases)
 ```
 
-The current version of *multiMiR* has 5830 miRNAs and 97186 target
-genes from human, mouse, and rat, as well as 64 drugs and 223 disease terms.
-Depending on the speed of your Internet connection, it may take a few minutes to
-retrieve the large number of target genes.
+The current version of *multiMiR* has 5830 miRNAs and 97186 target genes from
+human, mouse, and rat, as well as 64 drugs and 223 disease terms.  Depending on
+the speed of your Internet connection, it may take a few minutes to retrieve the
+large number of target genes.
 
 
-# Use `get.multimir` to query the multiMiR database
+# Use `get.multimir()` to query the multiMiR database
 
-`get.multimir` is the main function in the package to retrieve
-predicted and validated miRNA-target interactions and their disease and drug
-associations from the *multiMiR* database.
+`get.multimir()` is the main function in the package to retrieve predicted and
+validated miRNA-target interactions and their disease and drug associations from
+the *multiMiR* database.
 
-To get familiar with the parameters in `get.multimir`, you can type
-`?get.multimir` or `help(get.multimir)` in R. In the next section,
-many examples illustrate the use of the parameters.
+To get familiar with the parameters in `get.multimir()`, you can type
+`?get.multimir` or `help(get.multimir)` in R. In the next section, many examples
+illustrate the use of the parameters.
 
 
 # Examples of multiMiR queries
@@ -236,7 +246,7 @@ In the first example, we ask what genes are validated targets of hsa-miR-18a-3p.
 
 ```{r Example1}
 # The default is to search validated interactions in human
-example1 = get.multimir(mirna='hsa-miR-18a-3p', summary = TRUE)
+example1 <- get.multimir(mirna = 'hsa-miR-18a-3p', summary = TRUE)
 names(example1)
 # Detailed information of the validated miRNA-target interaction
 head(example1$validated)
@@ -245,12 +255,12 @@ example1$validated[grep("Luciferase", example1$validated[, "experiment"]), ]
 example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
 ```
 
-It turns out that *KRAS* is the only target validated by Luciferase
-assay. The interaction was recorded in miRecords and miRTarBase and supported by
-the same literature, whose PubMed ID is in column `pubmed_id`. The summary (by
-setting `summary = TRUE` when calling `get.multimir`) shows the
-number of records in each of the external databases and the total number of
-databases supporting the interaction.
+It turns out that *KRAS* is the only target validated by Luciferase assay. The
+interaction was recorded in miRecords and miRTarBase and supported by the same
+literature, whose PubMed ID is in column `pubmed_id`. The summary (by setting
+`summary = TRUE` when calling `get.multimir()`) shows the number of records in
+each of the external databases and the total number of databases supporting the
+interaction.
 
 ## Example 2: Retrieve miRNA-target interactions associated with a given drug
 ## or disease
@@ -259,25 +269,23 @@ In this example we would like to know which miRNAs and their target genes are
 associated with Cisplatin, a chemotherapy drug used in several cancers.
 
 ```{r Example2} 
-example2 = get.multimir(disease.drug='cisplatin', table='disease.drug')
+example2 <- get.multimir(disease.drug='cisplatin', table='disease.drug')
 names(example2)
 nrow(example2$disease.drug)
 head(example2$disease.drug)
 ```
 
-`get.multimir` returns 53 miRNA-target pairs. For more information, we
-can always refer to the published papers with PubMed IDs in column
-`paper_pubmedID`.
+`get.multimir()` returns 53 miRNA-target pairs. For more information, we can
+always refer to the published papers with PubMed IDs in column `paper_pubmedID`.
 
 ## Example 3: Select miRNAs predicted to target a gene
 
-`get.multimir` also takes target gene(s) as input. In this example we
-retrieve miRNAs predicted to target *Gnb1* in mouse. For predicted
-interactions, the default is to query the top 20\% predictions within each
-external database, which is equivalent to setting parameters
-`predicted.cutoff = 20` and `predicted.cutoff.type = 'p'` (for
-percentage cutoff). Here we search the top 35% among all conserved and
-nonconserved target sites.
+`get.multimir()` also takes target gene(s) as input. In this example we retrieve
+miRNAs predicted to target *Gnb1* in mouse. For predicted interactions, the
+default is to query the top 20\% predictions within each external database,
+which is equivalent to setting parameters `predicted.cutoff = 20` and
+`predicted.cutoff.type = 'p'` (for percentage cutoff). Here we search the top
+35% among all conserved and nonconserved target sites.
 
 ```{r Example3_part1}
 example3 <- get.multimir(org = "mmu", 
