@@ -14,10 +14,11 @@ example3 <- get.multimir(org = "mmu",
                          summary = TRUE,
                          predicted.cutoff      = 35,
                          predicted.cutoff.type = "p",
-                         predicted.site        = "all")
+                         predicted.site        = "all", 
+                         add.link = TRUE)
 
-example2 = get.multimir(disease.drug='cisplatin', table='disease.drug')
-example1 = get.multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
+example2 = get.multimir(disease.drug = 'cisplatin', table = 'disease.drug')
+example1 = get.multimir(mirna = 'hsa-miR-18a-3p',   summary = TRUE)
 
 
 assertWarning()
@@ -25,11 +26,18 @@ assertWarning()
 
 list(org = "mmu", 
      target  = "Gnb1",
-     table   = "predicted",
+     table   = "all", #"predicted",
      summary = TRUE,
      predicted.cutoff      = 35,
      predicted.cutoff.type = "p",
      predicted.site        = "all",
      mirna = NULL,
      disease.drug = NULL) %>% list2env(env=globalenv())
+
+get.multimir(org = "mmu",
+             target = "Gnb1",
+             table = "all",
+             summary = TRUE,
+             add.link = TRUE,
+             predicted.site = "all")
 

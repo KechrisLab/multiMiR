@@ -137,15 +137,15 @@ options(stringsAsFactors = FALSE)
 test_arg_df <- function(arg_df) {
     arg_df %>%
         by_row(to_arglist, .to = 'arglist') %>% 
-        mutate(queries   = map(arglist, qryget)) %>%
-        mutate(success   = map(queries, qryequal)) %>% 
-        mutate(allsucess = map(success, ~ all(as.logical(.x))) %>% unlist)
+        mutate(queries   = map(arglist, qryget)) #%>%
+#         mutate(success   = map(queries, qryequal)) %>% 
+#         mutate(allsucess = map(success, ~ all(as.logical(.x))) %>% unlist)
 }
 to_arglist <- function(dfrow) {
     dfrow %>% flatten
 }
 qryget <- function(getargs) {
-    newfn <- do.call(get.multimir, getargs)
+    newfn <- do.call(get.multimir, getargs) %>% .[["queries"]]
     oldfn <- do.call(get.multimirold, getargs)[[1]]
     list(newfn, oldfn)
 }
@@ -163,15 +163,6 @@ compare_qrys <- function(x, new, old) {
 }
 remove_spaces <- function(x) str_replace_all(x, " ", "")
  
-# getargs <- list("validated" = list(table = "validated", mirna = "hsa-miR-199a-3p"),
-#                 "mir2disease" = list(table = "mir2disease", mirna = "hsa-miR-199a-3p", 
-#                                      target = "TP53", org = "rno", disease.drug = "cisplatin"),
-#                 "disease.drug" = list(table = "disease.drug", mirna = "hsa-miR-199a-3p",
-#                                       #target = "TP53",
-#                                       org = "rno", disease.drug = "cisplatin"),
-#                 "validated" = list(table = "predicted", mirna = "hsa-miR-199a-3p",
-#                                    target = "TP53", org = "rno", predicted.cutoff.type = "p",
-#                                    predicted.cutoff = 70, predicted.site = "all"))
 # Test org parsing
 arg_test_org <- 
     data_frame(table = "validated", 
@@ -236,3 +227,12 @@ old_pred <- get.multimirold(org = "mmu",
 
 
 
+# getargs <- list("validated" = list(table = "validated", mirna = "hsa-miR-199a-3p"),
+#                 "mir2disease" = list(table = "mir2disease", mirna = "hsa-miR-199a-3p", 
+#                                      target = "TP53", org = "rno", disease.drug = "cisplatin"),
+#                 "disease.drug" = list(table = "disease.drug", mirna = "hsa-miR-199a-3p",
+#                                       #target = "TP53",
+#                                       org = "rno", disease.drug = "cisplatin"),
+#                 "validated" = list(table = "predicted", mirna = "hsa-miR-199a-3p",
+#                                    target = "TP53", org = "rno", predicted.cutoff.type = "p",
+#                                    predicted.cutoff = 70, predicted.site = "all"))
