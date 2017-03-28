@@ -4,21 +4,19 @@
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #' 
-#' @param x PLACEHOLDER
-#' @param org PLACEHOLDER
+#' @param x table/dataset returned by multimir db
+#' @param org Organism (see \code{get.multimir})
 #' @export add.multimir.links
 add.multimir.links <- function(x, org) {
     # To add external database link for each of the multiMiR result entry
+    if (nrow(x) == 0) return(x)
 
-    warning(paste("Some of the links to external databases may be broken due",
-                  "to outdated identifiers in these databases. Please refer",
-                  "to Supplementary Table 2 in the multiMiR paper for details",
-                  "of the issue.\n"))
     links <- rep(NA, nrow(x))
     db    <- as.character(unique(x$database))
     for (d in db) {
         m   <- which(x$database == d)
         mir <- as.character(x$mature_mirna_id[m])
+
         if (d == "mirecords") {
             # NOTE: need to resolve miRNA IDs with '*' in mirecords
             mir <- sub("-5p", "", mir)

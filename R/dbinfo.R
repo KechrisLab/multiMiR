@@ -81,7 +81,7 @@ multimir_dbInfoVersions <- function(url = NULL) {
     if (!is.null(url)) deprecate_arg("url")
     qry <- paste("SELECT * FROM multimir_versions.version",
                  "WHERE public=1 ORDER BY version DESC")
-    submit_request(query = qry)
+    submit_request(query = qry, .cgifields = "query")
 }
 
 #' @rdname multimir_dbInfo
@@ -121,3 +121,4 @@ multimir_dbCount <- function(url = NULL) {
     return(res)
 
 }
+

@@ -4,7 +4,7 @@
 \alias{get.multimir.cutoffs}
 \title{Load Pre-calculated Prediction Score Cutoffs in the multiMiR Package}
 \usage{
-get.multimir.cutoffs(cutoff.file = NULL)
+get.multimir.cutoffs(name = NULL, cutoff.file = NULL)
 }
 \arguments{
 \item{cutoff.file}{Deprecated. Set path to cutoffs file with the global

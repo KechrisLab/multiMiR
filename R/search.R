@@ -40,20 +40,22 @@ search.multimir <- function(query) {
 }
 
 
+
+
 #' General workhorse function for submitting and returning queries
 #' 
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get.multimir}.
 #' 
 #' @keywords internal
-submit_request <- function(url = full_url("multimir.queries"), query, 
-                           .cgifields = c("query"), ...) {
+submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 
-    request <- RCurl::postForm(url, query = query, .cgifields = .cgifields, ...)
+    request <- RCurl::postForm(url, query = query, ... )
     result  <- XML::readHTMLTable(request)
     parse_response(result)
 
 }
+
 
 
 
