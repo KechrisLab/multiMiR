@@ -6,9 +6,9 @@ cache: packages
 r:
     - bioc-release
     - bioc-devel
-      #    - oldrel
-      #    - release
-      #    - devel
+#    - oldrel
+#    - release
+#    - devel
 os:
     - linux
     - osx
@@ -25,11 +25,14 @@ warnings_are_errors: true
 #before_script:
 #  - psql -c 'create database test;' -U postgres
 
-#after_success:
-#- Rscript -e 'covr::codecov()'
+r_packages:
+    - covr
 
-#notifications
+after_success:
+    - Rscript -e 'library(covr); codecov()'
+
 notifications:
     email:
         on_success: change
         on_failure: change
+

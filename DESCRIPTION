@@ -1,19 +1,36 @@
 Package: multiMiR
-Title: Integration of multiple microRNA-target databases with their
-        disease and drug associations
-Description: A collection of microRNAs/targets from external resources,
-        including validated microRNA-target databases (miRecords, miRTarBase and
-        TarBase), predicted microRNA-target databases (DIANA-microT, ElMMo, MicroCosm,
-        miRanda, miRDB, PicTar, PITA and TargetScan) and microRNA-disease/drug databases
-        (miR2Disease, Pharmaco-miR VerSe and PhenomiR).
+Title: 
+    Integration of multiple microRNA-target databases with their disease and
+    drug associations
 Version: 0.98.0.1
-Author: Yuanbin Ru <ruyuanbin@gmail.com> and Katerina Kechris <Katerina.Kechris@ucdenver.edu>
-Maintainer: Yuanbin Ru <ruyuanbin@gmail.com>
-Depends: R (>= 3.3)
-Imports: XML, RCurl
+Authors@R: 
+    c(person("Yuanbin", "Ru", email = "ruyuanbin@gmail.com", role = c("aut")),
+      person("Matt", "Mulvahill", email = "matthew.mulvahill@ucdenver.edu", role = c("aut", "cre")),
+      person("Spencer", "Mahaffey", email = "spencer.mahaffey@ucdenver.edu", role = c("ctb")),
+      person("Katerina", "Kechris", email = "Katerina.Kechris@ucdenver.edu", role = c("aut", "cph", "ths")))
+Description: 
+    A collection of microRNAs/targets from external resources, including
+    validated microRNA-target databases (miRecords, miRTarBase and TarBase),
+    predicted microRNA-target databases (DIANA-microT, ElMMo, MicroCosm,
+    miRanda, miRDB, PicTar, PITA and TargetScan) and microRNA-disease/drug
+    databases (miR2Disease, Pharmaco-miR VerSe and PhenomiR).
+URL: https://github.com/KechrisLab/multiMiR
+BugReports: https://github.com/KechrisLab/multiMiR/issues
+Depends: 
+    R (>= 3.3)
+Imports: 
+    XML, 
+    RCurl, 
+    purrr
+Suggests: 
+    BiocStyle, 
+    knitr, 
+    rmarkdown, 
+    testthat (>= 1.0.2), 
+    tibble (>= 1.2)
 VignetteBuilder: knitr
-Suggests: BiocStyle, knitr, rmarkdown
-License: file LICENSE
-Packaged: 2016-12-08 04:19:34 UTC; smahaffey
+License: MIT + file LICENSE
 LazyData: true
 NeedsCompilation: no
+RoxygenNote: 6.0.1
+Encoding: UTF-8

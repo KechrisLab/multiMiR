@@ -33,4 +33,11 @@ devtools::install_github("kechrislab/multimir")
 devtools::install_github("kechrislab/multimir", ref = "v2.0")
 ```
 
+Terminology used in package:
+- *sql components*: SELECT or FROM or ON or WHERE... etc. (mmsql\_components class)
+- *sql features*: specific to this DB and the options used to generate meaningful
+  queries (i.e. mirna; conserved; table type: validated, predicted; etc.)
+- *sql*: a complete sql statement (mmsql class)
+- *query*: table result of sql statement (mmquery class), class includes sql
+  statement and parts 
 

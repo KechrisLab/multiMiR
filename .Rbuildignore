@@ -1,6 +1,9 @@
 .git
+..Rcheck
 .vimrc
 .travis.yml
-..Rcheck
 .gitignore
 test/
+^.*\.Rproj$
+^\.Rproj\.user$
+README.Rmd
