@@ -1,19 +1,33 @@
 ---
 title: "The multiMiR user's guide"
-author: Yuanbin Ru (ruyuanbin@gmail.com)
-date: "`r doc_date()`"
-package: "`r pkg_ver('BiocStyle')`"
+author: 
+    - name: Yuanbin Ru 
+      email: ruyuanbin@gmail.com
+    - name: Matt Mulvahill
+      email: matthew.mulvahill@ucdenver.edu
+      affiliation: CU-Anschutz
+    - name: Spencer Mahaffey
+      affiliation: CU-Anschutz
+    - name: Katerina Kechris
+      affiliation: CU-Anschutz
+package: multiMiR
 output: 
-  BiocStyle::html_document2:
-    toc: true
+  BiocStyle::html_document:
+    highlight: "tango"
     code_folding: show
-vignette: >
+    toc: true
+    toc_float: 
+      collapsed: false
+vignette: |
   %\VignetteIndexEntry{The multiMiR user's guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 ---
 
-```{r}
+
+```{r, include=FALSE, echo=FALSE}
+# date: "`r doc_date()`"
+# "`r pkg_ver('BiocStyle')`"
 # <style>
 #     pre {
 #     white-space: pre !important;
@@ -208,7 +222,7 @@ unique miRNAs, target genes, drugs, and diseases in the *multiMiR* database. An
 option for limiting the number of returned records has been added to help with
 testing and exploration.
 
-```{r list.multimir, eval=FALSE}
+```{r list.multimir}
 miRNAs   = list.multimir("mirna", limit = 10)
 genes    = list.multimir("gene", limit = 10)
 drugs    = list.multimir("drug", limit = 10)
@@ -270,7 +284,7 @@ In this example we would like to know which miRNAs and their target genes are
 associated with Cisplatin, a chemotherapy drug used in several cancers.
 
 ```{r Example2} 
-example2 <- get.multimir(disease.drug='cisplatin', table='disease.drug')
+example2 <- get.multimir(disease.drug = 'cisplatin', table = 'disease.drug')
 names(example2)
 nrow(example2$disease.drug)
 head(example2$disease.drug)
@@ -289,7 +303,7 @@ which is equivalent to setting parameters `predicted.cutoff = 20` and
 35% among all conserved and nonconserved target sites.
 
 ```{r Example3_part1}
-example3 <- get.multimir(org = "mmu", 
+example3 <- get.multimir(org     = "mmu",
                          target  = "Gnb1",
                          table   = "predicted",
                          summary = TRUE,
@@ -321,12 +335,12 @@ disease (COPD) in human and want to know what miRNAs target these genes by
 searching the top 500,000 predictions in each external database.
 
 ```{r Example4_part1} 
-example4 <- get.multimir(org='hsa',
-                         target=c('AKT2', 'CERS6', 'S1PR3', 'SULF2'),
-                         table='predicted',
-                         summary=TRUE,
-                         predicted.cutoff.type='n',
-                         predicted.cutoff=500000)
+example4 <- get.multimir(org     = 'hsa',
+                         target  = c('AKT2', 'CERS6', 'S1PR3', 'SULF2'),
+                         table   = 'predicted',
+                         summary = TRUE,
+                         predicted.cutoff.type = 'n',
+                         predicted.cutoff      = 500000)
 ```
 
 Then we count the number of target genes for each miRNA.
@@ -358,13 +372,13 @@ target any of the 47 genes.
 
 ```{r Example5_part2, eval=FALSE, echo=FALSE}
 # search all tables & top 10% predictions
-example5 <- get.multimir(org = "hsa",
-                         mirna = DE.miRNA.up,
-                         target = DE.entrez.dn,
-                         table = "all",
+example5 <- get.multimir(org     = "hsa",
+                         mirna   = DE.miRNA.up,
+                         target  = DE.entrez.dn,
+                         table   = "all",
                          summary = TRUE,
                          predicted.cutoff.type = "p",
-                         predicted.cutoff = 10)
+                         predicted.cutoff      = 10)
 ```
 ```{r eval = FALSE}
 # Searching diana_microt ...
@@ -407,7 +421,7 @@ Two miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
 
 ```{r Example5_part4, eval=FALSE, echo=FALSE}
 example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug,
-                           ignore.case=TRUE),]
+                           ignore.case = TRUE), ]
 ```
 ```{r eval=FALSE}
 #        database mature_mirna_acc mature_mirna_id target_symbol target_entrez
@@ -429,13 +443,15 @@ of the 47 genes.
 
 ```{r Example5_part5, eval=FALSE, echo=FALSE}
 length(unique(example5$predicted$mature_mirna_id))
+```
+```{r, eval=FALSE}
 # [1] 9
 ```
 
 
 ```{r Example5_part6, eval=FALSE, echo=FALSE}
 length(unique(example5$predicted$target_entrez))
-@
+```
 ```{r, eval=FALSE}
 # [1] 28
 ```
@@ -486,50 +502,46 @@ server, and parses, combines, and summarizes results from the web server. For
 advanced users, there are a couple ways to query the *multiMiR*
 database without using the *multiMiR* package; but they have to be
 familiar with SQL queries. In general, users are still advised to use the
-`get.multimir` function when querying multiple external databases in
+`get.multimir()` function when querying multiple external databases in
 *multiMiR*.
 
 ## Direct query on the web server
 
-The *multiMiR* package communicates with the *multiMiR*
-database via the script http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl on the
-web server. Once again, data from each of the
-external databases is stored in a table in *multiMiR*. There are also tables for
-miRNAs (table *mirna*) and target genes (table *target*).  
+The *multiMiR* package communicates with the *multiMiR* database via the script
+[http://multimir.ucdenver.edu/cgi-bin/multimir\_univ.pl](http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl)
+on the web server. Once again, data from each of the external databases is
+stored in a table in *multiMiR*. There are also tables for miRNAs (table
+*mirna*) and target genes (table *target*).  
 
 NOTE: While it is possible to complete short queries from a browser, the limits of 
 submitting a query through typing in the address bar of a browser are quickly reached
 (8192 characters total).  If you are a developer you should use your preferred method 
 to submit a HTTP POST which will allow for longer queries.  The fields to include are 
-query and dbName.  query- is the SQL query to submit.  dbName is the DBNAME column 
-from a call to multimir_dbInfoVersions(), however if this is excluded the current 
-version is the default.
+`query` and `dbName`.  `query` is the SQL query to submit.  `dbName` is the
+DBNAME column from a call to `multimir_dbInfoVersions()`, however if this is
+excluded the current version is the default.
 
 To learn about the structure of a table (e.g. DIANA-microT data in table
 *diana\_microt*), users can use URL
 
-
-http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl?query=describe diana\_microt
-
+[http://multimir.ucdenver.edu/cgi-bin/multimir\_univ.pl?query=describe diana\_microt](http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl?query=describe diana_microt)
 
 Similar with Example 1, the following URL searches for validated target genes of
 hsa-miR-18a-3p in miRecords.
 
-
-http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p'
-
+[http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p'](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature_mirna_acc, m.mature_mirna_id, t.target_symbol, t.target_entrez, t.target_ensembl, i.experiment, i.support_type, i.pubmed_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature_mirna_uid=i.mature_mirna_uid and i.target_uid=t.target_uid) WHERE m.mature_mirna_id='hsa-miR-18a-3p')
 
 As you can see, the query is long and searches just one of the three validated
-tables in *multiMiR*. While in Example 1, one line of R command using the `r
-get.multimir` function searches, combines and summarizes results from all three
-validated external databases (miRecords, miRTarBase and TarBase).
+tables in *multiMiR*. While in Example 1, one line of R command using the 
+`get.multimir()` function searches, combines and summarizes results from all
+three validated external databases (miRecords, miRTarBase and TarBase).
 
 ## Direct query in R
 
-The same direct queries we did above on the web server can be done in R as well.  This
-is the preferred method if you are unfamiliar with HTTP POST. Be sure to set the correct 
-database version, if you wish to change versions, before calling 'search.multimir' it uses
-the currently set version.
+The same direct queries we did above on the web server can be done in R as well.
+This is the preferred method if you are unfamiliar with HTTP POST. Be sure to
+set the correct database version, if you wish to change versions, before calling
+`search.multimir()` it uses the currently set version.
 
 To show the structure of table *diana\_microt*:
 
