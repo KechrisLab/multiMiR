@@ -4,26 +4,21 @@ language: R
 sudo: false
 cache: packages
 r:
-    - bioc-release
+    #- bioc-release
     - bioc-devel
-#    - oldrel
-#    - release
-#    - devel
 os:
-    - linux
+    #- linux
     - osx
 
 warnings_are_errors: true
-#env:
-#  global:
-#    - _R_CHECK_FORCE_SUGGESTS_=false
-#    - MAKEFLAGS="-j 2"
 
-#r_github_packages:
-#  - hadley/devtools
+osx_image: xcode8.3
 
-#before_script:
-#  - psql -c 'create database test;' -U postgres
+addons:
+  apt:
+    packages:
+      - libxml2-dev # for XML, a dependency 
+      - libcurl
 
 r_packages:
     - covr
