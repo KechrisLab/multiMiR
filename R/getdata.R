@@ -169,7 +169,7 @@ get.multimir <- function(url = NULL,
                           limit                 = limit)
     queries   <- stats::setNames(queries, .table)
     # Request data
-    .data     <- purrr::map(queries, query.multimir, org = org, 
+    .data     <- purrr::map(queries, query_multimir, org = org, 
                             add.link = add.link, use.tibble = use.tibble)
     # Restructure data and related info for returning
     rtnobject <- as_mmquery(outlist = .data, org = org, summary = summary,
@@ -233,8 +233,9 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 
 #' Wrapper for search.multimir for adding feature (printing notification to
 #' console)
+#' 
 #' @keywords internal
-query.multimir <- function(x, org, add.link, use.tibble) {
+query_multimir <- function(x, org, add.link, use.tibble) {
 
     cat("Searching", x$table, "...\n")
     x$data <- search.multimir(x$query)

@@ -61,11 +61,13 @@ not available in existing R packages:
    confident selection. 
 
 The *multiMiR* package enables retrieval of miRNA-target interactions from 14
-external databases in R without the need to visit all these databases.  Advanced
-users can also submit SQL queries to the web server to retrieve results.  The
-database is now versioned so it is possible to use previous versions of
-databases from the current R package, however the package defaults to the most
-recent version.
+external databases in R without the need to visit all these databases.
+Advanced users can also submit SQL queries to the web server to retrieve
+results. See the [publication on
+PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25063298) for additional detail on
+the database and its creation.  The database is now versioned so it is possible
+to use previous versions of databases from the current R package, however the
+package defaults to the most recent version.
 
 
 # Getting to know the multiMiR database
@@ -117,65 +119,65 @@ To display the database schema, we can use the `multimir_dbSchema()`
 function.  Following is only a portion of the full output.
 
 ```{sql, eval=FALSE}
---
--- Table structure for table `mirna`
---
-
-DROP TABLE IF EXISTS `mirna`;
-CREATE TABLE `mirna` (
-  mature_mirna_uid INTEGER UNSIGNED AUTO_INCREMENT,  -- mature miRNA unique ID
-  org VARCHAR(4) NOT NULL,                           -- organism abbreviation
-  mature_mirna_acc VARCHAR(20) default NULL,         -- mature miRNA accession
-  mature_mirna_id VARCHAR(20) default NULL,          -- mature miRNA ID/name
-  PRIMARY KEY (mature_mirna_uid),
-  KEY org (org),
-  KEY mature_mirna_acc (mature_mirna_acc),
-  KEY mature_mirna_id (mature_mirna_id)
-);
-
---
--- Table structure for table `target`
---
-
-DROP TABLE IF EXISTS `target`;
-CREATE TABLE `target` (
-  target_uid INTEGER UNSIGNED AUTO_INCREMENT,   -- target gene unique ID
-  org VARCHAR(4) NOT NULL,                      -- organism abbreviation
-  target_symbol VARCHAR(80) default NULL,       -- target gene symbol
-  target_entrez VARCHAR(10) default NULL,       -- target gene Entrez gene ID
-  target_ensembl VARCHAR(20) default NULL,      -- target gene Ensembl gene ID
-  PRIMARY KEY (target_uid),
-  KEY org (org),
-  KEY target_symbol (target_symbol),
-  KEY target_entrez (target_entrez),
-  KEY target_ensembl (target_ensembl)
-);
-
---
--- Table structure for table `mirecords`
---
-
-DROP TABLE IF EXISTS `mirecords`;
-CREATE TABLE `mirecords` (
-  mature_mirna_uid INTEGER UNSIGNED NOT NULL,   -- mature miRNA unique ID
-  target_uid INTEGER UNSIGNED NOT NULL,         -- target gene unique ID
-  target_site_number INT(10) default NULL,      -- target site number
-  target_site_position INT(10) default NULL,    -- target site position
-  experiment VARCHAR(160) default NULL,         -- supporting experiment
-  support_type VARCHAR(40) default NULL,        -- type of supporting experiment
-  pubmed_id VARCHAR(10) default NULL,           -- PubMed ID
-  FOREIGN KEY (mature_mirna_uid)
-    REFERENCES mirna(mature_mirna_uid)
-    ON UPDATE CASCADE ON DELETE RESTRICT,
-  FOREIGN KEY (target_uid)
-    REFERENCES target(target_uid)
-    ON UPDATE CASCADE ON DELETE RESTRICT
-);
-
-......
-
-(Please note that only three of the 19 tables are shown here for demonstration
-purpose.)
+## --
+## -- Table structure for table `mirna`
+## --
+## 
+## DROP TABLE IF EXISTS `mirna`;
+## CREATE TABLE `mirna` (
+##   mature_mirna_uid INTEGER UNSIGNED AUTO_INCREMENT,  -- mature miRNA unique ID
+##   org VARCHAR(4) NOT NULL,                           -- organism abbreviation
+##   mature_mirna_acc VARCHAR(20) default NULL,         -- mature miRNA accession
+##   mature_mirna_id VARCHAR(20) default NULL,          -- mature miRNA ID/name
+##   PRIMARY KEY (mature_mirna_uid),
+##   KEY org (org),
+##   KEY mature_mirna_acc (mature_mirna_acc),
+##   KEY mature_mirna_id (mature_mirna_id)
+## );
+## 
+## --
+## -- Table structure for table `target`
+## --
+## 
+## DROP TABLE IF EXISTS `target`;
+## CREATE TABLE `target` (
+##   target_uid INTEGER UNSIGNED AUTO_INCREMENT,   -- target gene unique ID
+##   org VARCHAR(4) NOT NULL,                      -- organism abbreviation
+##   target_symbol VARCHAR(80) default NULL,       -- target gene symbol
+##   target_entrez VARCHAR(10) default NULL,       -- target gene Entrez gene ID
+##   target_ensembl VARCHAR(20) default NULL,      -- target gene Ensembl gene ID
+##   PRIMARY KEY (target_uid),
+##   KEY org (org),
+##   KEY target_symbol (target_symbol),
+##   KEY target_entrez (target_entrez),
+##   KEY target_ensembl (target_ensembl)
+## );
+## 
+## --
+## -- Table structure for table `mirecords`
+## --
+## 
+## DROP TABLE IF EXISTS `mirecords`;
+## CREATE TABLE `mirecords` (
+##   mature_mirna_uid INTEGER UNSIGNED NOT NULL,   -- mature miRNA unique ID
+##   target_uid INTEGER UNSIGNED NOT NULL,         -- target gene unique ID
+##   target_site_number INT(10) default NULL,      -- target site number
+##   target_site_position INT(10) default NULL,    -- target site position
+##   experiment VARCHAR(160) default NULL,         -- supporting experiment
+##   support_type VARCHAR(40) default NULL,        -- type of supporting experiment
+##   pubmed_id VARCHAR(10) default NULL,           -- PubMed ID
+##   FOREIGN KEY (mature_mirna_uid)
+##     REFERENCES mirna(mature_mirna_uid)
+##     ON UPDATE CASCADE ON DELETE RESTRICT,
+##   FOREIGN KEY (target_uid)
+##     REFERENCES target(target_uid)
+##     ON UPDATE CASCADE ON DELETE RESTRICT
+## );
+## 
+## ......
+## 
+## (Please note that only three of the 19 tables are shown here for demonstration
+## purpose.)
 
 ```
 
@@ -188,13 +190,13 @@ db.info = multimir_dbInfo()
 db.info
 ```
 
-Among the 14 external databases, eight (DIANA-microT-CDS, ElMMo, MicroCosm,
-miRanda, miRDB, PicTar, PITA, and TargetScan) contain predicted miRNA-target
-interactions. Three of them (miRecords, miRTarBase, and TarBase) have
-experimentally validated miRNA-target interactions. The remaining three
-databases (miR2Disease, Pharmaco-miR, and PhenomiR) contain miRNA-drug/disease
-associations. To check these categories and databases from within R,
-we have a set of four helper functions:
+Among the 14 external databases, eight contain predicted miRNA-target
+interactions (DIANA-microT-CDS, ElMMo, MicroCosm, miRanda, miRDB, PicTar, PITA,
+and TargetScan), three have experimentally validated miRNA-target interactions
+(miRecords, miRTarBase, and TarBase) and the remaining three contain
+miRNA-drug/disease associations (miR2Disease, Pharmaco-miR, and PhenomiR). To
+check these categories and databases from within R, we have a set of four
+helper functions:
 
 ```{r multimir-tabletype}
 predicted_tables()
@@ -214,7 +216,7 @@ apply(db.count[,-1], 2, sum)
 
 The current version of *multiMiR* contains nearly 50 million records.
 
-# List miRNAs, genes, drugs and diseases in the multiMiR database}
+# List miRNAs, genes, drugs and diseases in the multiMiR database
 
 In addition to functions displaying database and table information, the
 *multiMiR* package also provides the `list.multimir()` function to list all the
@@ -381,20 +383,20 @@ example5 <- get.multimir(org     = "hsa",
                          predicted.cutoff      = 10)
 ```
 ```{r eval = FALSE}
-# Searching diana_microt ...
-# Searching elmmo ...
-# Searching microcosm ...
-# Searching miranda ...
-# Searching mirdb ...
-# Searching pictar ...
-# Searching pita ...
-# Searching targetscan ...
-# Searching mirecords ...
-# Searching mirtarbase ...
-# Searching tarbase ...
-# Searching mir2disease ...
-# Searching pharmaco_mir ...
-# Searching phenomir ...
+## Searching diana_microt ...
+## Searching elmmo ...
+## Searching microcosm ...
+## Searching miranda ...
+## Searching mirdb ...
+## Searching pictar ...
+## Searching pita ...
+## Searching targetscan ...
+## Searching mirecords ...
+## Searching mirtarbase ...
+## Searching tarbase ...
+## Searching mir2disease ...
+## Searching pharmaco_mir ...
+## Searching phenomir ...
 ```
 
 In the result, there are 3 unique miRNA-gene pairs that have been validated.
@@ -403,18 +405,18 @@ In the result, there are 3 unique miRNA-gene pairs that have been validated.
 example5$validated
 ```
 ```{r eval=FALSE}
-#     database mature_mirna_acc mature_mirna_id target_symbol target_entrez
-# 1 mirtarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
-# 2 mirtarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
-# 3    tarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
-# 4    tarbase     MIMAT0000424     hsa-miR-128          NEK2          4751
-# 5    tarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
-#    target_ensembl               experiment          support_type pubmed_id
-# 1 ENSG00000137714               Proteomics Functional MTI (Weak)  18668040
-# 2 ENSG00000064042 pSILAC//Proteomics;Other Functional MTI (Weak)  18668040
-# 3 ENSG00000137714               Proteomics              positive          
-# 4 ENSG00000117650               Microarray              positive          
-# 5 ENSG00000064042               Proteomics              positive          
+##     database mature_mirna_acc mature_mirna_id target_symbol target_entrez
+## 1 mirtarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
+## 2 mirtarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
+## 3    tarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
+## 4    tarbase     MIMAT0000424     hsa-miR-128          NEK2          4751
+## 5    tarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
+##    target_ensembl               experiment          support_type pubmed_id
+## 1 ENSG00000137714               Proteomics Functional MTI (Weak)  18668040
+## 2 ENSG00000064042 pSILAC//Proteomics;Other Functional MTI (Weak)  18668040
+## 3 ENSG00000137714               Proteomics              positive          
+## 4 ENSG00000117650               Microarray              positive          
+## 5 ENSG00000064042               Proteomics              positive          
 ```
 
 Two miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
@@ -424,18 +426,18 @@ example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug,
                            ignore.case = TRUE), ]
 ```
 ```{r eval=FALSE}
-#        database mature_mirna_acc mature_mirna_id target_symbol target_entrez
-# 18  mir2disease     MIMAT0000418  hsa-miR-23b-3p            NA            NA
-# 711    phenomir     MIMAT0000418  hsa-miR-23b-3p            NA            NA
-# 311    phenomir     MIMAT0000449 hsa-miR-146a-5p            NA            NA
-#     target_ensembl   disease_drug
-# 18              NA bladder cancer
-# 711             NA Bladder cancer
-# 311             NA Bladder cancer
-#                                               paper_pubmedID
-# 18  2007. Micro-RNA profiling in kidney and bladder cancers.
-# 711                                                 17826655
-# 311                                                 19127597
+##        database mature_mirna_acc mature_mirna_id target_symbol target_entrez
+## 18  mir2disease     MIMAT0000418  hsa-miR-23b-3p            NA            NA
+## 711    phenomir     MIMAT0000418  hsa-miR-23b-3p            NA            NA
+## 311    phenomir     MIMAT0000449 hsa-miR-146a-5p            NA            NA
+##     target_ensembl   disease_drug
+## 18              NA bladder cancer
+## 711             NA Bladder cancer
+## 311             NA Bladder cancer
+##                                               paper_pubmedID
+## 18  2007. Micro-RNA profiling in kidney and bladder cancers.
+## 711                                                 17826655
+## 311                                                 19127597
 ```
 
 The predicted databases predict 65 miRNA-gene pairs between the 9 miRNAs and 28
@@ -445,7 +447,7 @@ of the 47 genes.
 length(unique(example5$predicted$mature_mirna_id))
 ```
 ```{r, eval=FALSE}
-# [1] 9
+## [1] 9
 ```
 
 
@@ -453,7 +455,7 @@ length(unique(example5$predicted$mature_mirna_id))
 length(unique(example5$predicted$target_entrez))
 ```
 ```{r, eval=FALSE}
-# [1] 28
+## [1] 28
 ```
 
 
@@ -464,7 +466,7 @@ unique.pairs <-
 nrow(unique.pairs)
 ```
 ```{r, eval=FALSE}
-# [1] 65
+## [1] 65
 ```
 
 
@@ -472,13 +474,13 @@ nrow(unique.pairs)
 head(unique.pairs)
 ```
 ```{r, eval = FALSE}
-#         miRNA.ID target.Entrez
-# 1 hsa-miR-182-5p          2017
-# 2 hsa-miR-182-5p          1112
-# 3 hsa-miR-30d-5p         22998
-# 4 hsa-miR-30a-5p         22998
-# 5 hsa-miR-30b-5p         22998
-# 6 hsa-miR-182-5p          5962
+##         miRNA.ID target.Entrez
+## 1 hsa-miR-182-5p          2017
+## 2 hsa-miR-182-5p          1112
+## 3 hsa-miR-30d-5p         22998
+## 4 hsa-miR-30a-5p         22998
+## 5 hsa-miR-30b-5p         22998
+## 6 hsa-miR-182-5p          5962
 ```
 
 Results from each of the predicted databases are already ordered by their scores

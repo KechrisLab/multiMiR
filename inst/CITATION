@@ -1,0 +1,47 @@
+citEntry(entry = "Article",
+		 title = "The multiMiR R package and database: integration of
+		 microRNA–target interactions along with their disease and drug
+		 associations",
+		 author = personList(as.person("Yuanbin Ru"),
+							 as.person("Katerina J. Kechris"), 
+							 as.person("Boris Tabakoff"), 
+							 as.person("Paula Hoffman"),
+							 as.person("Richard A. Radcliffe"),
+							 as.person("Russell Bowler"),
+							 as.person("Spencer Mahaffey"),
+							 as.person("Simona Rossi"),
+							 as.person("George A. Calin"),
+							 as.person("Lynne Bemis"),  
+							 as.person("Dan Theodorescu")),
+		 journal = "Nucleic Acids Research",
+		 volume = "42",
+		 number = "17",
+		 pages = "e133",
+		 year = "2014",
+		 doi = "10.1093/nar/gku631",
+		 URL = "http://dx.doi.org/10.1093/nar/gku631",
+		 textVersion = 
+		 paste("Yuanbin Ru, Katerina J. Kechris, Boris Tabakoff, Paula Hoffman,",
+			   "Richard A. Radcliffe, Russell Bowler, Spencer Mahaffey, Simona",
+			   "Rossi, George A. Calin, Lynne Bemis, Dan Theodorescu; The",
+			   "multiMiR R package and database: integration of microRNA–target",
+			   "interactions along with their disease and drug associations.",
+			   "Nucleic Acids Res 2014; 42 (17): e133. doi: 10.1093/nar/gku631")
+		 )
+
+citEntry(entry = "Manual",
+    title = "multiMiR: Integration of multiple microRNA-target databases with
+             their disease and drug associations",
+    author = personList(as.person("Yuanbin Ru"),
+                        as.person("Matt Mulvahill"),
+                        as.person("Spencer Mahaffey"),
+                        as.person("Katerina Kechris")),
+    url = "https://github.com/KechrisLab/multiMiR",
+	textVersion = 
+	paste("Yuanbin Ru, Matt Mulvahill, Spencer Mahaffey and Katerina Kechris",
+		  "(2017). multiMiR: Integration of multiple microRNA-target databases",
+		  "with their disease and drug associations. R package version 0.98.0.2.",
+		  "https://github.com/KechrisLab/multiMiR")
+  )
+
+
