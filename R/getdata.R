@@ -138,6 +138,8 @@ get.multimir <- function(url = NULL,
 
     # Parse arguments
     org              <- parse_orgs(org)
+    mirna            <- remove_empty_strings(mirna)
+    target           <- remove_empty_strings(target)
     predicted.cutoff <- default_cutoff(predicted.cutoff.type, predicted.cutoff)
     .table <- switch(table,
                      all          = all_tables(),
@@ -261,6 +263,18 @@ query.multimir <- function(x, org, add.link, use.tibble) {
 #' @keywords internal
 remove_table <- function(tables, x) tables[!tables %in% x]
 
+
+#' Remove empty strings from character vector.
+#'
+#' The WHERE clauses for target and mirna use allow for multiple arguments
+#' always separated by 'OR' and several columns are checked for each value 
+#' (mirna id, acc; target symbol, entrez, ensemble).  If empty strings "" are
+#' present in the get.multimir arguments, Targets and miRNA with empty values in
+#' one of these columns will be incorrectly returned.  -- thus purge empty
+#' strings first.
+#'
+#' @keywords internal
+remove_empty_strings <- function(x) x[x != ""]
 
 
 
