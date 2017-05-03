@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.com/KechrisLab/multiMiR.svg?token=Vzy3B4WH2SvZ4ybN4Uzy&branch=master)](https://travis-ci.com/KechrisLab/multiMiR)
-
+[![Build Status](https://travis-ci.org/KechrisLab/multiMiR.svg?branch=master)](https://travis-ci.org/KechrisLab/multiMiR)
 
 # multiMiR  
 
