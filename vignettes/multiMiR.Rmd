@@ -6,11 +6,11 @@ author:
       affiliation: BioMarin Pharmaceutical Inc.
     - name: Matt Mulvahill
       email: matthew.mulvahill@ucdenver.edu
-      affiliation: CU-Anschutz
+      affiliation: CU Anschutz
     - name: Spencer Mahaffey
-      affiliation: CU-Anschutz
+      affiliation: CU Anschutz
     - name: Katerina Kechris
-      affiliation: CU-Anschutz
+      affiliation: CU Anschutz
 package: multiMiR
 output: 
   BiocStyle::html_document:

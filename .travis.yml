@@ -7,7 +7,6 @@ r:
     - bioc-devel
 os:
     - linux
-    - osx
 
 warnings_are_errors: true
 
@@ -21,4 +20,3 @@ notifications:
     email:
         on_success: change
         on_failure: change
-
