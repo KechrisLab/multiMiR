@@ -32,7 +32,7 @@ VignetteBuilder: knitr
 License: MIT + file LICENSE
 LazyData: true
 NeedsCompilation: no
-biocViews: miRNAData, SequencingData, Homo_sapiens_data, Mus_musculus_data,
-    Rattus_norvegicus, OrganismData
+biocViews: miRNAData, SequencingData, Homo_sapiens_Data, Mus_musculus_Data,
+    Rattus_norvegicus_Data, OrganismData
 RoxygenNote: 6.0.1
 Encoding: UTF-8
