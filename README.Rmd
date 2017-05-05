@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/KechrisLab/multiMiR.svg?token=Vzy3B4WH2SvZ4ybN4Uzy&branch=master)](https://travis-ci.com/KechrisLab/multiMiR)
-
+[![Build Status](https://travis-ci.org/KechrisLab/multiMiR.svg?branch=master)](https://travis-ci.org/KechrisLab/multiMiR)
+[![codecov](https://codecov.io/gh/KechrisLab/multiMiR/branch/master/graph/badge.svg)](https://codecov.io/gh/KechrisLab/multiMiR)
 
 # multiMiR  
 
@@ -26,11 +26,11 @@ install.packages("devtools")
 library(devtools)
 
 # Now install the development version of the multiMiR package
-devtools::install_github("kechrislab/multimir")
+devtools::install_github("kechrislab/multimir", build_vignettes = TRUE)
 
 # To install a public release, use the `ref=` option to select the tag of the
 # release version 
-devtools::install_github("kechrislab/multimir", ref = "v2.0")
+#devtools::install_github("kechrislab/multimir", ref = "v2.0")
 ```
 
 Terminology used in package:
