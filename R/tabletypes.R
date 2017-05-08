@@ -6,6 +6,10 @@
 #' \code{conserved_tables}.
 #'
 #' @param .table a table name
+#' @return Returns dataset that names that belong to the category of the
+#' function name (e.g. \code{validated_tables()} returns tables with validated
+#' miRNA-target interactions).  \code{reverse_table_lookup()} does the opposite;
+#' it returns the category a given \code{.table} belongs to.
 #'
 #' @aliases all_tables, validated_tables, predicted_tables, diseasedrug_tables,
 #' tables_wo_target, reverse_table_lookup
