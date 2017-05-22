@@ -6,6 +6,7 @@
 #' 
 #' @param cutoff.file Deprecated. Set path to cutoffs file with the global
 #' option \code{multimir.cutoffs}.
+#' @return Cutoff values object from remote database
 #' @keywords internal
 get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
     # To load pre-calculated score cutoffs
@@ -27,30 +28,11 @@ get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
 }
 
 
-#' Encode a URL Before Submitting It to the multiMiR Web Server
-#' 
-#' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
-#' 
-#' @param url A url character string to encode.
-#' @keywords internal
-myurlencode <- function(url) {
-    OK <- "[^-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_.+*(),:/?=]"
-    x  <- strsplit(url, "")[[1L]]
-    z  <- grep(OK, x)
-    if (length(z)) {
-        y <- sapply(x[z], function(x) { paste0("%", as.character(charToRaw(x)),
-                                               collapse = "") })
-        x[z] <- y
-    }
-    paste(x, collapse = "")
-}
-
-
 #' Internal function for sending deprecation messages
 #'
 #' @param name One of several predefined arguments that are being deprecated.
 #' All are URLs or URL paths now set by package/global options.
+#' @return NULL
 #' @keywords internal
 deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.file")) {
 
