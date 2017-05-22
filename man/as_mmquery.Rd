@@ -6,6 +6,9 @@
 \usage{
 as_mmquery(outlist, org, .args, summary = FALSE, use.tibble = FALSE)
 }
+\value{
+An \code{mmquery} object.
+}
 \description{
 This package's primary user-facing object. Contains the SQL statement and the
 returned data query, as well as a summary table depending on

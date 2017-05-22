@@ -33,10 +33,24 @@ reverse_table_lookup(.table)
 \arguments{
 \item{.table}{a table name}
 }
+\value{
+Returns dataset that names that belong to the category of the
+function name (e.g. \code{validated_tables()} returns tables with validated
+miRNA-target interactions).  \code{reverse_table_lookup()} does the opposite;
+it returns the category a given \code{.table} belongs to.
+}
 \description{
 One of three types: predicted, validated, or diseasedrug.
 Additionally two functions define characteristics of tables: those without a
 target column \code{tables_wo_target} and those with conserved target sites
 \code{conserved_tables}.
+}
+\examples{
+all_tables()
+validated_tables()
+predicted_tables()
+diseasedrug_tables()
+predicted_tables() \%in\% all_tables() # TRUE
+
 }
 \keyword{tables}

@@ -36,6 +36,9 @@ expand_limit(x)
 
 merge_order(.list)
 }
+\value{
+A complete SQL statement and related information.
+}
 \description{
 Constructors for parts of SQL queries
 Expand_query converts a \code{mmyquery} object to a SQL query string

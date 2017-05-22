@@ -11,7 +11,12 @@ add.multimir.links(x, org)
 
 \item{org}{Organism (see \code{get.multimir})}
 }
+\value{
+The input data frame \code{x} with a column added for the external
+database links.
+}
 \description{
 This is an internal multiMiR function that is not intended to be used
 directly.  Please use \code{get.multimir}.
 }
+\keyword{internal}

@@ -25,6 +25,12 @@ is_where(x)
 
 as_orderby(.vars, .order)
 }
+\value{
+\code{as_mmsql_components}: A collection of components that make up a
+SQL query. 
+\code{as_where_list}, \code{as_where}, \code{as_orderby}: Individual
+components of a SQL query.
+}
 \description{
 The collection object has a defined set of components that match the multiMiR
 database and defined options in \code{get.multimir()}. Conceptually this is

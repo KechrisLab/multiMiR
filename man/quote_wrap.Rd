@@ -9,6 +9,9 @@ quote_wrap(x)
 \arguments{
 \item{x}{a string to be wrapped in single quotes.}
 }
+\value{
+The input wrapped in single quotes.
+}
 \description{
 Internal function for adding single quotes around a string
 }

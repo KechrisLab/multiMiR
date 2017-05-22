@@ -6,6 +6,10 @@
 \usage{
 parens_wrap(x)
 }
+\value{
+The input vector converted to a comma-separated string wrapped in
+parentheses.
+}
 \description{
 Collapse a vector to a single comma-separated string and wrap in parentheses
 }

@@ -24,6 +24,9 @@ sql_mirna(mirna)
 
 sql_target(.table, target)
 }
+\value{
+Components of a SQL query specific to each table type.
+}
 \description{
 The three types of tables are predicted, validated, and diseasedrug
 (disease/drug). Additionally, mirna and target portions of the SQL statements

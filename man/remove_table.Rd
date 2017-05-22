@@ -6,6 +6,15 @@
 \usage{
 remove_table(tables, x)
 }
+\arguments{
+\item{tables}{A character vector.}
+
+\item{x}{A second character vector to remove from the first (\code{tables}).}
+}
+\value{
+Character vector \code{tables} excluding the strings matching those
+in \code{x}.
+}
 \description{
 Typically used when a set of arguments don't apply to a table or would return
 an error/empty response

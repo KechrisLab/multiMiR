@@ -13,6 +13,9 @@ multimir.summary(result, pair.index = 2:6, order.by = "all.sum")
 
 \item{order.by}{PLACEHOLDER}
 }
+\value{
+Summary of objects queries from databse
+}
 \description{
 This is an internal multiMiR function that is not intended to be used
 directly.  Please use \code{get.multimir}.

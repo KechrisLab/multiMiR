@@ -31,9 +31,12 @@ create_cutoff_name(.table, org, predicted.site)
 
 cutoff_to_score(.table, cutoff_name, predicted.cutoff.type, predicted.cutoff)
 }
+\value{
+The \code{WHERE} portion of a SQL query
+}
 \description{
 Functions defining filtering by organism (org), disease/drug, conserved, and
-cutoff  Filtering by mirna and target are defined within their \code{sql_...}
+cutoff. Filtering by mirna and target are defined within their \code{sql_...}
 functions.
 }
 \keyword{disease}
