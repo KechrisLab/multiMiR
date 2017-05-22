@@ -7,6 +7,7 @@
 #' @param result     PLACEHOLDER
 #' @param pair.index PLACEHOLDER
 #' @param order.by   PLACEHOLDER
+#' @return Summary of objects queries from databse
 #' @keywords internal
 multimir.summary <- function(result, 
                              pair.index = 2:6, 

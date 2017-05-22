@@ -51,7 +51,8 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
     if (length(result) == 2) {
 		    stopifnot(names(result[[1]]) == names(result[[2]]))
 		    nm      <- names(result[[1]])
-        result  <- sort(union(toupper(result[[1]][, 1]), toupper(result[[2]][, 1])))
+        result  <- sort(union(toupper(result[[1]][, 1]), 
+                              toupper(result[[2]][, 1])))
         result  <- data.frame(result)
 		colnames(result) <- nm
     } else {

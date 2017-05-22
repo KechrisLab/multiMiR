@@ -6,10 +6,12 @@
 #' specified option. 
 #' 
 #' @keywords internal
-as_mmquery <- function(outlist, org, .args, summary = FALSE, use.tibble = FALSE) {
+#' @return An \code{mmquery} object.
+as_mmquery <- function(outlist, org, .args, summary = FALSE, 
+                       use.tibble = FALSE) {
 
-    # outlist structured by table (list containing data, query, table name, type)   
-    # restructure so organized by type (predicted/validated/diseasedrug)
+    # outlist structured by table (list containing data, query, table name,
+    # type) restructure so organized by type (predicted/validated/diseasedrug)
     outobj <- purrr::split_by(outlist, ~ .x$type) 
     outobj <- purrr::map(outobj, ~ purrr::transpose(.x)) 
     outobj <- list(data = purrr::map(outobj, ~ purrr::reduce(.x$data, rbind)),

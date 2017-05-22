@@ -6,6 +6,7 @@
 #' 
 #' @param cutoff.file Deprecated. Set path to cutoffs file with the global
 #' option \code{multimir.cutoffs}.
+#' @return Cutoff values object from remote database
 #' @keywords internal
 get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
     # To load pre-calculated score cutoffs
@@ -27,32 +28,14 @@ get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
 }
 
 
-#' Encode a URL Before Submitting It to the multiMiR Web Server
-#' 
-#' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
-#' 
-#' @param url A url character string to encode.
-#' @keywords internal
-myurlencode <- function(url) {
-    OK <- "[^-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_.+*(),:/?=]"
-    x  <- strsplit(url, "")[[1L]]
-    z  <- grep(OK, x)
-    if (length(z)) {
-        y <- sapply(x[z], function(x) { paste0("%", as.character(charToRaw(x)),
-                                               collapse = "") })
-        x[z] <- y
-    }
-    paste(x, collapse = "")
-}
-
-
 #' Internal function for sending deprecation messages
 #'
 #' @param name One of several predefined arguments that are being deprecated.
 #' All are URLs or URL paths now set by package/global options.
+#' @return NULL
 #' @keywords internal
-deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.file")) {
+deprecate_arg <- function(name = c("url", "schema.file", "db.tables",
+                                   "cutoff.file")) {
 
     name <- match.arg(name)
     ops  <- switch(name,
@@ -65,8 +48,8 @@ deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.fi
     # an accurate message
     if (name == "db.tables") name <- "url"
 
-    message("The ", name, " argument is deprecated. Please set using the package ",
-            "option ", ops, " via options()")
+    message("The ", name, " argument is deprecated. Please set using the ",
+            "package option ", ops, " via options()")
 
 }
 
@@ -74,6 +57,7 @@ deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.fi
 #' Internal function for adding single quotes around a string
 #'
 #' @param x a string to be wrapped in single quotes.
+#' @return The input wrapped in single quotes.
 #' @keywords internal
 quote_wrap <- function(x) paste0("'", x, "'")
 
@@ -81,6 +65,7 @@ quote_wrap <- function(x) paste0("'", x, "'")
 
 #' Prep certain names for use in SQL query by adding parens
 #'
+#' @return The input value wrapped in quotes and then parentheses.
 #' @keywords internal
 parens_quote <- function(x) {
     if (!is.null(x)) parens_wrap(quote_wrap(x))
@@ -88,6 +73,8 @@ parens_quote <- function(x) {
 
 #' Collapse a vector to a single comma-separated string and wrap in parentheses 
 #'
+#' @return The input vector converted to a comma-separated string wrapped in
+#' parentheses.
 #' @keywords internal
 parens_wrap <- function(x) {
     paste0("(", paste(x, collapse = ", "), ")")
@@ -95,6 +82,7 @@ parens_wrap <- function(x) {
 
 #' Pad single space on each side of an input 
 #'
+#' @return Input value wrapped in single spaces.
 #' @keywords internal
 pad <- function(x) paste0(" ", x, " ") 
 

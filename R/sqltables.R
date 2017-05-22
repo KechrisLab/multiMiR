@@ -8,13 +8,16 @@
 #' @aliases sql_validated sql_predicted sql_diseasedrug sql_mirna
 #' sql_target
 #' @keywords tables types predicted validated diseasedrug disease drug
+#' @return Components of a SQL query specific to each table type.
 #' 
 #' @keywords internal
 sql_validated <- function(.table) {
 
     this_type <- .table %in% validated_tables()
-    as_mmsql_components(.select = if (!this_type) NULL else c("i.experiment, i.support_type, i.pubmed_id"),
-                        .from   = if (!this_type) NULL else sprintf("%s AS i", .table))
+    this_select <- if (!this_type) NULL else c("i.experiment, i.support_type, i.pubmed_id")
+    this_from   <- if (!this_type) NULL else sprintf("%s AS i", .table)
+    as_mmsql_components(.select = this_select,
+                        .from   = this_from)
 
 }
 

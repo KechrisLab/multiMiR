@@ -1,6 +1,7 @@
 #' Constructors for parts of SQL queries
 #' Expand_query converts a \code{mmyquery} object to a SQL query string
 #' 
+#' @return A complete SQL statement and related information.
 #' @keywords internal
 build_mmsql <- function(.table, org, 
                         mirna                 = NULL,
@@ -67,7 +68,8 @@ expand_on <- function(x) {
 #' @rdname build_mmsql
 #' @keywords internal
 expand_where_list <- function(x) {
-    paste("WHERE", paste(unlist(purrr::map(purrr::flatten(x), expand_where)), collapse = " AND "))
+    paste("WHERE", paste(unlist(purrr::map(purrr::flatten(x), expand_where)),
+                         collapse = " AND "))
 
 }
 

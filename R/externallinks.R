@@ -6,6 +6,9 @@
 #' 
 #' @param x table/dataset returned by multimir db
 #' @param org Organism (see \code{get.multimir})
+#' @return The input data frame \code{x} with a column added for the external
+#' database links.
+#' @keywords internal
 add.multimir.links <- function(x, org) {
     # To add external database link for each of the multiMiR result entry
     if (nrow(x) == 0) return(x)
