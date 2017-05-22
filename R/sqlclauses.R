@@ -108,12 +108,12 @@ cutoff_to_score <- function(.table, cutoff_name, predicted.cutoff.type,
     on.exit(options(scipen = scipen.orig))
     cutoffs   <- get.multimir.cutoffs()[[cutoff_name]]
 
-	# get dataset-specific score cutoff
-	if (predicted.cutoff.type == "p") {
+    # get dataset-specific score cutoff
+    if (predicted.cutoff.type == "p") {
 
         score_cutoff <- cutoffs[[paste0(predicted.cutoff, "%")]]
 
-	} else if (predicted.cutoff.type == "n") {
+    } else if (predicted.cutoff.type == "n") {
 
         tbl_count <- cutoffs[["count"]]
 

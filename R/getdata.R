@@ -196,16 +196,16 @@ get.multimir <- function(url = NULL,
 #' @keywords internal
 parse_orgs <- function(org) {
 
-	# only allows single string (TODO: same as old version?).
+    # only allows single string (TODO: same as old version?).
     if (!is.null(org)) {
         org <- gsub("hsa|human|homo sapiens", "hsa", org, ignore.case = TRUE)
         org <- gsub("mmu|mouse|mus musculus", "mmu", org, ignore.case = TRUE)
         org <- gsub("rno|rat|rattus norvegicus", "rno", org, ignore.case = TRUE)
 
-		if (!(org %in% c("hsa", "mmu", "rno"))) {
-			stop("Organism ", org,  " is not in multiMiR. Current options ",
-				 "are 'hsa' (human), 'mmu' (mouse) and 'rno' (rat).\n")
-        } 	
+        if (!(org %in% c("hsa", "mmu", "rno"))) {
+            stop("Organism ", org,  " is not in multiMiR. Current options ",
+                 "are 'hsa' (human), 'mmu' (mouse) and 'rno' (rat).\n")
+        }     
     } 
 
     return(org)
@@ -222,13 +222,13 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
         predicted.cutoff <- switch(predicted.cutoff.type, 
                                    p = 20, 
                                    n = 300000)
-	}
+    }
 
-	if (predicted.cutoff.type == "p" & 
+    if (predicted.cutoff.type == "p" & 
         (predicted.cutoff < 1 | predicted.cutoff > 100)) {
         stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
                    "between 1 and 100.\n"))
-	}
+    }
 
     return(predicted.cutoff)
 
