@@ -11,6 +11,13 @@
 #' miRNA-target interactions).  \code{reverse_table_lookup()} does the opposite;
 #' it returns the category a given \code{.table} belongs to.
 #'
+#' @examples
+#' all_tables()
+#' validated_tables()
+#' predicted_tables()
+#' diseasedrug_tables()
+#' predicted_tables() %in% all_tables() # TRUE
+#'
 #' @aliases all_tables, validated_tables, predicted_tables, diseasedrug_tables,
 #' tables_wo_target, reverse_table_lookup
 #' @keywords tables
