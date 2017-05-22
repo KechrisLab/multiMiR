@@ -22,7 +22,9 @@
 #' tables_wo_target, reverse_table_lookup
 #' @keywords tables
 #' @export
-all_tables <- function() c(validated_tables(), predicted_tables(), diseasedrug_tables())
+all_tables <- function() {
+    c(validated_tables(), predicted_tables(), diseasedrug_tables())
+}
 
 #' @rdname all_tables
 #' @export

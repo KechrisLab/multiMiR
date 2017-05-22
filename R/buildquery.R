@@ -68,7 +68,8 @@ expand_on <- function(x) {
 #' @rdname build_mmsql
 #' @keywords internal
 expand_where_list <- function(x) {
-    paste("WHERE", paste(unlist(purrr::map(purrr::flatten(x), expand_where)), collapse = " AND "))
+    paste("WHERE", paste(unlist(purrr::map(purrr::flatten(x), expand_where)),
+                         collapse = " AND "))
 
 }
 

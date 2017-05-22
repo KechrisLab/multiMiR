@@ -69,8 +69,8 @@ submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 #' @keywords internal
 parse_response <- function(HTML.response) {
     # To parse the response from the multimir web server.  Two tables should
-    # return. The first table (response[[1]]) is the summary. And the second table
-    # (response[[2]]) has the response in details.
+    # return. The first table (response[[1]]) is the summary. And the second
+    # table (response[[2]]) has the response in details.
 
 	response <- NULL
 	l      <- length(HTML.response)

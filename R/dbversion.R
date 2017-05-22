@@ -16,9 +16,9 @@
 #' switching to previous version is desired.
 #' 
 #' @param url Deprecated. Use global option \code{multimir.url} instead. 
-#' @param db_version A character string containing the full version number for the
-#' database version to use for for all package functions. The default will be
-#' the most recent version.
+#' @param db_version A character string containing the full version number for
+#' the database version to use for for all package functions. The default will
+#' be the most recent version.
 #' @return
 #' 
 #' \code{multimir_dbInfoVersions}: a data frame with information about the
@@ -47,7 +47,8 @@ multimir_switchDBVersion <- function(db_version, url = NULL) {
                                   "submitting an issue on Github repository.")
 
     set_dbversion(dbversion_row = new_vers, overwrite = TRUE)
-    message(paste0("Now using database version: ", getOption("multimir.db.version")))
+    message(paste0("Now using database version: ",
+                   getOption("multimir.db.version")))
 
 }
 

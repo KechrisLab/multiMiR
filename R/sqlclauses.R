@@ -78,7 +78,8 @@ where_cutoff <- function(.table, score_var, score_cutoff) {
 
     # NOTE: Check what the .value should be here. wasn't gettting same value
     # from example3 in vignette
-    operator <- switch(.table, miranda = "<=", pita = "<=", targetscan = "<=", ">")
+    operator <- switch(.table, miranda = "<=", pita = "<=", targetscan = "<=",
+                       ">")
     as_where(.vars = score_var, .operator = operator, .value = score_cutoff)
 
 }
@@ -88,7 +89,8 @@ where_cutoff <- function(.table, score_var, score_cutoff) {
 #' @keywords internal
 create_cutoff_name <- function(.table, org, predicted.site) {
     if (.table %in% conserved_tables()) {
-        suffix <- switch(predicted.site, conserved = "c1", nonconserved = "c0", NULL)
+        suffix <- switch(predicted.site, conserved = "c1", nonconserved = "c0",
+                         NULL)
     } else {
         suffix <- NULL
     }
@@ -98,7 +100,8 @@ create_cutoff_name <- function(.table, org, predicted.site) {
 
 #' @rdname sql_org
 #' @keywords internal
-cutoff_to_score <- function(.table, cutoff_name, predicted.cutoff.type, predicted.cutoff) {
+cutoff_to_score <- function(.table, cutoff_name, predicted.cutoff.type,
+                            predicted.cutoff) {
 
     scipen.orig <- getOption("scipen")
     options(scipen = 99)
@@ -120,13 +123,14 @@ cutoff_to_score <- function(.table, cutoff_name, predicted.cutoff.type, predicte
                            "10000 will be used instead.\n")
         too_large <- paste0("Number predicted cutoff (predicted.cutoff) ",
                             predicted.cutoff, " is larger than the total ",
-                            "number of records in table ", .table, ". All records ",
-                            "will be queried.\n")
+                            "number of records in table ", .table, 
+                            ". All records will be queried.\n")
         if (predicted.cutoff < count_min) message(too_small)
         if (predicted.cutoff > tbl_count) message(too_large)
 
         adj_pred_cutoff <- max(min(tbl_count, predicted.cutoff), count_min)
-        adj_pred_cutoff <- as.integer(as.integer(adj_pred_cutoff / 10000) * 10000)
+        adj_pred_cutoff <- as.integer(as.integer(adj_pred_cutoff / 10000) *
+                                      10000)
         score_cutoff    <- cutoffs[[as.character(adj_pred_cutoff)]]
     }
 

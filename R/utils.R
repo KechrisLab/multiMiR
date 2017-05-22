@@ -34,7 +34,8 @@ get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
 #' All are URLs or URL paths now set by package/global options.
 #' @return NULL
 #' @keywords internal
-deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.file")) {
+deprecate_arg <- function(name = c("url", "schema.file", "db.tables",
+                                   "cutoff.file")) {
 
     name <- match.arg(name)
     ops  <- switch(name,
@@ -47,8 +48,8 @@ deprecate_arg <- function(name = c("url", "schema.file", "db.tables", "cutoff.fi
     # an accurate message
     if (name == "db.tables") name <- "url"
 
-    message("The ", name, " argument is deprecated. Please set using the package ",
-            "option ", ops, " via options()")
+    message("The ", name, " argument is deprecated. Please set using the ",
+            "package option ", ops, " via options()")
 
 }
 

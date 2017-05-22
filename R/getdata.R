@@ -120,12 +120,13 @@ get.multimir <- function(url = NULL,
     if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
 
     # Argument checking
-    if (!table %in% c(all_tables(), "predicted", "validated", "disease.drug", "all")) {
+    if (!table %in% c(all_tables(), "predicted", "validated", "disease.drug",
+                      "all")) {
         stop("Invalid table value. See help for options.")
     }
     if (is.null(mirna) & is.null(target) & table == "all") {
-        message("Predicted and validated tables require either mirna or target ",
-                "arguments. Only disease/drug tables will be returned.")
+        message("Predicted and validated tables require either mirna or ", 
+                "target arguments. Only disease/drug tables will be returned.")
         table <- "disease.drug" 
     }
 
@@ -176,10 +177,10 @@ get.multimir <- function(url = NULL,
                             use.tibble = use.tibble, .args = sqlargs)
 
     if (add.link) {
-        message(paste("Some of the links to external databases may be broken due",
-                      "to outdated identifiers in these databases. Please refer",
-                      "to Supplementary Table 2 in the multiMiR paper for details",
-                      "of the issue.\n"))
+        message(paste("Some of the links to external databases may be broken",
+                      "due to outdated identifiers in these databases. Please",
+                      "refer to Supplementary Table 2 in the multiMiR paper",
+                      "for details of the issue.\n"))
     }
 
     return(rtnobject)
@@ -223,9 +224,10 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
                                    n = 300000)
 	}
 
-	if (predicted.cutoff.type == "p" & (predicted.cutoff < 1 | predicted.cutoff > 100)) {
-		stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
-				   "between 1 and 100.\n"))
+	if (predicted.cutoff.type == "p" & 
+        (predicted.cutoff < 1 | predicted.cutoff > 100)) {
+        stop(paste("Percent predicted cutoff (predicted.cutoff) should be",
+                   "between 1 and 100.\n"))
 	}
 
     return(predicted.cutoff)
