@@ -6,7 +6,6 @@
 #' 
 #' @param x table/dataset returned by multimir db
 #' @param org Organism (see \code{get.multimir})
-#' @export add.multimir.links
 add.multimir.links <- function(x, org) {
     # To add external database link for each of the multiMiR result entry
     if (nrow(x) == 0) return(x)
