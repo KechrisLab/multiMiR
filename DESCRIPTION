@@ -2,7 +2,7 @@ Package: multiMiR
 Title: 
     Integration of multiple microRNA-target databases with their disease and
     drug associations
-Version: 0.98.0.3
+Version: 0.99.0
 Authors@R: 
     c(person("Yuanbin", "Ru", email = "ruyuanbin@gmail.com", role = c("aut")),
       person("Matt", "Mulvahill", email = "matthew.mulvahill@ucdenver.edu", role = c("aut", "cre")),
@@ -17,7 +17,7 @@ Description:
 URL: https://github.com/KechrisLab/multiMiR
 BugReports: https://github.com/KechrisLab/multiMiR/issues
 Depends: 
-    R (>= 3.3)
+    R (>= 3.4)
 Imports: 
     XML, 
     RCurl, 
