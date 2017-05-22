@@ -10,7 +10,11 @@
 #' of each sql table (\code{sql_} prefix).
 #' 
 #' @aliases as_mmsql_components, as_where_list, as_where, as_orderby, is_where_list
-#' 
+#' @return 
+#' \code{as_mmsql_components}: A collection of components that make up a
+#' SQL query. 
+#' \code{as_where_list}, \code{as_where}, \code{as_orderby}: Individual
+#' components of a SQL query. 
 #' @keywords internal
 as_mmsql_components <- function(.select = NULL, .from = NULL, .on = NULL, 
                                 .where_list = NULL, .orderby = NULL,

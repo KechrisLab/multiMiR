@@ -191,6 +191,7 @@ get.multimir <- function(url = NULL,
 #' Each org can be specified in one of 3 ways -- this standardizes the argument
 #' into the 3 char abbreviation.
 #'
+#' @return A standardized, abbreviated form of the input org.
 #' @keywords internal
 parse_orgs <- function(org) {
 
@@ -212,6 +213,7 @@ parse_orgs <- function(org) {
 
 #' If null, set default predicted.cutoff 
 #'
+#' @return The default cutoff value. 
 #' @keywords internal
 default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 
@@ -234,6 +236,7 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 #' Wrapper for search.multimir for adding feature (printing notification to
 #' console)
 #' 
+#' @return The queried multimir data with the addition of a requested feature.
 #' @keywords internal
 query_multimir <- function(x, org, add.link, use.tibble) {
 
@@ -261,6 +264,10 @@ query_multimir <- function(x, org, add.link, use.tibble) {
 #' Typically used when a set of arguments don't apply to a table or would return
 #' an error/empty response
 #'
+#' @param tables A character vector.
+#' @param x A second character vector to remove from the first (\code{tables}).
+#' @return Character vector \code{tables} excluding the strings matching those
+#' in \code{x}.
 #' @keywords internal
 remove_table <- function(tables, x) tables[!tables %in% x]
 
@@ -274,6 +281,8 @@ remove_table <- function(tables, x) tables[!tables %in% x]
 #' one of these columns will be incorrectly returned.  -- thus purge empty
 #' strings first.
 #'
+#' @param x A character vector
+#' @return A character vector with empty strings removed
 #' @keywords internal
 remove_empty_strings <- function(x) x[x != ""]
 

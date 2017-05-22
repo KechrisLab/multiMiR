@@ -1,6 +1,7 @@
 #' Constructors for parts of SQL queries
 #' Expand_query converts a \code{mmyquery} object to a SQL query string
 #' 
+#' @return A complete SQL statement and related information.
 #' @keywords internal
 build_mmsql <- function(.table, org, 
                         mirna                 = NULL,

@@ -1,11 +1,12 @@
 #' Functions defining the WHERE clauses.
 #'
 #' Functions defining filtering by organism (org), disease/drug, conserved, and
-#' cutoff  Filtering by mirna and target are defined within their \code{sql_...}
+#' cutoff. Filtering by mirna and target are defined within their \code{sql_...}
 #' functions.
 #' 
 #' @aliases sql_org, where_org, where_diseasedrug, where_conserved,
 #' where_cutoff create_cutoff_name cutoff_to_score
+#' @return The \code{WHERE} portion of a SQL query
 #' @keywords tables types predicted validated diseasedrug disease drug
 #' 
 #' @keywords internal

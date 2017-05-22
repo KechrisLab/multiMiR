@@ -6,6 +6,7 @@
 #' specified option. 
 #' 
 #' @keywords internal
+#' @return An \code{mmquery} object.
 as_mmquery <- function(outlist, org, .args, summary = FALSE, use.tibble = FALSE) {
 
     # outlist structured by table (list containing data, query, table name, type)   

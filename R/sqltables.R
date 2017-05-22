@@ -8,6 +8,7 @@
 #' @aliases sql_validated sql_predicted sql_diseasedrug sql_mirna
 #' sql_target
 #' @keywords tables types predicted validated diseasedrug disease drug
+#' @return Components of a SQL query specific to each table type.
 #' 
 #' @keywords internal
 sql_validated <- function(.table) {
