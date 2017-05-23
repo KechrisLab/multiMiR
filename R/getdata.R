@@ -73,9 +73,9 @@
 #' @param add.link logical. Whether to add link to external database for each
 #' result entry.
 #' @param use.tibble logical. Whether to use the data_frame class from the
-#' tibble package for returned dataframes.  The key benefit for large datasets is
-#' more restrictive printing to the console (first 10 rows and only the number
-#' of columns that will fit \code{getOption('width')}). See
+#' tibble package for returned dataframes.  The key benefit for large datasets
+#' is more restrictive printing to the console (first 10 rows and only the
+#' number of columns that will fit \code{getOption('width')}). See
 #' \code{?tible::data_frame} for more information. 
 #' @param limit a positive integer. Limits the number of records returned from
 #' each table.  Useful in testing potentially large queries.

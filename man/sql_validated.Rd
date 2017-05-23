@@ -10,8 +10,8 @@
 \alias{sql_diseasedrug}
 \alias{sql_mirna}
 \alias{sql_target}
-\title{Generate mmsql_components objects for each of the three types of tables, as well as the
-mirna and target tables.}
+\title{Generate mmsql_components objects for each of the three types of tables, as
+well as the mirna and target tables.}
 \usage{
 sql_validated(.table)
 

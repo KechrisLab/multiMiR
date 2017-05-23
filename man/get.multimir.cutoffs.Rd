@@ -11,7 +11,7 @@ get.multimir.cutoffs(name = NULL, cutoff.file = NULL)
 option \code{multimir.cutoffs}.}
 }
 \value{
-Cutoff values object from remote database
+Cutoff values object from remote database.
 }
 \description{
 This is an internal multiMiR function that is not intended to be used

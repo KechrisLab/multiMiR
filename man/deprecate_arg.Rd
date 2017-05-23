@@ -9,6 +9,8 @@ deprecate_arg(name = c("url", "schema.file", "db.tables", "cutoff.file"))
 \arguments{
 \item{name}{One of several predefined arguments that are being deprecated.
 All are URLs or URL paths now set by package/global options.}
+
+\item{name}{Name of a deprecated function argument.}
 }
 \description{
 Internal function for sending deprecation messages

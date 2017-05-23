@@ -53,7 +53,8 @@ where_conserved <- function(.table, org, predicted.site) {
     targetscan_cut <- if (predicted.site == "conserved") "'Y'" else "'N'"
     pita_cut       <- 0.9
 
-    vars      <- switch(.table, targetscan = "i.conserved_site", "i.conservation")
+    vars      <- switch(.table, targetscan = "i.conserved_site",
+                        "i.conservation")
     operator  <- switch(predicted.site, conserved = ">=", "<")
     operator  <- switch(.table, targetscan = "=", operator)
     cut_value <- switch(.table, 

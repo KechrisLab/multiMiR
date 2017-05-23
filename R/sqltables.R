@@ -1,5 +1,5 @@
-#' Generate mmsql_components objects for each of the three types of tables, as well as the
-#' mirna and target tables.
+#' Generate mmsql_components objects for each of the three types of tables, as
+#' well as the mirna and target tables.
 #'
 #' The three types of tables are predicted, validated, and diseasedrug
 #' (disease/drug). Additionally, mirna and target portions of the SQL statements
@@ -13,11 +13,16 @@
 #' @keywords internal
 sql_validated <- function(.table) {
 
-    this_type <- .table %in% validated_tables()
-    this_select <- if (!this_type) NULL else c("i.experiment, i.support_type, i.pubmed_id")
-    this_from   <- if (!this_type) NULL else sprintf("%s AS i", .table)
-    as_mmsql_components(.select = this_select,
-                        .from   = this_from)
+
+    if (.table %in% validated_tables()) {
+        .select <- c("i.experiment, i.support_type, i.pubmed_id") 
+        .from   <- sprintf("%s AS i", .table)
+    } else {
+        .select <- NULL
+        .from   <- NULL
+    }
+
+    as_mmsql_components(.select = .select, .from = .from)
 
 }
 
@@ -29,8 +34,10 @@ sql_predicted <- function(.table, org, predicted.site, predicted.cutoff.type,
     this_type <- .table %in% predicted_tables()
 
     if (!this_type) {
-        .where_list <- NULL 
-        .orderby <- NULL 
+        .where_list <- NULL
+        .orderby    <- NULL
+        .select     <- NULL
+        .from       <- NULL
     } else {
         score_var    <- get_score_var(.table)
         cutoff_name  <- create_cutoff_name(.table, org, predicted.site)
@@ -41,11 +48,13 @@ sql_predicted <- function(.table, org, predicted.site, predicted.cutoff.type,
         .orderby     <- as_orderby(.vars = score_var, .order = "DESC")
         .where_list  <- as_where_list(conserved = conserved,
                                       cutoff    = cutoff)
+        .select      <- sprintf("%s AS score", score_var)
+        .from        <- sprintf("%s AS i", .table)
     }
-    as_mmsql_components(.select = if (!this_type) NULL else sprintf("%s AS score", score_var),
-                        .from   = if (!this_type) NULL else sprintf("%s AS i", .table),
-                        .where_list  = .where_list,
-                        .orderby     = .orderby)
+    as_mmsql_components(.select     = .select,
+                        .from       = .from,
+                        .where_list = .where_list,
+                        .orderby    = .orderby)
 
 }
 
