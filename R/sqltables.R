@@ -31,22 +31,26 @@ sql_validated <- function(.table) {
 sql_predicted <- function(.table, org, predicted.site, predicted.cutoff.type,
                           predicted.cutoff) {
 
-    if (.table %in% predicted_tables()) {
+    this_type <- .table %in% predicted_tables()
+
+    if (!this_type) {
+        .where_list <- NULL
+        .orderby    <- NULL
+        .select     <- NULL
+        .from       <- NULL
+    } else {
         score_var    <- get_score_var(.table)
         cutoff_name  <- create_cutoff_name(.table, org, predicted.site)
-        score_cutoff <- cutoff_to_score(.table, cutoff_name,
-                                        predicted.cutoff.type, predicted.cutoff)
+        score_cutoff <- cutoff_to_score(.table, cutoff_name, predicted.cutoff.type,
+                                        predicted.cutoff)
         conserved    <- where_conserved(.table, org, predicted.site)
         cutoff       <- where_cutoff(.table, score_var, score_cutoff)
-
         .orderby     <- as_orderby(.vars = score_var, .order = "DESC")
-        .where_list  <- as_where_list(conserved = conserved, cutoff = cutoff)
+        .where_list  <- as_where_list(conserved = conserved,
+                                      cutoff    = cutoff)
         .select      <- sprintf("%s AS score", score_var)
         .from        <- sprintf("%s AS i", .table)
-    } else {
-        .where_list <- .orderby <- .select <- .from <- NULL
     }
-
     as_mmsql_components(.select     = .select,
                         .from       = .from,
                         .where_list = .where_list,
@@ -58,20 +62,19 @@ sql_predicted <- function(.table, org, predicted.site, predicted.cutoff.type,
 #' @keywords internal
 sql_diseasedrug <- function(.table, disease.drug) {
     
-    if (.table %in% diseasedrug_tables()) {
-        assoc   <- switch(.table, pharmaco_mir = "i.drug", "i.disease")
-        pubmed  <- switch(.table,
-                          mir2disease = "CONCAT_WS('. ', i.year, i.title)",
-                          "i.pubmed_id")
-        .select <- sprintf("%s AS disease_drug, %s AS paper_pubmedID", 
-                           assoc, pubmed)
-        .where_list <- as_where_list(where_diseasedrug(.table, disease.drug))
-        .from       <- sprintf("%s AS i", .table),
-    } else {
-        .select <- .from <- .where_list <- NULL
-    }
+    this_type <- .table %in% diseasedrug_tables()
 
-    as_mmsql_components(.select = .select, .from = .table, .where_list = .where)
+    # Build select list
+    assoc   <- switch(.table, pharmaco_mir = "i.drug", "i.disease")
+    pubmed  <- switch(.table,
+                      mir2disease = "CONCAT_WS('. ', i.year, i.title)",
+                      "i.pubmed_id")
+    .select <- sprintf("%s AS disease_drug, %s AS paper_pubmedID", assoc, pubmed)
+    .where  <- where_diseasedrug(.table, disease.drug)
+
+    as_mmsql_components(.select     = if (!this_type) NULL else .select,
+                        .from       = if (!this_type) NULL else sprintf("%s AS i", .table),
+                        .where_list = if (!this_type) NULL else as_where_list(.where))
 
 }
 
@@ -89,7 +92,6 @@ sql_mirna <- function(mirna) {
                            .value    = mirna)
         .where_list <- as_where_list(.where)
     }
-
     as_mmsql_components(.select     = c("m.mature_mirna_acc",
                                         "m.mature_mirna_id"),
                         .from       = "mirna AS m",
