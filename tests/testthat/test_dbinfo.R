@@ -38,3 +38,14 @@ test_that("multimir_dbSchema prints sql code defining mm database to console.", 
 })
 
 
+context("sqltables")
+
+test_that("sql_predicted returns sql_components class object with expected
+          pieces", {
+
+    rtn <- sql_predicted(.table = "elmmo", org = "hsa")
+    expect_output()
+
+
+
+})
