@@ -17,7 +17,7 @@ Description:
 URL: https://github.com/KechrisLab/multiMiR
 BugReports: https://github.com/KechrisLab/multiMiR/issues
 Depends: 
-    R (>= 3.4)
+    R (>= 3.0)
 Imports: 
     XML, 
     RCurl, 
