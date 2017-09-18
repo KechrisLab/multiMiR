@@ -235,7 +235,7 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 }
 
 
-#' Wrapper for search.multimir for adding feature (printing notification to
+#' Wrapper for search_multimir for adding feature (printing notification to
 #' console)
 #' 
 #' @return The queried multimir data with the addition of a requested feature.
@@ -243,7 +243,7 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 query_multimir <- function(x, org, add.link, use.tibble) {
 
     cat("Searching", x$table, "...\n")
-    x$data <- search.multimir(x$query)
+    x$data <- search_multimir(x$query)
 
     if (!is.null(x$data)) {
         x$data <- cbind('database' = x$table, x$data)

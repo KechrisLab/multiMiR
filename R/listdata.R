@@ -43,7 +43,7 @@ list_multimir <- function(x     = c("mirna", "gene", "drug", "disease"),
                   disease = list("SELECT DISTINCT(disease) FROM mir2disease",
                                  "SELECT DISTINCT(disease) FROM phenomir"))
     if (!is.null(limit)) qry <- purrr::map(qry, ~ paste(.x, "LIMIT", limit))
-    result <- lapply(qry, search.multimir)
+    result <- lapply(qry, search_multimir)
 
     stopifnot(length(result) %in% 1:2)
 
