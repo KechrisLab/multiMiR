@@ -72,23 +72,23 @@ parse_response <- function(HTML.response) {
     # return. The first table (response[[1]]) is the summary. And the second
     # table (response[[2]]) has the response in details.
 
-	response <- NULL
-	l      <- length(HTML.response)
-	if (l == 2) {
-		response <- HTML.response[[2]]
-	} else if (l > 2) {
-		# This should never happen, but just in case...
-		stop(paste("Unexpected response from multiMiR web server.",
-				   "Problem originates with web server - Please submit issue",
-				   "on Github repo"))
-	} else if (l == 0) {
-		stop("Request to multiMiR web server failed. There could be ",
-			 "incorrect syntax in your query, or you are not connected to ",
-			 "the internet.  Alternatively the multiMiR web server at ", 
-			 "http://multimir.ucdenver.edu is temporarily down. \n")
-	}  # else if l ==1, just return NULL
+    response <- NULL
+    l      <- length(HTML.response)
+    if (l == 2) {
+        response <- HTML.response[[2]]
+    } else if (l > 2) {
+        # This should never happen, but just in case...
+        stop(paste("Unexpected response from multiMiR web server.",
+                   "Problem originates with web server - Please submit issue",
+                   "on Github repo"))
+    } else if (l == 0) {
+        stop("Request to multiMiR web server failed. There could be ",
+             "incorrect syntax in your query, or you are not connected to ",
+             "the internet.  Alternatively the multiMiR web server at ", 
+             "http://multimir.ucdenver.edu is temporarily down. \n")
+    }  # else if l ==1, just return NULL
 
-	return(response)
+    return(response)
 
 }
 

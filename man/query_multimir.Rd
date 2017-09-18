@@ -7,6 +7,9 @@ console)}
 \usage{
 query_multimir(x, org, add.link, use.tibble)
 }
+\value{
+The queried multimir data with the addition of a requested feature.
+}
 \description{
 Wrapper for search.multimir for adding feature (printing notification to
 console)

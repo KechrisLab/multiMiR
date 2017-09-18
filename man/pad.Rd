@@ -6,6 +6,9 @@
 \usage{
 pad(x)
 }
+\value{
+Input value wrapped in single spaces.
+}
 \description{
 Pad single space on each side of an input
 }

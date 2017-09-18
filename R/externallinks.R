@@ -31,28 +31,29 @@ add.multimir.links <- function(x, org) {
             } else if (org == "rno") {
                 s <- "species=Rattus+norvegicus"
             }
-            links[m] <- paste("http://mirecords.biolead.org/interactions.php?",
-                              s, "&mirna_acc=", mir,
-                              "&targetgene_type=symbol&targetgene_info=", 
-                              symbol, "&v=yes&search_int=Search", sep = "")
+            links[m] <- paste0("http://mirecords.biolead.org/interactions.php?",
+                               s, "&mirna_acc=", mir,
+                               "&targetgene_type=symbol&targetgene_info=", 
+                               symbol, "&v=yes&search_int=Search")
         } else if (d == "mirtarbase") {
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://mirtarbase.mbc.nctu.edu.tw/php/search.php?org=",
-                      org, "&mirnas=", mir, "&targets=", symbol, "&opt=adv", 
-                      sep = "")
+                paste0("http://mirtarbase.mbc.nctu.edu.tw/php/search.php?org=",
+                       org, "&mirnas=", mir, "&targets=", symbol, "&opt=adv")
         } else if (d == "tarbase") {
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://diana.imis.athena-innovation.gr/DianaTools/index.php?r=tarbase/index&mirnas=",
-                      mir, "&genes=", symbol, sep = "")
+                paste0("http://diana.imis.athena-innovation.gr/DianaTools/",
+                       "index.php?r=tarbase/index&mirnas=",
+                       mir, "&genes=", symbol)
         } else if (d == "mir2disease") {
-            # NOTE: Can only search by miRNA, gene or disease alone - here use gene
+            # NOTE: Can only search by miRNA, gene or disease alone - here use
+            # gene
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://watson.compbio.iupui.edu:8080/miR2Disease/searchTarget.jsp?SearchUnit=target&SearchText=",
-                      symbol, "&checkbox2=Causal&checkbox2=Unspecified", 
-                      sep = "")
+                paste0("http://watson.compbio.iupui.edu:8080/miR2Disease/",
+                       "searchTarget.jsp?SearchUnit=target&SearchText=",
+                       symbol, "&checkbox2=Causal&checkbox2=Unspecified")
         } else if (d == "pharmaco_mir") {
             # NOTE: Links don't work
 
@@ -60,15 +61,15 @@ add.multimir.links <- function(x, org) {
             # NOTE: search by gene
             symbol   <- as.character(x$target_symbol[m])
             links[m] <- 
-                paste("http://mips.helmholtz-muenchen.de/phenomir/main/list/searchform2?query=",
-                      symbol, "&selectedview=mirs&searchtype=fuzzy", 
-                      sep = "")
+                paste0("http://mips.helmholtz-muenchen.de/phenomir/main/list/",
+                      "searchform2?query=", symbol,
+                      "&selectedview=mirs&searchtype=fuzzy")
         } else if (d == "diana_microt") {
             ensembl <- as.character(x$target_ensembl[m])
             links[m] <- 
-                paste("http://diana.imis.athena-innovation.gr/DianaTools/index.php?r=microT_CDS/results&genes=",
-                      ensembl, "&mirnas=", mir, "&threshold=0", 
-                      sep = "")
+                paste0("http://diana.imis.athena-innovation.gr/DianaTools/",
+                       "index.php?r=microT_CDS/results&genes=", ensembl,
+                       "&mirnas=", mir, "&threshold=0")
         } else if (d == "elmmo") {
             # NOTE: Need RefSeq accession for the gene - use miRNA only
             mir <- sub("-5p", "", mir)
@@ -80,10 +81,9 @@ add.multimir.links <- function(x, org) {
             } else if (org == "rno") {
                 s <- "organism=rn"
             }
-            links[m] <- paste("http://www.mirz.unibas.ch/ElMMo3/?", s,
-                              "&cellType=all&miRNAs[]=", mir,
-                              "&predict=Predict+miRNAs+targets+!", 
-                              sep = "")
+            links[m] <- paste0("http://www.mirz.unibas.ch/ElMMo3/?", s,
+                               "&cellType=all&miRNAs[]=", mir,
+                               "&predict=Predict+miRNAs+targets+!")
         } else if (d == "microcosm") {
             mir <- sub("-5p", "", mir)
             mir <- sub("-3p", "", mir)
@@ -96,9 +96,9 @@ add.multimir.links <- function(x, org) {
             }
             symbol   <- as.character(x$target_symbol[m])
             links[m] <-
-                paste("http://www.ebi.ac.uk/enright-srv/microcosm/cgi-bin/targets/v5/hit_list.pl?",
-                      s, "&mirna_id=", mir, "&external_name=", symbol, 
-                      sep = "")
+                paste0("http://www.ebi.ac.uk/enright-srv/microcosm/cgi-bin/",
+                       "targets/v5/hit_list.pl?",
+                       s, "&mirna_id=", mir, "&external_name=", symbol)
         } else if (d == "miranda") {
             # NOTE: Could only search by gene or miRNA - use gene here
             if (org == "hsa") {
@@ -110,8 +110,8 @@ add.multimir.links <- function(x, org) {
             }
             symbol   <- as.character(x$target_symbol[m])
             links[m] <-
-                paste("http://www.microrna.org/microrna/searchGenes.do?gene=",
-                      symbol, "&", s, sep = "")
+                paste0("http://www.microrna.org/microrna/searchGenes.do?gene=",
+                       symbol, "&", s)
         } else if (d == "mirdb") {
             # NOTE: Could only search by gene or miRNA - use gene here
             if (org == "hsa") {
@@ -122,9 +122,9 @@ add.multimir.links <- function(x, org) {
                 s <- "species=Rat"
             }
             symbol <- as.character(x$target_symbol[m])
-            links[m] <- paste("http://mirdb.org/cgi-bin/search.cgi?", s,
-                              "&searchType=gene&geneChoice=symbol&searchBox=", 
-                              symbol, sep = "")
+            links[m] <- paste0("http://mirdb.org/cgi-bin/search.cgi?", s,
+                               "&searchType=gene&geneChoice=symbol&searchBox=",
+                               symbol)
         } else if (d == "pictar") {
             # NOTE: Links don't work
 
@@ -138,22 +138,25 @@ add.multimir.links <- function(x, org) {
             }
             symbol <- as.character(x$target_symbol[m])
             links[m] <-
-                paste("http://genie.weizmann.ac.il/cgi-bin/search_mir07_prediction.pl?",
-                      s, "&microRNAs=", mir, "&Genes=", symbol,
-                      "&MinimumSeed=7&AllowSingleGU=1&AllowSingleMismatch=1&MinConservation=0&FlankOption=0_0",
-                      sep = "")
+                paste0("http://genie.weizmann.ac.il/cgi-bin/",
+                       "search_mir07_prediction.pl?", s, "&microRNAs=", mir,
+                       "&Genes=", symbol,
+                       "&MinimumSeed=7&AllowSingleGU=1&AllowSingleMismatch=1",
+                       "&MinConservation=0&FlankOption=0_0")
         } else if (d == "targetscan") {
             mir <- sub("-5p", "", mir)
             mir <- sub("-3p", "", mir)
             symbol <- as.character(x$target_symbol[m])
             if (org == "hsa") {
                 links[m] <-
-                    paste("http://www.targetscan.org/cgi-bin/targetscan/vert_61/targetscan.cgi?species=Human&gid=",
-                          symbol, "&mirg=", mir, sep = "")
+                    paste0("http://www.targetscan.org/cgi-bin/targetscan/",
+                           "vert_61/targetscan.cgi?species=Human&gid=", symbol,
+                           "&mirg=", mir)
             } else if (org == "mmu") {
                 links[m] <-
-                    paste("http://www.targetscan.org/cgi-bin/targetscan/mmu_61/targetscan.cgi?species=Mouse&gid=",
-                          symbol, "&mirg=", mir, sep = "")
+                    paste0("http://www.targetscan.org/cgi-bin/targetscan/",
+                           "mmu_61/targetscan.cgi?species=Mouse&gid=", symbol,
+                           "&mirg=", mir)
             }
         }
     }

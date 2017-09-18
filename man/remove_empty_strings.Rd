@@ -6,6 +6,12 @@
 \usage{
 remove_empty_strings(x)
 }
+\arguments{
+\item{x}{A character vector}
+}
+\value{
+A character vector with empty strings removed
+}
 \description{
 The WHERE clauses for target and mirna use allow for multiple arguments
 always separated by 'OR' and several columns are checked for each value 

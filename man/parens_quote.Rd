@@ -6,6 +6,9 @@
 \usage{
 parens_quote(x)
 }
+\value{
+The input value wrapped in quotes and then parentheses.
+}
 \description{
 Prep certain names for use in SQL query by adding parens
 }

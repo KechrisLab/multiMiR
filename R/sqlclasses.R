@@ -9,7 +9,8 @@
 #' resolved as strings (or character vectors) in the functions defining handling
 #' of each sql table (\code{sql_} prefix).
 #' 
-#' @aliases as_mmsql_components, as_where_list, as_where, as_orderby, is_where_list
+#' @aliases as_mmsql_components, as_where_list, as_where, as_orderby,
+#' is_where_list
 #' @return 
 #' \code{as_mmsql_components}: A collection of components that make up a
 #' SQL query. 

@@ -7,6 +7,9 @@ into the 3 char abbreviation.}
 \usage{
 parse_orgs(org)
 }
+\value{
+A standardized, abbreviated form of the input org.
+}
 \description{
 Each org can be specified in one of 3 ways -- this standardizes the argument
 into the 3 char abbreviation.

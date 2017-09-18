@@ -6,6 +6,9 @@
 \usage{
 default_cutoff(predicted.cutoff.type, predicted.cutoff)
 }
+\value{
+The default cutoff value.
+}
 \description{
 If null, set default predicted.cutoff
 }

@@ -26,11 +26,12 @@ install.packages("devtools")
 library(devtools)
 
 # Now install the development version of the multiMiR package
-devtools::install_github("kechrislab/multimir", build_vignettes = TRUE)
+#devtools::install_github("kechrislab/multimir", build_vignettes = TRUE)
 
 # To install a public release, use the `ref=` option to select the tag of the
 # release version 
-#devtools::install_github("kechrislab/multimir", ref = "v2.0")
+# The current public release is v0.99.5
+devtools::install_github("kechrislab/multimir", ref = "v0.99.5")
 ```
 
 Terminology used in package:

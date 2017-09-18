@@ -6,7 +6,7 @@
 #' 
 #' @param cutoff.file Deprecated. Set path to cutoffs file with the global
 #' option \code{multimir.cutoffs}.
-#' @return Cutoff values object from remote database
+#' @return Cutoff values object from remote database.
 #' @keywords internal
 get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
     # To load pre-calculated score cutoffs
@@ -32,6 +32,7 @@ get.multimir.cutoffs <- function(name = NULL, cutoff.file = NULL) {
 #'
 #' @param name One of several predefined arguments that are being deprecated.
 #' All are URLs or URL paths now set by package/global options.
+#' @param name Name of a deprecated function argument.
 #' @return NULL
 #' @keywords internal
 deprecate_arg <- function(name = c("url", "schema.file", "db.tables",
@@ -87,4 +88,16 @@ parens_wrap <- function(x) {
 pad <- function(x) paste0(" ", x, " ") 
 
 
+#' Split, order and sort lists by their components.
+#'
+#' Copied from purrr:v0.2.2
+#'
+#' @param .x A list or atomic vector.
+#' @param .f A function, formula, or atomic vector.
+#' @param ... Additional arguments passed on to \code{.f}.
+#' @keywords internal
+split_by <- function(.x, .f, ...) {
+    vals <- purrr::map(.x, .f, ...)
+    split(.x, purrr::simplify_all(purrr::transpose(vals)))
+}
 
