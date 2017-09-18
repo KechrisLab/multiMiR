@@ -1,19 +1,19 @@
 
 #' List microRNAs, Genes, Drugs Or Diseases in the multiMiR Package
-#' 
-#' \code{list.multimir} lists all the unique microRNAs, target genes, drugs, or
+#'
+#' \code{list_multimir} lists all the unique microRNAs, target genes, drugs, or
 #' diseases in the web server of the multiMiR package.
-#' 
-#' \code{list.multimir} returns all the unique microRNAs, target genes, drugs,
+#'
+#' \code{list_multimir} returns all the unique microRNAs, target genes, drugs,
 #' or diseases in the web server of the multiMiR package.
-#' 
+#'
 #' @param x a character string indicating what to list. This must be one of the
 #' strings \code{"mirna"} (default), \code{"gene"}, \code{"drug"}, or
 #' \code{"disease"}. This can be abbreviated and is case insensitive.
 #' @param limit a positive integer. Limits the number of records returned from
 #' each table.  Useful in testing potentially large queries.
-#' @param url Deprecated. Use global option \code{multimir.url} instead. 
-#' @return \code{list.multimir} returns a data frame with information of
+#' @param url Deprecated. Use global option \code{multimir.url} instead.
+#' @return \code{list_multimir} returns a data frame with information of
 #' microRNAs (microRNA unique ID, organism, mature microRNA accession number,
 #' and mature microRNA ID), target genes (gene unique ID, organism, gene
 #' symbol, Entrez gene ID, and Ensembl gene ID), drugs (drug names), and
@@ -21,16 +21,16 @@
 #' @author Yuanbin Ru \email{ruyuanbin@@gmail.com}
 #' @keywords utilities database
 #' @examples
-#' 
-#'   miRNAs <- list.multimir("mirna")
-#'   genes <- list.multimir("gene")
-#'   drugs <- list.multimir("drug")
-#'   diseases <- list.multimir("disease")
-#' 
-#' @export list.multimir
-list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
+#'
+#'   miRNAs <- list_multimir("mirna")
+#'   genes <- list_multimir("gene")
+#'   drugs <- list_multimir("drug")
+#'   diseases <- list_multimir("disease")
+#'
+#' @export list_multimir
+list_multimir <- function(x     = c("mirna", "gene", "drug", "disease"),
                           limit = NULL,
-                          url = NULL) {
+                          url   = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
     x   <- match.arg(x)
@@ -62,4 +62,17 @@ list.multimir <- function(x   = c("mirna", "gene", "drug", "disease"),
     return(result)
 
 }
+
+
+#' @export list.multimir
+#' @rdname list_multimir
+list.multimir <- function(x     = c("mirna", "gene", "drug", "disease"),
+                          limit = NULL,
+                          url   = NULL) {
+    .Deprecated("list_multimir")
+    list_multimir(x     = c("mirna", "gene", "drug", "disease"),
+                  limit = NULL,
+                  url   = NULL)
+}
+
 
