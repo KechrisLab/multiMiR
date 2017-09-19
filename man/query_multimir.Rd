@@ -2,7 +2,7 @@
 % Please edit documentation in R/getdata.R
 \name{query_multimir}
 \alias{query_multimir}
-\title{Wrapper for search.multimir for adding feature (printing notification to
+\title{Wrapper for search_multimir for adding feature (printing notification to
 console)}
 \usage{
 query_multimir(x, org, add.link, use.tibble)
@@ -11,7 +11,7 @@ query_multimir(x, org, add.link, use.tibble)
 The queried multimir data with the addition of a requested feature.
 }
 \description{
-Wrapper for search.multimir for adding feature (printing notification to
+Wrapper for search_multimir for adding feature (printing notification to
 console)
 }
 \keyword{internal}

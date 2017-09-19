@@ -2,10 +2,10 @@
 #' Add External Database Link for Each of the multiMiR Result Entry
 #' 
 #' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
+#' directly.  Please use \code{get_multimir}.
 #' 
 #' @param x table/dataset returned by multimir db
-#' @param org Organism (see \code{get.multimir})
+#' @param org Organism (see \code{get_multimir})
 #' @return The input data frame \code{x} with a column added for the external
 #' database links.
 #' @keywords internal

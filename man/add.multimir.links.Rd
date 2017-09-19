@@ -9,7 +9,7 @@ add.multimir.links(x, org)
 \arguments{
 \item{x}{table/dataset returned by multimir db}
 
-\item{org}{Organism (see \code{get.multimir})}
+\item{org}{Organism (see \code{get_multimir})}
 }
 \value{
 The input data frame \code{x} with a column added for the external
@@ -17,6 +17,6 @@ database links.
 }
 \description{
 This is an internal multiMiR function that is not intended to be used
-directly.  Please use \code{get.multimir}.
+directly.  Please use \code{get_multimir}.
 }
 \keyword{internal}

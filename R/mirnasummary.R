@@ -2,7 +2,7 @@
 #' Summarize microRNA/target Information from the multiMiR Package
 #' 
 #' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
+#' directly.  Please use \code{get_multimir}.
 #' 
 #' @param result     PLACEHOLDER
 #' @param pair.index PLACEHOLDER
@@ -12,7 +12,7 @@
 multimir.summary <- function(result, 
                              pair.index = 2:6, 
                              order.by = "all.sum") {
-    # To summarize the result from functions get.multimir*
+    # To summarize the result from functions get_multimir*
     len <- length(pair.index)
     r   <- NULL
     for (n in names(result)) {

@@ -11,6 +11,6 @@ The queried table portion of the HTML response.
 }
 \description{
 This is an internal multiMiR function that is not intended to be used
-directly.  Please use \code{get.multimir}.
+directly.  Please use \code{get_multimir}.
 }
 \keyword{internal}

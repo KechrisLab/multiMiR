@@ -1,5 +1,5 @@
 
-#' Constructor and methods for object returned by \code{get.multimir()}.
+#' Constructor and methods for object returned by \code{get_multimir()}.
 #' 
 #' This package's primary user-facing object. Contains the SQL statement and the
 #' returned data query, as well as a summary table depending on
@@ -7,6 +7,10 @@
 #' 
 #' @keywords internal
 #' @return An \code{mmquery} object.
+#' @importFrom purrr map
+#' @importFrom purrr transpose
+#' @importFrom purrr reduce
+#' @importFrom purrr compact
 as_mmquery <- function(outlist, org, .args, summary = FALSE, 
                        use.tibble = FALSE) {
 

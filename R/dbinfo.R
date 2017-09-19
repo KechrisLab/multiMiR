@@ -25,7 +25,7 @@
 #' 
 #' \code{multimir_dbTables} returns the vector of tables in the multiMiR
 #' database and saves it to the global option \code{multimir.tables.list}. This
-#' function is automatically run when get.multimir is called if the
+#' function is automatically run when get_multimir is called if the
 #' \code{multimir.tables.list} is NULL.
 #' 
 #' @aliases multimir_dbCount multimir_dbInfo multimir_dbInfoVersions
@@ -69,7 +69,7 @@ multimir_dbInfo <- function(url = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
     qry <- "SELECT * FROM map_metadata"
-    search.multimir(query = qry)
+    search_multimir(query = qry)
 
 }
 
@@ -112,7 +112,7 @@ multimir_dbCount <- function(url = NULL) {
     if (!is.null(url)) deprecate_arg("url")
 
     qry <- "SELECT * FROM map_counts"
-    res <- search.multimir(query = qry)
+    res <- search_multimir(query = qry)
 
     for (i in 2:ncol(res)) {
         res[, i] <- as.numeric(as.character(res[, i]))

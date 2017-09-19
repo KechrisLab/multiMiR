@@ -1,23 +1,26 @@
 
 #' Search the multiMiR Database Given a MySQL Query
 #' 
-#' This is an internal function called by some of the other functions in
-#' multiMiR. Given a MySQL query, it searches and retrieves result from the
-#' multiMiR database on the multiMiR web server. To use \code{search.multimir}
+#' This is a function for directly querying the multiMiR database with MySQL
+#' queries. Given a MySQL query, it searches and retrieves result from the
+#' multiMiR database on the multiMiR web server. To use \code{search_multimir}
 #' directly, users will need to be familiar with MySQL and multiMiR table
-#' structures. Users are advised to use \code{get.multimir} instead.
+#' structures. Users are advised to use \code{get_multimir} instead.
+#' 
+#' search.multimir() has been deprecated and replaced with the search_multimir()
+#' version.
 #' 
 #' @param query a character string for the MySQL query.
-#' @return \code{search.multimir} returns a data frame containing results from
+#' @return \code{search_multimir} returns a data frame containing results from
 #' the multiMiR web server.
 #' @keywords utilities database
 #' @examples
 #' 
 #'   ## show all tables in the multiMiR database
-#'   tables <- search.multimir(query="show tables")
+#'   tables <- search_multimir(query="show tables")
 #' 
 #'   ## show the structure of table diana_microt
-#'   microt <- search.multimir(query="describe diana_microt")
+#'   microt <- search_multimir(query="describe diana_microt")
 #' 
 #'   ## search for validated target genes of hsa-miR-18a-3p in miRecords
 #'   qry <- paste("SELECT m.mature_mirna_acc, m.mature_mirna_id,",
@@ -27,10 +30,10 @@
 #'                "AS t ON (m.mature_mirna_uid=i.mature_mirna_uid AND",
 #'                "    i.target_uid=t.target_uid)",
 #'                "WHERE m.mature_mirna_id='hsa-miR-18a-3p'")
-#'   result <- search.multimir(query = qry)
+#'   result <- search_multimir(query = qry)
 #' 
 #' @export
-search.multimir <- function(query) {
+search_multimir <- function(query) {
     # To search the multiMiR database on the web server given a MySQL query
     # NOTE: Can only be used after version is set?? due to dbName arg?
 
@@ -39,14 +42,23 @@ search.multimir <- function(query) {
                    .cgifields = c("query","dbName"))
 }
 
+#' @rdname search_multimir
+#' @export
+search.multimir <- function(query) {
+    .Deprecated("search_multimir")
+    search_multimir(query = query)
+}
+
 
 
 
 #' General workhorse function for submitting and returning queries
 #' 
 #' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
+#' directly.  Please use \code{get_multimir}.
 #' 
+#' @importFrom XML readHTMLTable
+#' @importFrom RCurl postForm
 #' @return Table requested in \code{query}.
 #' @keywords internal
 submit_request <- function(url = full_url("multimir.queries"), query, ...) {
@@ -63,7 +75,7 @@ submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 #' Parse the Result Returned by the multiMiR Web Server
 #' 
 #' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
+#' directly.  Please use \code{get_multimir}.
 #' 
 #' @return The queried table portion of the HTML response.
 #' @keywords internal
