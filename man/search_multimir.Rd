@@ -17,11 +17,15 @@ search.multimir(query)
 the multiMiR web server.
 }
 \description{
-This is an internal function called by some of the other functions in
-multiMiR. Given a MySQL query, it searches and retrieves result from the
+This is a function for directly querying the multiMiR database with MySQL
+queries. Given a MySQL query, it searches and retrieves result from the
 multiMiR database on the multiMiR web server. To use \code{search_multimir}
 directly, users will need to be familiar with MySQL and multiMiR table
-structures. Users are advised to use \code{get.multimir} instead.
+structures. Users are advised to use \code{get_multimir} instead.
+}
+\details{
+search.multimir() has been deprecated and replaced with the search_multimir()
+version.
 }
 \examples{
 

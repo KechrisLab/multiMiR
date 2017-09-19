@@ -220,16 +220,16 @@ The current version of *multiMiR* contains nearly 50 million records.
 # List miRNAs, genes, drugs and diseases in the multiMiR database
 
 In addition to functions displaying database and table information, the
-*multiMiR* package also provides the `list.multimir()` function to list all the
+*multiMiR* package also provides the `list_multimir()` function to list all the
 unique miRNAs, target genes, drugs, and diseases in the *multiMiR* database. An
 option for limiting the number of returned records has been added to help with
 testing and exploration.
 
-```{r list.multimir}
-miRNAs   = list.multimir("mirna", limit = 10)
-genes    = list.multimir("gene", limit = 10)
-drugs    = list.multimir("drug", limit = 10)
-diseases = list.multimir("disease", limit = 10)
+```{r list_multimir}
+miRNAs   = list_multimir("mirna", limit = 10)
+genes    = list_multimir("gene", limit = 10)
+drugs    = list_multimir("drug", limit = 10)
+diseases = list_multimir("disease", limit = 10)
 # executes 2 separate queries, giving 20 results
 head(miRNAs)
 head(genes)
@@ -243,14 +243,14 @@ the speed of your Internet connection, it may take a few minutes to retrieve the
 large number of target genes.
 
 
-# Use `get.multimir()` to query the multiMiR database
+# Use `get_multimir()` to query the multiMiR database
 
-`get.multimir()` is the main function in the package to retrieve predicted and
+`get_multimir()` is the main function in the package to retrieve predicted and
 validated miRNA-target interactions and their disease and drug associations from
 the *multiMiR* database.
 
-To get familiar with the parameters in `get.multimir()`, you can type
-`?get.multimir` or `help(get.multimir)` in R. In the next section, many examples
+To get familiar with the parameters in `get_multimir()`, you can type
+`?get_multimir` or `help(get_multimir)` in R. In the next section, many examples
 illustrate the use of the parameters.
 
 
@@ -265,7 +265,7 @@ In the first example, we ask what genes are validated targets of hsa-miR-18a-3p.
 
 ```{r Example1}
 # The default is to search validated interactions in human
-example1 <- get.multimir(mirna = 'hsa-miR-18a-3p', summary = TRUE)
+example1 <- get_multimir(mirna = 'hsa-miR-18a-3p', summary = TRUE)
 names(example1)
 # Detailed information of the validated miRNA-target interaction
 head(example1$validated)
@@ -277,7 +277,7 @@ example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
 It turns out that *KRAS* is the only target validated by Luciferase assay. The
 interaction was recorded in miRecords and miRTarBase and supported by the same
 literature, whose PubMed ID is in column `pubmed_id`. The summary (by setting
-`summary = TRUE` when calling `get.multimir()`) shows the number of records in
+`summary = TRUE` when calling `get_multimir()`) shows the number of records in
 each of the external databases and the total number of databases supporting the
 interaction.
 
@@ -287,18 +287,18 @@ In this example we would like to know which miRNAs and their target genes are
 associated with Cisplatin, a chemotherapy drug used in several cancers.
 
 ```{r Example2} 
-example2 <- get.multimir(disease.drug = 'cisplatin', table = 'disease.drug')
+example2 <- get_multimir(disease.drug = 'cisplatin', table = 'disease.drug')
 names(example2)
 nrow(example2$disease.drug)
 head(example2$disease.drug)
 ```
 
-`get.multimir()` returns 53 miRNA-target pairs. For more information, we can
+`get_multimir()` returns 53 miRNA-target pairs. For more information, we can
 always refer to the published papers with PubMed IDs in column `paper_pubmedID`.
 
 ## Example 3: Select miRNAs predicted to target a gene
 
-`get.multimir()` also takes target gene(s) as input. In this example we retrieve
+`get_multimir()` also takes target gene(s) as input. In this example we retrieve
 miRNAs predicted to target *Gnb1* in mouse. For predicted interactions, the
 default is to query the top 20\% predictions within each external database,
 which is equivalent to setting parameters `predicted.cutoff = 20` and
@@ -306,7 +306,7 @@ which is equivalent to setting parameters `predicted.cutoff = 20` and
 35% among all conserved and nonconserved target sites.
 
 ```{r Example3_part1}
-example3 <- get.multimir(org     = "mmu",
+example3 <- get_multimir(org     = "mmu",
                          target  = "Gnb1",
                          table   = "predicted",
                          summary = TRUE,
@@ -338,7 +338,7 @@ disease (COPD) in human and want to know what miRNAs target these genes by
 searching the top 500,000 predictions in each external database.
 
 ```{r Example4_part1} 
-example4 <- get.multimir(org     = 'hsa',
+example4 <- get_multimir(org     = 'hsa',
                          target  = c('AKT2', 'CERS6', 'S1PR3', 'SULF2'),
                          table   = 'predicted',
                          summary = TRUE,
@@ -375,7 +375,7 @@ target any of the 47 genes.
 
 ```{r Example5_part2, eval=FALSE, echo=FALSE}
 # search all tables & top 10% predictions
-example5 <- get.multimir(org     = "hsa",
+example5 <- get_multimir(org     = "hsa",
                          mirna   = DE.miRNA.up,
                          target  = DE.entrez.dn,
                          table   = "all",
@@ -497,7 +497,7 @@ example5.split <- split(example5$predicted, example5$predicted$database)
 
 # Direct query to the database on the multiMiR web server
 
-As shown previously, *get.multimir* is the main function to retrieve
+As shown previously, *get_multimir* is the main function to retrieve
 information from the *multiMiR* database, which is hosted at
 http://multimir.ucdenver.edu. The function builds one SQL query for every
 external database that the user is going to search, submits the query to the web
@@ -505,7 +505,7 @@ server, and parses, combines, and summarizes results from the web server. For
 advanced users, there are a couple ways to query the *multiMiR*
 database without using the *multiMiR* package; but they have to be
 familiar with SQL queries. In general, users are still advised to use the
-`get.multimir()` function when querying multiple external databases in
+`get_multimir()` function when querying multiple external databases in
 *multiMiR*.
 
 ## Direct query on the web server
@@ -536,7 +536,7 @@ hsa-miR-18a-3p in miRecords.
 
 As you can see, the query is long and searches just one of the three validated
 tables in *multiMiR*. While in Example 1, one line of R command using the 
-`get.multimir()` function searches, combines and summarizes results from all
+`get_multimir()` function searches, combines and summarizes results from all
 three validated external databases (miRecords, miRTarBase and TarBase).
 
 ## Direct query in R
@@ -544,12 +544,12 @@ three validated external databases (miRecords, miRTarBase and TarBase).
 The same direct queries we did above on the web server can be done in R as well.
 This is the preferred method if you are unfamiliar with HTTP POST. Be sure to
 set the correct database version, if you wish to change versions, before calling
-`search.multimir()` it uses the currently set version.
+`search_multimir()` it uses the currently set version.
 
 To show the structure of table *diana\_microt*:
 
 ```{r Direct_query1}
-direct2 <- search.multimir(query = "describe diana_microt")
+direct2 <- search_multimir(query = "describe diana_microt")
 direct2
 ```
 
@@ -563,7 +563,7 @@ qry <- "SELECT m.mature_mirna_acc, m.mature_mirna_id, t.target_symbol,
         ON (m.mature_mirna_uid=i.mature_mirna_uid and 
             i.target_uid=t.target_uid) 
         WHERE m.mature_mirna_id='hsa-miR-18a-3p'"
-direct3 <- search.multimir(query = qry)
+direct3 <- search_multimir(query = qry)
 direct3
 ```
 

@@ -4,8 +4,8 @@
 #' \code{list_multimir} lists all the unique microRNAs, target genes, drugs, or
 #' diseases in the web server of the multiMiR package.
 #'
-#' \code{list_multimir} returns all the unique microRNAs, target genes, drugs,
-#' or diseases in the web server of the multiMiR package.
+#' list.multimir() has been deprecated and replaced with the list_multimir()
+#' version.
 #'
 #' @param x a character string indicating what to list. This must be one of the
 #' strings \code{"mirna"} (default), \code{"gene"}, \code{"drug"}, or
@@ -70,9 +70,9 @@ list.multimir <- function(x     = c("mirna", "gene", "drug", "disease"),
                           limit = NULL,
                           url   = NULL) {
     .Deprecated("list_multimir")
-    list_multimir(x     = c("mirna", "gene", "drug", "disease"),
-                  limit = NULL,
-                  url   = NULL)
+    list_multimir(x     = x,
+                  limit = limit,
+                  url   = url)
 }
 
 

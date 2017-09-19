@@ -1,11 +1,14 @@
 
 #' Search the multiMiR Database Given a MySQL Query
 #' 
-#' This is an internal function called by some of the other functions in
-#' multiMiR. Given a MySQL query, it searches and retrieves result from the
+#' This is a function for directly querying the multiMiR database with MySQL
+#' queries. Given a MySQL query, it searches and retrieves result from the
 #' multiMiR database on the multiMiR web server. To use \code{search_multimir}
 #' directly, users will need to be familiar with MySQL and multiMiR table
-#' structures. Users are advised to use \code{get.multimir} instead.
+#' structures. Users are advised to use \code{get_multimir} instead.
+#' 
+#' search.multimir() has been deprecated and replaced with the search_multimir()
+#' version.
 #' 
 #' @param query a character string for the MySQL query.
 #' @return \code{search_multimir} returns a data frame containing results from
@@ -43,7 +46,7 @@ search_multimir <- function(query) {
 #' @export
 search.multimir <- function(query) {
     .Deprecated("search_multimir")
-    search_multimir(query)
+    search_multimir(query = query)
 }
 
 
@@ -52,7 +55,7 @@ search.multimir <- function(query) {
 #' General workhorse function for submitting and returning queries
 #' 
 #' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
+#' directly.  Please use \code{get_multimir}.
 #' 
 #' @return Table requested in \code{query}.
 #' @keywords internal
@@ -70,7 +73,7 @@ submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 #' Parse the Result Returned by the multiMiR Web Server
 #' 
 #' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please use \code{get.multimir}.
+#' directly.  Please use \code{get_multimir}.
 #' 
 #' @return The queried table portion of the HTML response.
 #' @keywords internal

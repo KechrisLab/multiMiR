@@ -33,7 +33,7 @@ components of a SQL query.
 }
 \description{
 The collection object has a defined set of components that match the multiMiR
-database and defined options in \code{get.multimir()}. Conceptually this is
+database and defined options in \code{get_multimir()}. Conceptually this is
 split into two parts, the relatively straightforward SELECT, FROM, and ON
 portion of the query and the more complex filtering and sorting operations:
 WHERE and ORDER BY.  The latter have their own classes, the former are

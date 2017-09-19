@@ -1,5 +1,5 @@
 
-#' Constructor and methods for object returned by \code{get.multimir()}.
+#' Constructor and methods for object returned by \code{get_multimir()}.
 #' 
 #' This package's primary user-facing object. Contains the SQL statement and the
 #' returned data query, as well as a summary table depending on

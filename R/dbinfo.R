@@ -25,7 +25,7 @@
 #' 
 #' \code{multimir_dbTables} returns the vector of tables in the multiMiR
 #' database and saves it to the global option \code{multimir.tables.list}. This
-#' function is automatically run when get.multimir is called if the
+#' function is automatically run when get_multimir is called if the
 #' \code{multimir.tables.list} is NULL.
 #' 
 #' @aliases multimir_dbCount multimir_dbInfo multimir_dbInfoVersions

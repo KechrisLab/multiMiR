@@ -16,7 +16,7 @@ A character vector with empty strings removed
 The WHERE clauses for target and mirna use allow for multiple arguments
 always separated by 'OR' and several columns are checked for each value 
 (mirna id, acc; target symbol, entrez, ensemble).  If empty strings "" are
-present in the get.multimir arguments, Targets and miRNA with empty values in
+present in the get_multimir arguments, Targets and miRNA with empty values in
 one of these columns will be incorrectly returned.  -- thus purge empty
 strings first.
 }

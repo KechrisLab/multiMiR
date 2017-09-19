@@ -5,7 +5,10 @@
 #' interactions and their disease and drug associations from the multiMiR
 #' package.
 #' 
-#' \code{get.multimir} is the main and recommended function to retrieve
+#' get.multimir() has been deprecated and replaced with the get_multimir()
+#' version.
+#' 
+#' \code{get_multimir} is the main and recommended function to retrieve
 #' information from the multiMiR package. Input to the function must contain at
 #' least one of the followings: miRNA(s), target gene(s), and disease and drug
 #' term(s).
@@ -80,7 +83,7 @@
 #' @param limit a positive integer. Limits the number of records returned from
 #' each table.  Useful in testing potentially large queries.
 #' 
-#' @return \code{get.multimir} returns a list with several data frames
+#' @return \code{get_multimir} returns a list with several data frames
 #' containing results from a given external database (e.g., if
 #' \code{table="targetscan"}), the predicted (if \code{table= "predicted"}),
 #' validated (if \code{table="validated"}), and disease and drug (if
@@ -88,33 +91,32 @@
 #' \code{summary=TRUE}).
 #' @keywords utilities database
 #' @examples
-#' 
+#'
 #'   ## search 'hsa-miR-18a-3p' in validated interactions in human
-#'   example1 <- get.multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
+#'   example1 <- get_multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
 #'   names(example1)
 #'   ## target genes that are validated by Luciferase assay
 #'   example1$validated[grep("Luciferase", example1$validated[,"experiment"]),]
 #'   example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
-#' 
+#'
 #'   ## search 'cisplatin' in disease and drug tables in human
-#'   example2 <- get.multimir(disease.drug='cisplatin', table='disease.drug')
+#'   example2 <- get_multimir(disease.drug='cisplatin', table='disease.drug')
 #'   nrow(example2$disease.drug)
 #'   head(example2$disease.drug)
-#' 
-#' @export get.multimir
-get.multimir <- function(url = NULL, 
-                         org = "hsa", 
-                         mirna = NULL, 
-                         target = NULL,
-                         disease.drug = NULL, 
-                         table = "validated",
-                         predicted.cutoff = NULL,
+#' @export get_multimir
+get_multimir <- function(url                   = NULL,
+                         org                   = "hsa",
+                         mirna                 = NULL,
+                         target                = NULL,
+                         disease.drug          = NULL,
+                         table                 = "validated",
+                         predicted.cutoff      = NULL,
                          predicted.cutoff.type = "p",
-                         predicted.site = "conserved",
-                         summary = FALSE,
-                         add.link = FALSE,
-                         use.tibble = FALSE,
-                         limit = NULL) {
+                         predicted.site        = "conserved",
+                         summary               = FALSE,
+                         add.link              = FALSE,
+                         use.tibble            = FALSE,
+                         limit                 = NULL) {
 
     if (!is.null(url)) deprecate_arg("url")
     if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
@@ -184,6 +186,39 @@ get.multimir <- function(url = NULL,
     }
 
     return(rtnobject)
+
+}
+
+#' @rdname get_multimir
+#' @export
+get.multimir <- function(url                   = NULL,
+                         org                   = "hsa",
+                         mirna                 = NULL,
+                         target                = NULL,
+                         disease.drug          = NULL,
+                         table                 = "validated",
+                         predicted.cutoff      = NULL,
+                         predicted.cutoff.type = "p",
+                         predicted.site        = "conserved",
+                         summary               = FALSE,
+                         add.link              = FALSE,
+                         use.tibble            = FALSE,
+                         limit                 = NULL) {
+
+    .Deprecated("get_multimir")
+    get_multimir(url                   = url,
+                 org                   = org,
+                 mirna                 = mirna,
+                 target                = target,
+                 disease.drug          = disease.drug,
+                 table                 = table,
+                 predicted.cutoff      = predicted.cutoff,
+                 predicted.cutoff.type = predicted.cutoff.type,
+                 predicted.site        = predicted.site,
+                 summary               = summary,
+                 add.link              = add.link,
+                 use.tibble            = use.tibble,
+                 limit                 = limit)
 
 }
 
@@ -279,7 +314,7 @@ remove_table <- function(tables, x) tables[!tables %in% x]
 #' The WHERE clauses for target and mirna use allow for multiple arguments
 #' always separated by 'OR' and several columns are checked for each value 
 #' (mirna id, acc; target symbol, entrez, ensemble).  If empty strings "" are
-#' present in the get.multimir arguments, Targets and miRNA with empty values in
+#' present in the get_multimir arguments, Targets and miRNA with empty values in
 #' one of these columns will be incorrectly returned.  -- thus purge empty
 #' strings first.
 #'

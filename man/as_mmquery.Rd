@@ -2,7 +2,7 @@
 % Please edit documentation in R/mmquery.R
 \name{as_mmquery}
 \alias{as_mmquery}
-\title{Constructor and methods for object returned by \code{get.multimir()}.}
+\title{Constructor and methods for object returned by \code{get_multimir()}.}
 \usage{
 as_mmquery(outlist, org, .args, summary = FALSE, use.tibble = FALSE)
 }

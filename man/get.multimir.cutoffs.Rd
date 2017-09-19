@@ -15,6 +15,6 @@ Cutoff values object from remote database.
 }
 \description{
 This is an internal multiMiR function that is not intended to be used
-directly.  Please set prediction score cutoff in \code{get.multimir}.
+directly.  Please set prediction score cutoff in \code{get_multimir}.
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 #' Load Pre-calculated Prediction Score Cutoffs in the multiMiR Package
 #' 
 #' This is an internal multiMiR function that is not intended to be used
-#' directly.  Please set prediction score cutoff in \code{get.multimir}.
+#' directly.  Please set prediction score cutoff in \code{get_multimir}.
 #' 
 #' @param cutoff.file Deprecated. Set path to cutoffs file with the global
 #' option \code{multimir.cutoffs}.

@@ -33,8 +33,8 @@ diseases (disease name).
 diseases in the web server of the multiMiR package.
 }
 \details{
-\code{list_multimir} returns all the unique microRNAs, target genes, drugs,
-or diseases in the web server of the multiMiR package.
+list.multimir() has been deprecated and replaced with the list_multimir()
+version.
 }
 \examples{
 
