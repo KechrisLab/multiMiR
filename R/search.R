@@ -57,6 +57,8 @@ search.multimir <- function(query) {
 #' This is an internal multiMiR function that is not intended to be used
 #' directly.  Please use \code{get_multimir}.
 #' 
+#' @importFrom XML readHTMLTable
+#' @importFrom RCurl postForm
 #' @return Table requested in \code{query}.
 #' @keywords internal
 submit_request <- function(url = full_url("multimir.queries"), query, ...) {

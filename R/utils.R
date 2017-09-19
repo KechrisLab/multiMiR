@@ -95,6 +95,9 @@ pad <- function(x) paste0(" ", x, " ")
 #' @param .x A list or atomic vector.
 #' @param .f A function, formula, or atomic vector.
 #' @param ... Additional arguments passed on to \code{.f}.
+#' @importFrom purrr map
+#' @importFrom purrr simplify_all
+#' @importFrom purrr transpose
 #' @keywords internal
 split_by <- function(.x, .f, ...) {
     vals <- purrr::map(.x, .f, ...)

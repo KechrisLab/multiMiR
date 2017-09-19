@@ -101,6 +101,7 @@ sql_mirna <- function(mirna) {
 }
 
 #' @rdname sql_validated
+#' @importFrom purrr map_chr
 #' @keywords internal
 sql_target <- function(.table, target) {
 

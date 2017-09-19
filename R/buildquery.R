@@ -3,6 +3,11 @@
 #' 
 #' @return A complete SQL statement and related information.
 #' @keywords internal
+#' @importFrom purrr map
+#' @importFrom purrr transpose
+#' @importFrom purrr compact
+#' @importFrom purrr map_chr
+#' @importFrom purrr flatten
 build_mmsql <- function(.table, org, 
                         mirna                 = NULL,
                         target                = NULL,

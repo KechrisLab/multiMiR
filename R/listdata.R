@@ -27,6 +27,7 @@
 #'   drugs <- list_multimir("drug")
 #'   diseases <- list_multimir("disease")
 #'
+#' @importFrom purrr map
 #' @export list_multimir
 list_multimir <- function(x     = c("mirna", "gene", "drug", "disease"),
                           limit = NULL,

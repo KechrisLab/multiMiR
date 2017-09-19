@@ -103,6 +103,8 @@
 #'   example2 <- get_multimir(disease.drug='cisplatin', table='disease.drug')
 #'   nrow(example2$disease.drug)
 #'   head(example2$disease.drug)
+#'
+#' @importFrom purrr map
 #' @export get_multimir
 get_multimir <- function(url                   = NULL,
                          org                   = "hsa",

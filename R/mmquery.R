@@ -7,6 +7,10 @@
 #' 
 #' @keywords internal
 #' @return An \code{mmquery} object.
+#' @importFrom purrr map
+#' @importFrom purrr transpose
+#' @importFrom purrr reduce
+#' @importFrom purrr compact
 as_mmquery <- function(outlist, org, .args, summary = FALSE, 
                        use.tibble = FALSE) {
 

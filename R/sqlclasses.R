@@ -35,6 +35,8 @@ as_mmsql_components <- function(.select = NULL, .from = NULL, .on = NULL,
 
 #' @rdname as_mmsql_components
 #' @keywords internal
+#' @importFrom purrr compact
+#' @importFrom purrr map_lgl
 as_where_list <- function(...) {
     wlist <- purrr::compact(list(...))
     stopifnot(all(purrr::map_lgl(wlist, inherits, "where")))
