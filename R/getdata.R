@@ -277,6 +277,7 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 #' 
 #' @return The queried multimir data with the addition of a requested feature.
 #' @keywords internal
+#' @importFrom tibble as_data_frame
 query_multimir <- function(x, org, add.link, use.tibble) {
 
     cat("Searching", x$table, "...\n")

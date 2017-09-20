@@ -51,6 +51,7 @@ print <- function(x, ...) {
     UseMethod("print", x)
 }
 
+#' @importFrom tibble as_data_frame
 print.mmquery <- function(x) {
 
     cat("MultiMiR query\n")
