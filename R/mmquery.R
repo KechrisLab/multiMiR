@@ -47,22 +47,18 @@ as_mmquery <- function(outlist, org, .args, summary = FALSE,
               )
 }
 
-print <- function(x, ...) {
-    UseMethod("print", x)
-}
-
 #' @importFrom tibble as_data_frame
 print.mmquery <- function(x) {
 
     cat("MultiMiR query\n")
     cat("Validated interactions:\n")
-    tibble::as_data_frame(x$validated) 
+    print(as_data_frame(x$validated), n = 5)
     cat("Predicted interactions:\n")
-    tibble::as_data_frame(x$predicted) 
+    print(as_data_frame(x$predicted), n = 5)
     cat("Disease/Drug associations:\n")
-    tibble::as_data_frame(x$diseasedrug) 
+    print(as_data_frame(x$diseasedrug), n = 5)
     cat("Summary:\n")
-    tibble::as_data_frame(x$summary) 
+    print(as_data_frame(x$summary), n = 5)
 
 }
 
