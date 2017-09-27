@@ -25,6 +25,7 @@ Imports:
     tibble (>= 1.2)
 Suggests: 
     BiocStyle, 
+    edgeR,
     knitr, 
     rmarkdown, 
     testthat (>= 1.0.2), 
