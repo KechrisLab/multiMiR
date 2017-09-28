@@ -176,3 +176,90 @@ setClass("mmquery_bioc",
                         predicted.cutoff.type = "character",
                         predicted.site        = "character"))
 
+
+#' S4 methods for mmquery_bioc class - based on AnnotationDbi accessor methods
+#'
+#' @param x An mmquery_bioc object.
+#' @param keys A result of the keys() function. For the mmquery_bioc class this
+#'   is a character vector of microRNA's in the returned mmquery_bioc object.
+#' @param keytype allows the user to discover which keytypes can be passes in to
+#' select or keys  and the keytype argument
+#' @param columns lists the columns that can be returned for the
+#' \code{mmquery_bioc} object.
+#' @param ... additional arguments
+#'
+#' @importFrom AnnotationDbi columns
+#' @importFrom AnnotationDbi keys
+#' @importFrom methods slot
+#' @export
+setMethod("columns", "mmquery_bioc",
+          function(x) {
+              tables <- c("validated", "predicted", "disease.drug")
+              rtn <- sapply(tables, function(y) colnames(slot(x, y)))
+              rtn <- unique(unname(unlist(rtn)))
+              rtn
+          })
+
+#' @rdname columns
+#' @export
+# keys likely miRNA
+setMethod("keys", "mmquery_bioc",
+          function(x, keytype, ...) {
+              if(missing(keytype)){
+                  keytype <- "mature_mirna_id"
+              }
+              tables <- c("validated", "predicted", "disease.drug")
+              rtn <- sapply(tables, function(y) {
+                                tbl <- slot(x, y)
+                                tbl[[keytype]]
+                        })
+              unique(unname(unlist(rtn)))
+
+          })
+
+
+# setMethod("select", "mmquery_bioc",
+#           function(x, keys, columns, keytype, ...) {
+#               if (missing(keytype)) keytype <- chooseCentralOrgPkgSymbol(x)
+#               jointype <- .chooseJoinType(x)
+#               .select(x, keys, columns, keytype, jointype=jointype, ...)
+#               ## .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
+#               ##               kt=kt, ...)
+#           })
+
+# #' @rdname select
+# 
+# #' @rdname select
+# setMethod("keytypes", "mmquery_bioc",
+#     function(x) {
+#         kts <- .cols(x, baseType="ENTREZID")
+#         .filterDeprecatedKeytypes(kts)
+#     })
+# 
+# #' @rdname select
+# setMethod("select", "mmquery_bioc",
+#           function(x, keys, columns, keytype, ...) {
+#               if (missing(keytype)) keytype <- chooseCentralOrgPkgSymbol(x)
+#               jointype <- .chooseJoinType(x)
+#               .select(x, keys, columns, keytype, jointype=jointype, ...)
+#               ## .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
+#               ##               kt=kt, ...)
+#           })
+# 
+# setMethod("show", "mmquery_bioc",
+#     function(object)
+#     {
+#         cat(class(object), "object:\n")
+#         metadata <- metadata(object)
+#         for (i in seq_len(nrow(metadata))) {
+#             cat("| ", metadata[i, "name"], ": ", metadata[i, "value"],
+#                 "\n", sep="")
+#         }
+#         message("\n","Please see: help('select') for usage information", sep="")
+#     }
+# )
+# 
+# # Optional functions
+# setMethod("metadata", "AnnotationDb",
+#     function(x) dbReadTable(dbconn(x), "metadata")
+# )
