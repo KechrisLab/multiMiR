@@ -268,10 +268,10 @@ In the first example, we ask what genes are validated targets of hsa-miR-18a-3p.
 example1 <- get_multimir(mirna = 'hsa-miR-18a-3p', summary = TRUE)
 names(example1)
 # Detailed information of the validated miRNA-target interaction
-head(example1$validated)
+head(example1@validated)
 # Which interactions are supported by Luciferase assay?
-example1$validated[grep("Luciferase", example1$validated[, "experiment"]), ]
-example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
+example1@validated[grep("Luciferase", example1@validated[, "experiment"]), ]
+example1@summary[example1@summary[,"target_symbol"] == "KRAS",]
 ```
 
 It turns out that *KRAS* is the only target validated by Luciferase assay. The
@@ -289,8 +289,8 @@ associated with Cisplatin, a chemotherapy drug used in several cancers.
 ```{r Example2} 
 example2 <- get_multimir(disease.drug = 'cisplatin', table = 'disease.drug')
 names(example2)
-nrow(example2$disease.drug)
-head(example2$disease.drug)
+nrow(example2@disease.drug)
+head(example2@disease.drug)
 ```
 
 `get_multimir()` returns 53 miRNA-target pairs. For more information, we can
@@ -314,11 +314,11 @@ example3 <- get_multimir(org     = "mmu",
                          predicted.cutoff.type = "p",
                          predicted.site        = "all")
 names(example3)
-head(example3$predicted)
-head(example3$summary)
+head(example3@predicted)
+head(example3@summary)
 ```
 
-The records in `example3$predicted` are ordered by scores from best to
+The records in `example3@predicted` are ordered by scores from best to
 worst within each external database. Once again, the summary option allows us to
 examine the number of target sites predicted by each external database and the
 total number of databases predicting the interaction.
@@ -326,7 +326,7 @@ total number of databases predicting the interaction.
 Finally we examine how many predictions each of the databases has.
 
 ```{r Example3_part2}
-apply(example3$summary[, 6:13], 2, function(x) sum(x > 0))
+apply(example3@summary[, 6:13], 2, function(x) sum(x > 0))
 ```
 
 ## Example 4: Select miRNA(s) predicted to target most, if not all, of the genes of interest
@@ -349,7 +349,7 @@ example4 <- get_multimir(org     = 'hsa',
 Then we count the number of target genes for each miRNA.
 
 ```{r Example4_part2}
-example4.counts <- addmargins(table(example4$summary[, 2:3]))
+example4.counts <- addmargins(table(example4@summary[, 2:3]))
 example4.counts <- example4.counts[-nrow(example4.counts), ]
 example4.counts <- example4.counts[order(example4.counts[, 5], decreasing = TRUE), ]
 head(example4.counts)
@@ -381,7 +381,8 @@ example5 <- get_multimir(org     = "hsa",
                          table   = "all",
                          summary = TRUE,
                          predicted.cutoff.type = "p",
-                         predicted.cutoff      = 10)
+                         predicted.cutoff      = 10,
+                         use.tibble = TRUE)
 ```
 ```{r eval = FALSE}
 ## Searching diana_microt ...
@@ -403,7 +404,7 @@ example5 <- get_multimir(org     = "hsa",
 In the result, there are 3 unique miRNA-gene pairs that have been validated.
 
 ```{r Example5_part3, eval=FALSE, echo=FALSE}
-example5$validated
+example5@validated
 ```
 ```{r eval=FALSE}
 ##     database mature_mirna_acc mature_mirna_id target_symbol target_entrez
@@ -423,7 +424,7 @@ example5$validated
 Two miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
 
 ```{r Example5_part4, eval=FALSE, echo=FALSE}
-example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug,
+example5@disease.drug[grep("bladder", example5@disease.drug$disease_drug,
                            ignore.case = TRUE), ]
 ```
 ```{r eval=FALSE}
@@ -445,7 +446,7 @@ The predicted databases predict 65 miRNA-gene pairs between the 9 miRNAs and 28
 of the 47 genes.
 
 ```{r Example5_part5, eval=FALSE, echo=FALSE}
-length(unique(example5$predicted$mature_mirna_id))
+length(unique(example5@predicted$mature_mirna_id))
 ```
 ```{r, eval=FALSE}
 ## [1] 9
@@ -453,7 +454,7 @@ length(unique(example5$predicted$mature_mirna_id))
 
 
 ```{r Example5_part6, eval=FALSE, echo=FALSE}
-length(unique(example5$predicted$target_entrez))
+length(unique(example5@predicted$target_entrez))
 ```
 ```{r, eval=FALSE}
 ## [1] 28
@@ -462,8 +463,8 @@ length(unique(example5$predicted$target_entrez))
 
 ```{r Example5_part7, eval=FALSE, echo=TRUE}
 unique.pairs <- 
-    unique(data.frame(miRNA.ID = as.character(example5$predicted$mature_mirna_id),
-                      target.Entrez = as.character(example5$predicted$target_entrez)))
+    unique(data.frame(miRNA.ID = as.character(example5@predicted$mature_mirna_id),
+                      target.Entrez = as.character(example5@predicted$target_entrez)))
 nrow(unique.pairs)
 ```
 ```{r, eval=FALSE}
@@ -489,7 +490,7 @@ from best to worst.
 
 
 ```{r Example5_part9, eval=FALSE, echo=FALSE}
-example5.split <- split(example5$predicted, example5$predicted$database)
+example5.split <- split(example5@predicted, example5@predicted$database)
 ```
 
 

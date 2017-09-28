@@ -8,7 +8,8 @@
 get_multimir(url = NULL, org = "hsa", mirna = NULL, target = NULL,
   disease.drug = NULL, table = "validated", predicted.cutoff = NULL,
   predicted.cutoff.type = "p", predicted.site = "conserved",
-  summary = FALSE, add.link = FALSE, use.tibble = FALSE, limit = NULL)
+  summary = FALSE, add.link = FALSE, use.tibble = FALSE, limit = NULL,
+  legacy.out = FALSE)
 
 get.multimir(url = NULL, org = "hsa", mirna = NULL, target = NULL,
   disease.drug = NULL, table = "validated", predicted.cutoff = NULL,
@@ -78,6 +79,9 @@ number of columns that will fit \code{getOption('width')}). See
 
 \item{limit}{a positive integer. Limits the number of records returned from
 each table.  Useful in testing potentially large queries.}
+
+\item{legacy.out}{logical. Whether to return the Bioconductor compatible S4
+object or the legacy S3 object (default=FALSE).}
 }
 \value{
 \code{get_multimir} returns a list with several data frames
@@ -126,13 +130,13 @@ break up the list into smaller batches and submit them sequentially.
   example1 <- get_multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
   names(example1)
   ## target genes that are validated by Luciferase assay
-  example1$validated[grep("Luciferase", example1$validated[,"experiment"]),]
-  example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
+  example1@validated[grep("Luciferase", example1@validated[,"experiment"]),]
+  example1@summary[example1@summary[,"target_symbol"] == "KRAS",]
 
   ## search 'cisplatin' in disease and drug tables in human
   example2 <- get_multimir(disease.drug='cisplatin', table='disease.drug')
-  nrow(example2$disease.drug)
-  head(example2$disease.drug)
+  nrow(example2@disease.drug)
+  head(example2@disease.drug)
 
 }
 \keyword{database}

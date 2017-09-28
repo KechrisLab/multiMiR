@@ -82,7 +82,9 @@
 #' \code{?tible::data_frame} for more information. 
 #' @param limit a positive integer. Limits the number of records returned from
 #' each table.  Useful in testing potentially large queries.
-#' 
+#' @param legacy.out logical. Whether to return the Bioconductor compatible S4
+#' object or the legacy S3 object (default=FALSE).
+#'
 #' @return \code{get_multimir} returns a list with several data frames
 #' containing results from a given external database (e.g., if
 #' \code{table="targetscan"}), the predicted (if \code{table= "predicted"}),
@@ -96,15 +98,17 @@
 #'   example1 <- get_multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
 #'   names(example1)
 #'   ## target genes that are validated by Luciferase assay
-#'   example1$validated[grep("Luciferase", example1$validated[,"experiment"]),]
-#'   example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
+#'   example1@validated[grep("Luciferase", example1@validated[,"experiment"]),]
+#'   example1@summary[example1@summary[,"target_symbol"] == "KRAS",]
 #'
 #'   ## search 'cisplatin' in disease and drug tables in human
 #'   example2 <- get_multimir(disease.drug='cisplatin', table='disease.drug')
-#'   nrow(example2$disease.drug)
-#'   head(example2$disease.drug)
+#'   nrow(example2@disease.drug)
+#'   head(example2@disease.drug)
 #'
 #' @importFrom purrr map
+#' @importFrom tibble as_data_frame
+#' @importFrom stats setNames
 #' @export get_multimir
 get_multimir <- function(url                   = NULL,
                          org                   = "hsa",
@@ -118,7 +122,8 @@ get_multimir <- function(url                   = NULL,
                          summary               = FALSE,
                          add.link              = FALSE,
                          use.tibble            = FALSE,
-                         limit                 = NULL) {
+                         limit                 = NULL,
+                         legacy.out            = FALSE) {
 
     if (!is.null(url)) deprecate_arg("url")
     if (is.null(mirna) & is.null(target) & is.null(disease.drug)) return(NULL) 
@@ -163,22 +168,22 @@ get_multimir <- function(url                   = NULL,
     }
 
     # Build queries and request from server
-    queries <- purrr::map(.table, build_mmsql, 
-                          org                   = org,
-                          mirna                 = mirna,
-                          target                = target,
-                          disease.drug          = disease.drug,
-                          predicted.site        = predicted.site,
-                          predicted.cutoff.type = predicted.cutoff.type,
-                          predicted.cutoff      = predicted.cutoff,
-                          limit                 = limit)
-    queries   <- stats::setNames(queries, .table)
+    queries <- map(.table, build_mmsql, 
+                   org                   = org,
+                   mirna                 = mirna,
+                   target                = target,
+                   disease.drug          = disease.drug,
+                   predicted.site        = predicted.site,
+                   predicted.cutoff.type = predicted.cutoff.type,
+                   predicted.cutoff      = predicted.cutoff,
+                   limit                 = limit)
+    queries   <- setNames(queries, .table)
     # Request data
-    .data     <- purrr::map(queries, query_multimir, org = org, 
-                            add.link = add.link, use.tibble = use.tibble)
+    .data     <- map(queries, query_multimir, org = org,
+                     add.link = add.link, use.tibble = use.tibble)
     # Restructure data and related info for returning
-    rtnobject <- as_mmquery(outlist = .data, org = org, summary = summary,
-                            use.tibble = use.tibble, .args = sqlargs)
+    rtnobject <- extract_mmquery(outlist = .data, org = org, summary = summary,
+                                 use.tibble = use.tibble, .args = sqlargs)
 
     if (add.link) {
         message(paste("Some of the links to external databases may be broken",
@@ -186,6 +191,9 @@ get_multimir <- function(url                   = NULL,
                       "refer to Supplementary Table 2 in the multiMiR paper",
                       "for details of the issue.\n"))
     }
+
+    # Choose between S4 and legacy S3 output
+    rtnobject <- if (legacy.out) as.mmquery(rtnobject) else as.mmquery_bioc(rtnobject)
 
     return(rtnobject)
 
@@ -291,7 +299,8 @@ query_multimir <- function(x, org, add.link, use.tibble) {
     } else {
         x$data <- data.frame()
     }
-    if (use.tibble) x$data <- tibble::as_data_frame(x$data)
+
+    if (use.tibble) x$data <- as_data_frame(x$data)
     if (x$table %in% diseasedrug_tables()) x$data <- unique(x$data)
 
     return(x)

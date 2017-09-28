@@ -22,12 +22,14 @@ Imports:
     XML, 
     RCurl, 
     purrr (>= 0.2.2),
-    tibble (>= 1.2)
+    tibble (>= 1.2),
+    magrittr,
+    methods
 Suggests: 
     BiocStyle, 
     knitr, 
     rmarkdown, 
-    testthat (>= 1.0.2), 
+    testthat (>= 1.0.2)
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 LazyData: true
