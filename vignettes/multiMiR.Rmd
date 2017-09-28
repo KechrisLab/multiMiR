@@ -381,8 +381,7 @@ example5 <- get_multimir(org     = "hsa",
                          table   = "all",
                          summary = TRUE,
                          predicted.cutoff.type = "p",
-                         predicted.cutoff      = 10,
-                         use.tibble = TRUE)
+                         predicted.cutoff      = 10)
 ```
 ```{r eval = FALSE}
 ## Searching diana_microt ...
