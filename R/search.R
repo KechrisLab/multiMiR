@@ -64,7 +64,7 @@ search.multimir <- function(query) {
 submit_request <- function(url = full_url("multimir.queries"), query, ...) {
 
     request <- RCurl::postForm(url, query = query, ... )
-    result  <- XML::readHTMLTable(request)
+    result  <- XML::readHTMLTable(request, stringsAsFactors = FALSE)
     parse_response(result)
 
 }
