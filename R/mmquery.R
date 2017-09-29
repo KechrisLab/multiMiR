@@ -100,30 +100,6 @@ print.mmquery <- function(x) {
 }
 
 
-# summary.mmquery <- function(x) {
-# 
-#     has_validated    <- !is.null(x$validated)
-#     has_predicted    <- !is.null(x$predicted)
-#     has_disease.drug <- !is.null(x$disease.drug)
-# 
-#     cat("MultiMiR Query of microRNA\n")
-# #     cat(sprintf("%s validated records found\n", nrow_validated))
-# #     cat(sprintf("%s predicted records found\n", nrow_predcted))
-# #     cat(sprintf("%s disease/drug records found\n", nrow_disease))
-# 
-# }
-
-
-# sumstats <- function(x) {
-#     if (is.null(x)) {
-#         present <- FALSE
-#         nrows   <- 0
-#     } else {
-#         present <- TRUE
-#         nrows   <- nrow(x)
-#     }
-# }
-
 
 
 
@@ -159,9 +135,11 @@ print.mmquery <- function(x) {
 #' @param .list a list of returned dataframes, summary
 #' @param ... additional arguments
 #' 
-#' @importFrom methods new
+#' @importFrom AnnotationDbi select
 #' @importFrom AnnotationDbi columns
 #' @importFrom AnnotationDbi keys
+#' @importFrom AnnotationDbi keytypes
+#' @importFrom methods new
 #' @importFrom methods slot
 #' @export
 setClass("mmquery_bioc", 
@@ -203,21 +181,14 @@ as.mmquery_bioc <- function(.list) {
 
 #' @rdname mmquery_bioc-class
 #' @export
-setMethod("columns", "mmquery_bioc",
-          function(x) {
-              tables <- c("validated", "predicted", "disease.drug")
-              rtn <- sapply(tables, function(y) colnames(slot(x, y)))
-              rtn <- unique(unname(unlist(rtn)))
-              rtn
-          })
+setMethod("columns", "mmquery_bioc", function(x) mm_cols(x))
 
 #' @rdname mmquery_bioc-class
 #' @export
-# keys likely miRNA
 setMethod("keys", "mmquery_bioc",
           function(x, keytype, ...) {
               if(missing(keytype)){
-                  keytype <- "mature_mirna_id"
+                  keytype <- mm_centralPkgSymbol()
               }
               tables <- c("validated", "predicted", "disease.drug")
               rtn <- sapply(tables, function(y) {
@@ -228,35 +199,37 @@ setMethod("keys", "mmquery_bioc",
 
           })
 
+#' @rdname mmquery_bioc-class
+#' @export
+setMethod("keytypes", "mmquery_bioc", function(x) mm_cols(x))
 
-# setMethod("select", "mmquery_bioc",
-#           function(x, keys, columns, keytype, ...) {
-#               if (missing(keytype)) keytype <- chooseCentralOrgPkgSymbol(x)
-#               jointype <- .chooseJoinType(x)
-#               .select(x, keys, columns, keytype, jointype=jointype, ...)
-#               ## .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
-#               ##               kt=kt, ...)
-#           })
+#' @rdname mmquery_bioc-class
+#' @export
+setMethod("select", "mmquery_bioc",
+          function(x, keys, columns, keytype, ...) {
 
-# #' @rdname select
-# 
-# #' @rdname select
-# setMethod("keytypes", "mmquery_bioc",
-#     function(x) {
-#         kts <- .cols(x, baseType="ENTREZID")
-#         .filterDeprecatedKeytypes(kts)
-#     })
-# 
-# #' @rdname select
-# setMethod("select", "mmquery_bioc",
-#           function(x, keys, columns, keytype, ...) {
-#               if (missing(keytype)) keytype <- chooseCentralOrgPkgSymbol(x)
-#               jointype <- .chooseJoinType(x)
-#               .select(x, keys, columns, keytype, jointype=jointype, ...)
-#               ## .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
-#               ##               kt=kt, ...)
-#           })
-# 
+              if (missing(keytype)) keytype <- mm_centralPkgSymbol()
+              sapply(x, function(y) {
+                         rtn <- slot(x, y)[, c(columns, keytype)]
+                         rtn <- rtn[rtn$keytype %in% keys, ]
+                         rtn
+#                          %>% dplyr::select(columns, keytype) %>%
+#                              dplyr::filter(keytype %in% keys)
+                        })
+          })
+
+
+#' @keywords internal
+mm_cols <- function(x) {
+    tables <- c("validated", "predicted", "disease.drug")
+    rtn <- sapply(tables, function(y) colnames(slot(x, y)))
+    rtn <- unique(unname(unlist(rtn)))
+    rtn
+}
+
+#' @keywords internal
+mm_centralPkgSymbol <- function() "mature_mirna_id"
+
 # setMethod("show", "mmquery_bioc",
 #     function(object)
 #     {
@@ -269,7 +242,7 @@ setMethod("keys", "mmquery_bioc",
 #         message("\n","Please see: help('select') for usage information", sep="")
 #     }
 # )
-# 
+
 # # Optional functions
 # setMethod("metadata", "AnnotationDb",
 #     function(x) dbReadTable(dbconn(x), "metadata")

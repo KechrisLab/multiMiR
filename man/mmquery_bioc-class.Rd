@@ -6,6 +6,8 @@
 \alias{as.mmquery_bioc}
 \alias{columns,mmquery_bioc-method}
 \alias{keys,mmquery_bioc-method}
+\alias{keytypes,mmquery_bioc-method}
+\alias{select,mmquery_bioc-method}
 \title{S4 constructor and methods for object returned by \code{get_multimir()}.}
 \usage{
 as.mmquery_bioc(.list)
@@ -13,6 +15,10 @@ as.mmquery_bioc(.list)
 \S4method{columns}{mmquery_bioc}(x)
 
 \S4method{keys}{mmquery_bioc}(x, keytype, ...)
+
+\S4method{keytypes}{mmquery_bioc}(x)
+
+\S4method{select}{mmquery_bioc}(x, keys, columns, keytype, ...)
 }
 \arguments{
 \item{.list}{a list of returned dataframes, summary}
