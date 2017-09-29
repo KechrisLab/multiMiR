@@ -254,6 +254,48 @@ To get familiar with the parameters in `get_multimir()`, you can type
 illustrate the use of the parameters.
 
 
+# Example of multiMiR in a Bioconductor workflow
+
+This example shows the use of `multiMiR` in a downstream Bioconductor workflow:
+H:re we take ISS and ILS strain 
+
+
+```{r, biocworkflow, eval=TRUE}
+library(edgeR)
+library(multiMiR)
+
+counts_table   <- load(system.file("extdata", "counts_table.RData", 
+                                   package = "multiMiR"))
+strains_factor <- load(system.file("extdata", "strains_factor.RData", 
+                                   package = "multiMiR"))
+```
+
+```{r, biocworkflow2, eval=TRUE}
+# Standard edgeR differential expression analysis
+design <- model.matrix(~ strains_factor)
+
+##  Using trended dispersions
+dge <- DGEList(counts = counts_table)
+dge <- calcNormFactors(dge)
+dge$samples$strains <- strains_factor
+dge <- estimateGLMCommonDisp(dge, design)
+dge <- estimateGLMTrendedDisp(dge, design)
+dge <- estimateGLMTagwiseDisp(dge, design)
+
+##   Fit GLM model for strain effect
+fit <- glmFit(dge, design)
+lrt <- glmLRT(fit)
+
+##   Table of unadjusted p-values (PValue) and FDR values
+p_val_DE_edgeR <- topTags(lrt, adjust.method = 'BH', n = Inf)
+
+# Getting top differentially expressed miRNA's
+top_miRNAs <- rownames(p_val_DE_edgeR$table)[1:10]
+
+####    Plug miRNA's into multiMiR and getting validated targets    ####
+multimir_results <- get_multimir(org = 'mmu', mirna = top_miRNAs, table = 'validated', summary = T)
+```
+
 # Examples of multiMiR queries
 
 In this section a variety of examples are described on how to query the multiMiR
