@@ -23,7 +23,6 @@ Imports:
     RCurl, 
     purrr (>= 0.2.2),
     tibble (>= 1.2),
-    dplyr (>= 0.7.0),
     magrittr,
     methods,
     AnnotationDbi

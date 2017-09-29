@@ -155,7 +155,6 @@ setClass("mmquery_bioc",
                         predicted.site        = "character"))
 
 #' @rdname mmquery_bioc-class
-#' @export
 as.mmquery_bioc <- function(.list) {
 
     #stopifnot(all(c("validated", "predicted", "disease.drug", "queries",
