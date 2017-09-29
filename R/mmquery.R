@@ -51,10 +51,6 @@ extract_mmquery <- function(outlist, org, .args, summary = FALSE,
 
 }
 
-null_to_df <- function(x) if (is.null(x)) data.frame() else x
-null_to_num <- function(x) if (is.null(x)) numeric() else x
-null_to_char <- function(x) if (is.null(x)) character() else x
-
 
 #' S3 constructor and methods for object returned by \code{get_multimir()}.
 #' 
@@ -132,38 +128,42 @@ print.mmquery <- function(x) {
 
 
 #' S4 constructor and methods for object returned by \code{get_multimir()}.
-#' 
+#'
 #' This package's primary user-facing object. Contains the SQL statement and the
 #' returned data query, as well as a summary table depending on
 #' specified option. 
+#'
+#' @slot validated A dataframe containing any validated microRNA-target
+#' interactions
+#' @slot predicted A dataframe containing any predicted microRNA-target
+#' interactions
+#' @slot disease.drug A dataframe containing any microRNA and disease or drug
+#' associations.
+#' @slot queries A list of queries submitted to the multiMiR SQL server.
+#' @slot summary A summary dataframe of the returned microRNA dataframes
+#' @slot tables A character vector of the microRNA relationship types returned
+#' (validated, predicted, disease.drug, or all).
+#' @slot org The selected organism (hsa/human, mmu/mouse, rno/rat).
+#' @slot predicted.cutoff An integer giving a prediction score cutoff.
+#' @slot predicted.cutoff.type A character indicating the type of prediction
+#' score cutoff (p = percentage, n = number, character() = none)
+#' @slot predicted.site A character string indicating the type of predicted
+#' target sites to searched.
+#' @param x An mmquery_bioc object.
+#' @param keys A result of the keys() function. For the mmquery_bioc class this
+#'   is a character vector of microRNA's in the returned mmquery_bioc object.
+#' @param keytype allows the user to discover which keytypes can be passes in to
+#' select or keys  and the keytype argument
+#' @param columns lists the columns that can be returned for the
+#' \code{mmquery_bioc} object.
+#' @param .list a list of returned dataframes, summary
+#' @param ... additional arguments
 #' 
 #' @importFrom methods new
-#' @keywords internal
-#' @return An \code{mmquery_bioc} object.
-#' 
-as.mmquery_bioc <- function(a_list) {
-
-    #stopifnot(all(c("validated", "predicted", "disease.drug", "queries",
-    #                "summary", "table", "org", "predicted.cutoff",
-    #                "predicted.cutoff.type", "predicted.site") %in%
-    #              names(a_list)))
-
-    # Create and return s3 object
-    new("mmquery_bioc",
-        validated    = a_list$validated,
-        predicted    = a_list$predicted,
-        disease.drug = a_list$disease.drug,
-        queries      = a_list$queries,
-        summary      = a_list$summary,
-        tables       = a_list$table,
-        org          = a_list$org,
-        predicted.cutoff      = a_list$predicted.cutoff,
-        predicted.cutoff.type = a_list$predicted.cutoff.type,
-        predicted.site        = a_list$predicted.site
-        )
-
-}
-
+#' @importFrom AnnotationDbi columns
+#' @importFrom AnnotationDbi keys
+#' @importFrom methods slot
+#' @export
 setClass("mmquery_bioc", 
          representation(validated    = "data.frame",
                         predicted    = "data.frame",
@@ -176,21 +176,32 @@ setClass("mmquery_bioc",
                         predicted.cutoff.type = "character",
                         predicted.site        = "character"))
 
+#' @rdname mmquery_bioc-class
+#' @export
+as.mmquery_bioc <- function(.list) {
 
-#' S4 methods for mmquery_bioc class - based on AnnotationDbi accessor methods
-#'
-#' @param x An mmquery_bioc object.
-#' @param keys A result of the keys() function. For the mmquery_bioc class this
-#'   is a character vector of microRNA's in the returned mmquery_bioc object.
-#' @param keytype allows the user to discover which keytypes can be passes in to
-#' select or keys  and the keytype argument
-#' @param columns lists the columns that can be returned for the
-#' \code{mmquery_bioc} object.
-#' @param ... additional arguments
-#'
-#' @importFrom AnnotationDbi columns
-#' @importFrom AnnotationDbi keys
-#' @importFrom methods slot
+    #stopifnot(all(c("validated", "predicted", "disease.drug", "queries",
+    #                "summary", "table", "org", "predicted.cutoff",
+    #                "predicted.cutoff.type", "predicted.site") %in%
+    #              names(a_list)))
+
+    # Create and return s3 object
+    new("mmquery_bioc",
+        validated    = .list$validated,
+        predicted    = .list$predicted,
+        disease.drug = .list$disease.drug,
+        queries      = .list$queries,
+        summary      = .list$summary,
+        tables       = .list$table,
+        org          = .list$org,
+        predicted.cutoff      = .list$predicted.cutoff,
+        predicted.cutoff.type = .list$predicted.cutoff.type,
+        predicted.site        = .list$predicted.site
+        )
+
+}
+
+#' @rdname mmquery_bioc-class
 #' @export
 setMethod("columns", "mmquery_bioc",
           function(x) {
@@ -200,7 +211,7 @@ setMethod("columns", "mmquery_bioc",
               rtn
           })
 
-#' @rdname columns
+#' @rdname mmquery_bioc-class
 #' @export
 # keys likely miRNA
 setMethod("keys", "mmquery_bioc",
