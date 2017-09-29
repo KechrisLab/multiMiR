@@ -210,12 +210,11 @@ setMethod("select", "mmquery_bioc",
               if (missing(keytype)) keytype <- mm_centralPkgSymbol()
               tables <- c("validated", "predicted", "disease.drug")
               sapply(tables, function(y) {
+                         keytype <- mm_centralPkgSymbol()
                          rtn <- slot(x, y)
                          rtn <- rtn[, colnames(rtn) %in% c(columns, keytype)]
-                         rtn <- rtn[rtn[keytype, ] %in% keys, ]
+                         rtn <- rtn[rtn[, keytype] %in% keys, ]
                          rtn
-#                          %>% dplyr::select(columns, keytype) %>%
-#                              dplyr::filter(keytype %in% keys)
                         })
           })
 
