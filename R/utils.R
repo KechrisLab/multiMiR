@@ -104,3 +104,17 @@ split_by <- function(.x, .f, ...) {
     split(.x, purrr::simplify_all(purrr::transpose(vals)))
 }
 
+#' Replace nulls with an empty object of each type
+#'
+#' @return an empty \code{data.frame}, \code{numeric}, or \code{character}
+#' vector.
+#' @param x input object
+#' @keywords internal
+null_to_df <- function(x) if (is.null(x)) data.frame() else x
+
+#' @rdname null_to_df
+null_to_num <- function(x) if (is.null(x)) numeric() else x
+
+#' @rdname null_to_df
+null_to_char <- function(x) if (is.null(x)) character() else x
+

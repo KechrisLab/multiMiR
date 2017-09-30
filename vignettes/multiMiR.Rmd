@@ -217,6 +217,20 @@ apply(db.count[,-1], 2, sum)
 
 The current version of *multiMiR* contains nearly 50 million records.
 
+
+# Changes to `package:multiMiR` - S3 and S4 classes
+
+With the addition of multiMiR to Bioconductor, the return object has changed
+from an S3 (`mmquery`) to an S4 class (`mmquery_bioc`).  The new S4 object is
+structured similar to the prior version. All features are now accessible using
+the S4 accessor operator `@`. 
+
+Additionally, the `AnnotationDbi` accessor methods `column`, `keys`, `keytypes`,
+and `select` all work for `mmquery_bioc` objects.  See Section [annodbi].
+
+For backwards compatibility, `get_multimir()` will return the old S3 object if
+the argument `legacy.out = TRUE`.
+
 # List miRNAs, genes, drugs and diseases in the multiMiR database
 
 In addition to functions displaying database and table information, the
@@ -254,6 +268,53 @@ To get familiar with the parameters in `get_multimir()`, you can type
 illustrate the use of the parameters.
 
 
+# Example of multiMiR in a Bioconductor workflow
+
+This example shows the use of `multiMiR` alongside the `edgeR` Bioconductor
+package.  Here we take microRNA data from ISS and ILS mouse strains and conduct
+a differential expression analysis.  The top differentially expresssed
+microRNA's are then used to search the multiMiR database for validated
+target genes.
+
+```{r, biocworkflow, eval=TRUE}
+library(edgeR)
+library(multiMiR)
+
+# Load data
+counts_file  <- system.file("extdata", "counts_table.Rds", package = "multiMiR")
+strains_file <- system.file("extdata", "strains_factor.Rds", package = "multiMiR")
+counts_table   <- readRDS(counts_file)
+strains_factor <- readRDS(strains_file)
+
+# Standard edgeR differential expression analysis
+design <- model.matrix(~ strains_factor)
+
+# Using trended dispersions
+dge <- DGEList(counts = counts_table)
+dge <- calcNormFactors(dge)
+dge$samples$strains <- strains_factor
+dge <- estimateGLMCommonDisp(dge, design)
+dge <- estimateGLMTrendedDisp(dge, design)
+dge <- estimateGLMTagwiseDisp(dge, design)
+
+# Fit GLM model for strain effect
+fit <- glmFit(dge, design)
+lrt <- glmLRT(fit)
+
+# Table of unadjusted p-values (PValue) and FDR values
+p_val_DE_edgeR <- topTags(lrt, adjust.method = 'BH', n = Inf)
+
+# Getting top differentially expressed miRNA's
+top_miRNAs <- rownames(p_val_DE_edgeR$table)[1:10]
+
+# Plug miRNA's into multiMiR and getting validated targets
+multimir_results <- get_multimir(org     = 'mmu',
+                                 mirna   = top_miRNAs,
+                                 table   = 'validated',
+                                 summary = T)
+head(multimir_results@validated)
+```
+
 # Examples of multiMiR queries
 
 In this section a variety of examples are described on how to query the multiMiR
@@ -268,10 +329,10 @@ In the first example, we ask what genes are validated targets of hsa-miR-18a-3p.
 example1 <- get_multimir(mirna = 'hsa-miR-18a-3p', summary = TRUE)
 names(example1)
 # Detailed information of the validated miRNA-target interaction
-head(example1$validated)
+head(example1@validated)
 # Which interactions are supported by Luciferase assay?
-example1$validated[grep("Luciferase", example1$validated[, "experiment"]), ]
-example1$summary[example1$summary[,"target_symbol"] == "KRAS",]
+example1@validated[grep("Luciferase", example1@validated[, "experiment"]), ]
+example1@summary[example1@summary[,"target_symbol"] == "KRAS",]
 ```
 
 It turns out that *KRAS* is the only target validated by Luciferase assay. The
@@ -289,8 +350,8 @@ associated with Cisplatin, a chemotherapy drug used in several cancers.
 ```{r Example2} 
 example2 <- get_multimir(disease.drug = 'cisplatin', table = 'disease.drug')
 names(example2)
-nrow(example2$disease.drug)
-head(example2$disease.drug)
+nrow(example2@disease.drug)
+head(example2@disease.drug)
 ```
 
 `get_multimir()` returns 53 miRNA-target pairs. For more information, we can
@@ -314,11 +375,11 @@ example3 <- get_multimir(org     = "mmu",
                          predicted.cutoff.type = "p",
                          predicted.site        = "all")
 names(example3)
-head(example3$predicted)
-head(example3$summary)
+head(example3@predicted)
+head(example3@summary)
 ```
 
-The records in `example3$predicted` are ordered by scores from best to
+The records in `example3@predicted` are ordered by scores from best to
 worst within each external database. Once again, the summary option allows us to
 examine the number of target sites predicted by each external database and the
 total number of databases predicting the interaction.
@@ -326,7 +387,7 @@ total number of databases predicting the interaction.
 Finally we examine how many predictions each of the databases has.
 
 ```{r Example3_part2}
-apply(example3$summary[, 6:13], 2, function(x) sum(x > 0))
+apply(example3@summary[, 6:13], 2, function(x) sum(x > 0))
 ```
 
 ## Example 4: Select miRNA(s) predicted to target most, if not all, of the genes of interest
@@ -349,7 +410,7 @@ example4 <- get_multimir(org     = 'hsa',
 Then we count the number of target genes for each miRNA.
 
 ```{r Example4_part2}
-example4.counts <- addmargins(table(example4$summary[, 2:3]))
+example4.counts <- addmargins(table(example4@summary[, 2:3]))
 example4.counts <- example4.counts[-nrow(example4.counts), ]
 example4.counts <- example4.counts[order(example4.counts[, 5], decreasing = TRUE), ]
 head(example4.counts)
@@ -381,7 +442,8 @@ example5 <- get_multimir(org     = "hsa",
                          table   = "all",
                          summary = TRUE,
                          predicted.cutoff.type = "p",
-                         predicted.cutoff      = 10)
+                         predicted.cutoff      = 10,
+                         use.tibble = TRUE)
 ```
 ```{r eval = FALSE}
 ## Searching diana_microt ...
@@ -403,7 +465,7 @@ example5 <- get_multimir(org     = "hsa",
 In the result, there are 3 unique miRNA-gene pairs that have been validated.
 
 ```{r Example5_part3, eval=FALSE, echo=FALSE}
-example5$validated
+example5@validated
 ```
 ```{r eval=FALSE}
 ##     database mature_mirna_acc mature_mirna_id target_symbol target_entrez
@@ -423,7 +485,7 @@ example5$validated
 Two miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
 
 ```{r Example5_part4, eval=FALSE, echo=FALSE}
-example5$disease.drug[grep("bladder", example5$disease.drug$disease_drug,
+example5@disease.drug[grep("bladder", example5@disease.drug$disease_drug,
                            ignore.case = TRUE), ]
 ```
 ```{r eval=FALSE}
@@ -445,7 +507,7 @@ The predicted databases predict 65 miRNA-gene pairs between the 9 miRNAs and 28
 of the 47 genes.
 
 ```{r Example5_part5, eval=FALSE, echo=FALSE}
-length(unique(example5$predicted$mature_mirna_id))
+length(unique(example5@predicted$mature_mirna_id))
 ```
 ```{r, eval=FALSE}
 ## [1] 9
@@ -453,7 +515,7 @@ length(unique(example5$predicted$mature_mirna_id))
 
 
 ```{r Example5_part6, eval=FALSE, echo=FALSE}
-length(unique(example5$predicted$target_entrez))
+length(unique(example5@predicted$target_entrez))
 ```
 ```{r, eval=FALSE}
 ## [1] 28
@@ -462,8 +524,8 @@ length(unique(example5$predicted$target_entrez))
 
 ```{r Example5_part7, eval=FALSE, echo=TRUE}
 unique.pairs <- 
-    unique(data.frame(miRNA.ID = as.character(example5$predicted$mature_mirna_id),
-                      target.Entrez = as.character(example5$predicted$target_entrez)))
+    unique(data.frame(miRNA.ID = as.character(example5@predicted$mature_mirna_id),
+                      target.Entrez = as.character(example5@predicted$target_entrez)))
 nrow(unique.pairs)
 ```
 ```{r, eval=FALSE}
@@ -489,10 +551,38 @@ from best to worst.
 
 
 ```{r Example5_part9, eval=FALSE, echo=FALSE}
-example5.split <- split(example5$predicted, example5$predicted$database)
+example5.split <- split(example5@predicted, example5@predicted$database)
 ```
 
 
+## Use of AnnotationDbi accessor methods {#annodbi}
+
+AnnotationDbi accessor methods can be used to select and filter the data
+returned by `get_multimir()`.
+
+```{r annodbi}
+# On example4's result
+columns(example4)
+keys(example4)
+keytypes(example4)
+mykeys <- keys(example4)[1:4]
+select(example4, keys = mykeys, columns = c("database", "target_entrez"))
+
+# On example3's result
+columns(example3)
+keys(example3)
+keytypes(example3)
+mykeys <- keys(example3)[1:4]
+select(example3, keys = mykeys, columns = c("database", "target_entrez", "score"))
+
+# Search by gene on example4's result
+columns(example4)
+keytypes(example4)
+keys(example4, keytype = "target_entrez")
+mykeys <- keys(example4, keytype = "target_entrez") [1:2]
+select(example4, keys = mykeys, keytype = "target_entrez",
+       columns = c("database", "target_entrez", "score"))
+```
 
 
 # Direct query to the database on the multiMiR web server
