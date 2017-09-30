@@ -125,7 +125,7 @@ print.mmquery <- function(x) {
 #' score cutoff (p = percentage, n = number, character() = none)
 #' @slot predicted.site A character string indicating the type of predicted
 #' target sites to searched.
-#' @param x An mmquery_bioc object.
+#' @param x,object An mmquery_bioc object.
 #' @param keys A result of the keys() function. For the mmquery_bioc class this
 #'   is a character vector of microRNA's in the returned mmquery_bioc object.
 #' @param keytype allows the user to discover which keytypes can be passes in to
@@ -139,6 +139,7 @@ print.mmquery <- function(x) {
 #' @importFrom AnnotationDbi columns
 #' @importFrom AnnotationDbi keys
 #' @importFrom AnnotationDbi keytypes
+#' @importFrom AnnotationDbi show
 #' @importFrom methods new
 #' @importFrom methods slot
 #' @export
@@ -210,13 +211,30 @@ setMethod("select", "mmquery_bioc",
               if (missing(keytype)) keytype <- mm_centralPkgSymbol()
               tables <- c("validated", "predicted", "disease.drug")
               sapply(tables, function(y) {
-                         keytype <- mm_centralPkgSymbol()
                          rtn <- slot(x, y)
                          rtn <- rtn[, colnames(rtn) %in% c(columns, keytype)]
-                         rtn <- rtn[rtn[, keytype] %in% keys, ]
+                         if (nrow(rtn) > 0) rtn <- rtn[rtn[, keytype] %in% keys, ]
                          rtn
                         })
+
           })
+
+#' @rdname mmquery_bioc-class
+#' @export
+setMethod("show", "mmquery_bioc",
+    function(object)
+    {
+        cat("MultiMiR query\n")
+        cat("Validated interactions:\n")
+        print(as_data_frame(object@validated), n = 5)
+        cat("Predicted interactions:\n")
+        print(as_data_frame(object@predicted), n = 5)
+        cat("Disease/Drug associations:\n")
+        print(as_data_frame(object@disease.drug), n = 5)
+        cat("Summary:\n")
+        print(as_data_frame(object@summary), n = 5)
+    }
+)
 
 
 #' @keywords internal
@@ -230,18 +248,6 @@ mm_cols <- function(x) {
 #' @keywords internal
 mm_centralPkgSymbol <- function() "mature_mirna_id"
 
-# setMethod("show", "mmquery_bioc",
-#     function(object)
-#     {
-#         cat(class(object), "object:\n")
-#         metadata <- metadata(object)
-#         for (i in seq_len(nrow(metadata))) {
-#             cat("| ", metadata[i, "name"], ": ", metadata[i, "value"],
-#                 "\n", sep="")
-#         }
-#         message("\n","Please see: help('select') for usage information", sep="")
-#     }
-# )
 
 # # Optional functions
 # setMethod("metadata", "AnnotationDb",

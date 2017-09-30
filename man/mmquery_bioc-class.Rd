@@ -8,6 +8,7 @@
 \alias{keys,mmquery_bioc-method}
 \alias{keytypes,mmquery_bioc-method}
 \alias{select,mmquery_bioc-method}
+\alias{show,mmquery_bioc-method}
 \title{S4 constructor and methods for object returned by \code{get_multimir()}.}
 \usage{
 as.mmquery_bioc(.list)
@@ -19,11 +20,13 @@ as.mmquery_bioc(.list)
 \S4method{keytypes}{mmquery_bioc}(x)
 
 \S4method{select}{mmquery_bioc}(x, keys, columns, keytype, ...)
+
+\S4method{show}{mmquery_bioc}(object)
 }
 \arguments{
 \item{.list}{a list of returned dataframes, summary}
 
-\item{x}{An mmquery_bioc object.}
+\item{x, object}{An mmquery_bioc object.}
 
 \item{keytype}{allows the user to discover which keytypes can be passes in to
 select or keys  and the keytype argument}
