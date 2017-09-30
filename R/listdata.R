@@ -21,12 +21,12 @@
 #' @author Yuanbin Ru \email{ruyuanbin@@gmail.com}
 #' @keywords utilities database
 #' @examples
-#'
+#' \dontrun{
 #'   miRNAs <- list_multimir("mirna")
 #'   genes <- list_multimir("gene")
 #'   drugs <- list_multimir("drug")
 #'   diseases <- list_multimir("disease")
-#'
+#' }
 #' @importFrom purrr map
 #' @export list_multimir
 list_multimir <- function(x     = c("mirna", "gene", "drug", "disease"),

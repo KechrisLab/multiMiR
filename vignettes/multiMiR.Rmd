@@ -25,7 +25,6 @@ vignette: |
   %\VignetteEncoding{UTF-8}  
 ---
 
-
 ```{r, include=FALSE, echo=FALSE}
 # date: "`r doc_date()`"
 # "`r pkg_ver('BiocStyle')`"
@@ -226,7 +225,7 @@ structured similar to the prior version. All features are now accessible using
 the S4 accessor operator `@`. 
 
 Additionally, the `AnnotationDbi` accessor methods `column`, `keys`, `keytypes`,
-and `select` all work for `mmquery_bioc` objects.  See Section [annodbi].
+and `select` all work for `mmquery_bioc` objects.  See Section \@ref(annodbi).
 
 For backwards compatibility, `get_multimir()` will return the old S3 object if
 the argument `legacy.out = TRUE`.
@@ -563,14 +562,14 @@ returned by `get_multimir()`.
 ```{r annodbi}
 # On example4's result
 columns(example4)
-keys(example4)
+head(keys(example4))
 keytypes(example4)
 mykeys <- keys(example4)[1:4]
 select(example4, keys = mykeys, columns = c("database", "target_entrez"))
 
 # On example3's result
 columns(example3)
-keys(example3)
+head(keys(example3))
 keytypes(example3)
 mykeys <- keys(example3)[1:4]
 select(example3, keys = mykeys, columns = c("database", "target_entrez", "score"))
@@ -578,8 +577,8 @@ select(example3, keys = mykeys, columns = c("database", "target_entrez", "score"
 # Search by gene on example4's result
 columns(example4)
 keytypes(example4)
-keys(example4, keytype = "target_entrez")
-mykeys <- keys(example4, keytype = "target_entrez") [1:2]
+head(keys(example4, keytype = "target_entrez"))
+mykeys <- keys(example4, keytype = "target_entrez")[1]
 select(example4, keys = mykeys, keytype = "target_entrez",
        columns = c("database", "target_entrez", "score"))
 ```
