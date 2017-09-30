@@ -217,6 +217,20 @@ apply(db.count[,-1], 2, sum)
 
 The current version of *multiMiR* contains nearly 50 million records.
 
+
+# Changes to `package:multiMiR` - S3 and S4 classes
+
+With the addition of multiMiR to Bioconductor, the return object has changed
+from an S3 (`mmquery`) to an S4 class (`mmquery_bioc`).  The new S4 object is
+structured similar to the prior version. All features are now accessible using
+the S4 accessor operator `@`. 
+
+Additionally, the `AnnotationDbi` accessor methods `column`, `keys`, `keytypes`,
+and `select` all work for `mmquery_bioc` objects.  See Section [annodbi].
+
+For backwards compatibility, `get_multimir()` will return the old S3 object if
+the argument `legacy.out = TRUE`.
+
 # List miRNAs, genes, drugs and diseases in the multiMiR database
 
 In addition to functions displaying database and table information, the
@@ -256,25 +270,26 @@ illustrate the use of the parameters.
 
 # Example of multiMiR in a Bioconductor workflow
 
-This example shows the use of `multiMiR` in a downstream Bioconductor workflow:
-H:re we take ISS and ILS strain 
-
+This example shows the use of `multiMiR` alongside the `edgeR` Bioconductor
+package.  Here we take microRNA data from ISS and ILS mouse strains and conduct
+a differential expression analysis.  The top differentially expresssed
+microRNA's are then used to search the multiMiR database for validated
+target genes.
 
 ```{r, biocworkflow, eval=TRUE}
 library(edgeR)
 library(multiMiR)
 
-counts_table   <- load(system.file("extdata", "counts_table.RData", 
-                                   package = "multiMiR"))
-strains_factor <- load(system.file("extdata", "strains_factor.RData", 
-                                   package = "multiMiR"))
-```
+# Load data
+counts_file  <- system.file("extdata", "counts_table.Rds", package = "multiMiR")
+strains_file <- system.file("extdata", "strains_factor.Rds", package = "multiMiR")
+counts_table   <- readRDS(counts_file)
+strains_factor <- readRDS(strains_file)
 
-```{r, biocworkflow2, eval=TRUE}
 # Standard edgeR differential expression analysis
 design <- model.matrix(~ strains_factor)
 
-##  Using trended dispersions
+# Using trended dispersions
 dge <- DGEList(counts = counts_table)
 dge <- calcNormFactors(dge)
 dge$samples$strains <- strains_factor
@@ -282,18 +297,22 @@ dge <- estimateGLMCommonDisp(dge, design)
 dge <- estimateGLMTrendedDisp(dge, design)
 dge <- estimateGLMTagwiseDisp(dge, design)
 
-##   Fit GLM model for strain effect
+# Fit GLM model for strain effect
 fit <- glmFit(dge, design)
 lrt <- glmLRT(fit)
 
-##   Table of unadjusted p-values (PValue) and FDR values
+# Table of unadjusted p-values (PValue) and FDR values
 p_val_DE_edgeR <- topTags(lrt, adjust.method = 'BH', n = Inf)
 
 # Getting top differentially expressed miRNA's
 top_miRNAs <- rownames(p_val_DE_edgeR$table)[1:10]
 
-####    Plug miRNA's into multiMiR and getting validated targets    ####
-multimir_results <- get_multimir(org = 'mmu', mirna = top_miRNAs, table = 'validated', summary = T)
+# Plug miRNA's into multiMiR and getting validated targets
+multimir_results <- get_multimir(org     = 'mmu',
+                                 mirna   = top_miRNAs,
+                                 table   = 'validated',
+                                 summary = T)
+head(multimir_results@validated)
 ```
 
 # Examples of multiMiR queries
@@ -423,7 +442,8 @@ example5 <- get_multimir(org     = "hsa",
                          table   = "all",
                          summary = TRUE,
                          predicted.cutoff.type = "p",
-                         predicted.cutoff      = 10)
+                         predicted.cutoff      = 10,
+                         use.tibble = TRUE)
 ```
 ```{r eval = FALSE}
 ## Searching diana_microt ...
@@ -535,6 +555,34 @@ example5.split <- split(example5@predicted, example5@predicted$database)
 ```
 
 
+## Use of AnnotationDbi accessor methods {#annodbi}
+
+AnnotationDbi accessor methods can be used to select and filter the data
+returned by `get_multimir()`.
+
+```{r annodbi}
+# On example4's result
+columns(example4)
+keys(example4)
+keytypes(example4)
+mykeys <- keys(example4)[1:4]
+select(example4, keys = mykeys, columns = c("database", "target_entrez"))
+
+# On example3's result
+columns(example3)
+keys(example3)
+keytypes(example3)
+mykeys <- keys(example3)[1:4]
+select(example3, keys = mykeys, columns = c("database", "target_entrez", "score"))
+
+# Search by gene on example4's result
+columns(example4)
+keytypes(example4)
+keys(example4, keytype = "target_entrez")
+mykeys <- keys(example4, keytype = "target_entrez") [1:2]
+select(example4, keys = mykeys, keytype = "target_entrez",
+       columns = c("database", "target_entrez", "score"))
+```
 
 
 # Direct query to the database on the multiMiR web server
