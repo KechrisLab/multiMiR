@@ -315,7 +315,7 @@ top_miRNAs <- rownames(p_val_DE_edgeR$table)[1:10]
 multimir_results <- get_multimir(org     = 'mmu',
                                  mirna   = top_miRNAs,
                                  table   = 'validated',
-                                 summary = T)
+                                 summary = TRUE)
 head(multimir_results@data)
 ```
 
