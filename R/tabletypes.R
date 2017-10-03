@@ -17,6 +17,7 @@
 #' predicted_tables()
 #' diseasedrug_tables()
 #' predicted_tables() %in% all_tables() # TRUE
+#' table_types()
 #'
 #' @aliases all_tables, validated_tables, predicted_tables, diseasedrug_tables,
 #' tables_wo_target, reverse_table_lookup
@@ -59,6 +60,10 @@ reverse_table_lookup <- function(.table) {
         "disease.drug"
     }
 }
+
+#' @rdname all_tables
+#' @export
+table_types <- function() c("validated", "predicted", "disease.drug")
 
 #' @keywords internal
 get_score_var <- function(.table) {

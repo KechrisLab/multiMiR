@@ -84,12 +84,12 @@ each table.  Useful in testing potentially large queries.}
 object or the legacy S3 object (default=FALSE).}
 }
 \value{
-\code{get_multimir} returns a list with several data frames
-containing results from a given external database (e.g., if
-\code{table="targetscan"}), the predicted (if \code{table= "predicted"}),
-validated (if \code{table="validated"}), and disease and drug (if
-\code{table="disease.drug"}) components of multiMiR, and a summary (if
-\code{summary=TRUE}).
+\code{get_multimir} returns an S4 object (see
+\code{?mmquery_bioc-class} containing the queried data and associated
+metadata. With \code{legacy.out=FALSE} (default), the data is a single
+dataset with association/interaction type defined by the \code{type}
+variable. With \code{legacy.out=TRUE} the original S3 object with 3 separate
+data frames ('predicted', 'validated', and 'disease_drug') is returned.
 }
 \description{
 The main function to retrieve predicted and validated miRNA-target
@@ -128,15 +128,17 @@ break up the list into smaller batches and submit them sequentially.
 
   ## search 'hsa-miR-18a-3p' in validated interactions in human
   example1 <- get_multimir(mirna='hsa-miR-18a-3p', summary=TRUE)
-  names(example1)
+  columns(example1)
   ## target genes that are validated by Luciferase assay
-  example1@validated[grep("Luciferase", example1@validated[,"experiment"]),]
+  lucif <- select(example1, keytype = "type", keys = "validated", 
+                  columns = columns(example1))
+  lucif[grep("Luciferase", lucif$experiment), ]
   example1@summary[example1@summary[,"target_symbol"] == "KRAS",]
 
   ## search 'cisplatin' in disease and drug tables in human
   example2 <- get_multimir(disease.drug='cisplatin', table='disease.drug')
-  nrow(example2@disease.drug)
-  head(example2@disease.drug)
+  nrow(example2@data)
+  head(example2@data)
 
 }
 \keyword{database}

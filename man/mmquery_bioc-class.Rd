@@ -42,19 +42,15 @@ is a character vector of microRNA's in the returned mmquery_bioc object.}
 \description{
 This package's primary user-facing object. Contains the SQL statement and the
 returned data query, as well as a summary table depending on
-specified option.
+specified option.  Note that the returned data is now contained in a single
+dataframe. To filter to a specific type of association or interaction,
+\code{select} on the \code{type} variable.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{validated}}{A dataframe containing any validated microRNA-target
-interactions}
-
-\item{\code{predicted}}{A dataframe containing any predicted microRNA-target
-interactions}
-
-\item{\code{disease.drug}}{A dataframe containing any microRNA and disease or drug
-associations.}
+\item{\code{data}}{A dataframe containing validated and predicted microRNA-target
+interactions and disease/drug assocations found.}
 
 \item{\code{queries}}{A list of queries submitted to the multiMiR SQL server.}
 

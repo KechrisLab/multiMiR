@@ -25,7 +25,9 @@ Imports:
     tibble (>= 1.2),
     magrittr,
     methods,
-    AnnotationDbi
+    BiocGenerics,
+    AnnotationDbi,
+    dplyr,
 Suggests: 
     BiocStyle, 
     edgeR,
