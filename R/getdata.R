@@ -292,7 +292,7 @@ query_multimir <- function(x, org, add.link, use.tibble) {
     x$data <- search_multimir(x$query)
 
     if (!is.null(x$data)) {
-        x$data <- cbind('database' = x$table, x$data)
+        x$data <- cbind('database' = x$table, x$data, stringsAsFactors = FALSE)
         if (add.link) {
            x$data <- add.multimir.links(x$data, org)
         }

@@ -14,6 +14,7 @@
 \alias{tables_wo_target}
 \alias{conserved_tables}
 \alias{reverse_table_lookup}
+\alias{table_types}
 \title{Functions defining the category each table belongs to.}
 \usage{
 all_tables()
@@ -29,6 +30,8 @@ tables_wo_target()
 conserved_tables()
 
 reverse_table_lookup(.table)
+
+table_types()
 }
 \arguments{
 \item{.table}{a table name}
@@ -51,6 +54,7 @@ validated_tables()
 predicted_tables()
 diseasedrug_tables()
 predicted_tables() \%in\% all_tables() # TRUE
+table_types()
 
 }
 \keyword{tables}

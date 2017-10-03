@@ -100,8 +100,13 @@ db.ver
 To switch between versions we can use `multimir_switchDBVersion()`.
 
 ```{r multimir_switchDBVersion, echo=TRUE}
+vers_table <- multimir_dbInfoVersions()
+vers_table
+
 multimir_switchDBVersion(db_version = "2.0.0")
-multimir_switchDBVersion(db_version = "2.1.0")
+
+curr_vers  <- vers_table[1, "VERSION"]  # current version
+multimir_switchDBVersion(db_version = curr_vers)
 ```
 
 The remaining functions will query the selected version until the package is reloaded 
@@ -311,7 +316,7 @@ multimir_results <- get_multimir(org     = 'mmu',
                                  mirna   = top_miRNAs,
                                  table   = 'validated',
                                  summary = T)
-head(multimir_results@validated)
+head(multimir_results@data)
 ```
 
 # Examples of multiMiR queries
@@ -327,10 +332,12 @@ In the first example, we ask what genes are validated targets of hsa-miR-18a-3p.
 # The default is to search validated interactions in human
 example1 <- get_multimir(mirna = 'hsa-miR-18a-3p', summary = TRUE)
 names(example1)
+# Check which types of associations were returned
+table(example1@data$type)
 # Detailed information of the validated miRNA-target interaction
-head(example1@validated)
+head(example1@data)
 # Which interactions are supported by Luciferase assay?
-example1@validated[grep("Luciferase", example1@validated[, "experiment"]), ]
+example1@data[grep("Luciferase", example1@data[, "experiment"]), ]
 example1@summary[example1@summary[,"target_symbol"] == "KRAS",]
 ```
 
@@ -346,11 +353,12 @@ interaction.
 In this example we would like to know which miRNAs and their target genes are
 associated with Cisplatin, a chemotherapy drug used in several cancers.
 
-```{r Example2} 
+```{r Example2}
 example2 <- get_multimir(disease.drug = 'cisplatin', table = 'disease.drug')
 names(example2)
-nrow(example2@disease.drug)
-head(example2@disease.drug)
+nrow(example2@data)
+table(example2@data$type)
+head(example2@data)
 ```
 
 `get_multimir()` returns 53 miRNA-target pairs. For more information, we can
@@ -374,7 +382,8 @@ example3 <- get_multimir(org     = "mmu",
                          predicted.cutoff.type = "p",
                          predicted.site        = "all")
 names(example3)
-head(example3@predicted)
+table(example3@data$type)
+head(example3@data)
 head(example3@summary)
 ```
 
@@ -397,7 +406,7 @@ same miRNA(s). Here we have four genes involved in chronic obstructive pulmonary
 disease (COPD) in human and want to know what miRNAs target these genes by
 searching the top 500,000 predictions in each external database.
 
-```{r Example4_part1} 
+```{r Example4_part1}
 example4 <- get_multimir(org     = 'hsa',
                          target  = c('AKT2', 'CERS6', 'S1PR3', 'SULF2'),
                          table   = 'predicted',
@@ -433,7 +442,7 @@ expression changed at opposite directions may play a role in cancer metastasis.
 So we use `multiMiR` to check whether any of the nine miRNAs could
 target any of the 47 genes.
 
-```{r Example5_part2, eval=FALSE, echo=FALSE}
+```{r Example5_part2, eval=TRUE, echo=TRUE}
 # search all tables & top 10% predictions
 example5 <- get_multimir(org     = "hsa",
                          mirna   = DE.miRNA.up,
@@ -444,7 +453,7 @@ example5 <- get_multimir(org     = "hsa",
                          predicted.cutoff      = 10,
                          use.tibble = TRUE)
 ```
-```{r eval = FALSE}
+```{r eval = FALSE, include=FALSE}
 ## Searching diana_microt ...
 ## Searching elmmo ...
 ## Searching microcosm ...
@@ -461,12 +470,19 @@ example5 <- get_multimir(org     = "hsa",
 ## Searching phenomir ...
 ```
 
-In the result, there are 3 unique miRNA-gene pairs that have been validated.
 
-```{r Example5_part3, eval=FALSE, echo=FALSE}
-example5@validated
+```{r Example5_part3, eval=TRUE, echo=TRUE}
+table(example5@data$type)
+result <- select(example5, keytype = "type", keys = "validated", columns = columns(example5))
+unique_pairs <- 
+    result[!duplicated(result[, c("mature_mirna_id", "target_entrez")]), ]
+
+result
 ```
-```{r eval=FALSE}
+
+In the result, there are `r nrow(unique_pairs)` unique miRNA-gene pairs that have been validated.
+
+```{r eval=FALSE, include=FALSE}
 ##     database mature_mirna_acc mature_mirna_id target_symbol target_entrez
 ## 1 mirtarbase     MIMAT0000087  hsa-miR-30a-5p          FDX1          2230
 ## 2 mirtarbase     MIMAT0000087  hsa-miR-30a-5p        LIMCH1         22998
@@ -481,13 +497,27 @@ example5@validated
 ## 5 ENSG00000064042               Proteomics              positive          
 ```
 
-Two miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
 
-```{r Example5_part4, eval=FALSE, echo=FALSE}
-example5@disease.drug[grep("bladder", example5@disease.drug$disease_drug,
-                           ignore.case = TRUE), ]
+```{r Example5_part4, eval=TRUE, echo=TRUE}
+mykeytype <- "disease_drug"
+
+mykeys <- keys(example5, keytype = mykeytype)
+mykeys <- mykeys[grep("bladder", mykeys, ignore.case = TRUE)]
+
+result <- select(example5, keytype = "disease_drug", keys = mykeys,
+                 columns = columns(example5))
+result
 ```
-```{r eval=FALSE}
+
+```{r Example5_part4_fortext, echo=FALSE, include=FALSE, eval=TRUE}
+unique_pairs <- 
+    result[!duplicated(apply(result[, c("mature_mirna_id", "disease_drug")], 2,
+                             tolower)), ]
+```
+
+`r nrow(unique_pairs)` miRNAs are associated with bladder cancer in miR2Disease and PhenomiR.
+
+```{r eval=FALSE, include=FALSE}
 ##        database mature_mirna_acc mature_mirna_id target_symbol target_entrez
 ## 18  mir2disease     MIMAT0000418  hsa-miR-23b-3p            NA            NA
 ## 711    phenomir     MIMAT0000418  hsa-miR-23b-3p            NA            NA
@@ -505,52 +535,28 @@ example5@disease.drug[grep("bladder", example5@disease.drug$disease_drug,
 The predicted databases predict 65 miRNA-gene pairs between the 9 miRNAs and 28
 of the 47 genes.
 
-```{r Example5_part5, eval=FALSE, echo=FALSE}
-length(unique(example5@predicted$mature_mirna_id))
-```
-```{r, eval=FALSE}
-## [1] 9
-```
-
-
-```{r Example5_part6, eval=FALSE, echo=FALSE}
-length(unique(example5@predicted$target_entrez))
-```
-```{r, eval=FALSE}
-## [1] 28
-```
-
-
-```{r Example5_part7, eval=FALSE, echo=TRUE}
+```{r Example5_part5, eval=TRUE, echo=TRUE}
+predicted <- select(example5, keytype = "type", keys = "predicted", 
+                    columns = columns(example5))
+length(unique(predicted$mature_mirna_id))
+length(unique(predicted$target_entrez))
 unique.pairs <- 
-    unique(data.frame(miRNA.ID = as.character(example5@predicted$mature_mirna_id),
-                      target.Entrez = as.character(example5@predicted$target_entrez)))
+    unique(data.frame(miRNA.ID = as.character(predicted$mature_mirna_id),
+                      target.Entrez = as.character(predicted$target_entrez)))
 nrow(unique.pairs)
 ```
-```{r, eval=FALSE}
-## [1] 65
-```
 
 
-```{r Example5_part8, eval=FALSE, echo=FALSE}
+```{r Example5_part8, eval=TRUE, echo=TRUE}
 head(unique.pairs)
-```
-```{r, eval = FALSE}
-##         miRNA.ID target.Entrez
-## 1 hsa-miR-182-5p          2017
-## 2 hsa-miR-182-5p          1112
-## 3 hsa-miR-30d-5p         22998
-## 4 hsa-miR-30a-5p         22998
-## 5 hsa-miR-30b-5p         22998
-## 6 hsa-miR-182-5p          5962
 ```
 
 Results from each of the predicted databases are already ordered by their scores
 from best to worst.
 
 
-```{r Example5_part9, eval=FALSE, echo=FALSE}
-example5.split <- split(example5@predicted, example5@predicted$database)
+```{r Example5_part9, eval=TRUE, echo=TRUE}
+example5.split <- split(predicted, predicted$database)
 ```
 
 
@@ -565,22 +571,24 @@ columns(example4)
 head(keys(example4))
 keytypes(example4)
 mykeys <- keys(example4)[1:4]
-select(example4, keys = mykeys, columns = c("database", "target_entrez"))
+head(select(example4, keys = mykeys, 
+            columns = c("database", "target_entrez")))
 
 # On example3's result
 columns(example3)
 head(keys(example3))
 keytypes(example3)
 mykeys <- keys(example3)[1:4]
-select(example3, keys = mykeys, columns = c("database", "target_entrez", "score"))
+head(select(example3, keys = mykeys, 
+            columns = c("database", "target_entrez", "score")))
 
 # Search by gene on example4's result
 columns(example4)
 keytypes(example4)
 head(keys(example4, keytype = "target_entrez"))
 mykeys <- keys(example4, keytype = "target_entrez")[1]
-select(example4, keys = mykeys, keytype = "target_entrez",
-       columns = c("database", "target_entrez", "score"))
+head(select(example4, keys = mykeys, keytype = "target_entrez",
+            columns = c("database", "target_entrez", "score")))
 ```
 
 

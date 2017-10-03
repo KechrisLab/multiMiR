@@ -107,14 +107,12 @@ print.mmquery <- function(x) {
 #'
 #' This package's primary user-facing object. Contains the SQL statement and the
 #' returned data query, as well as a summary table depending on
-#' specified option. 
+#' specified option.  Note that the returned data is now contained in a single
+#' dataframe. To filter to a specific type of association or interaction,
+#' \code{select} on the \code{type} variable.
 #'
-#' @slot validated A dataframe containing any validated microRNA-target
-#' interactions
-#' @slot predicted A dataframe containing any predicted microRNA-target
-#' interactions
-#' @slot disease.drug A dataframe containing any microRNA and disease or drug
-#' associations.
+#' @slot data A dataframe containing validated and predicted microRNA-target
+#' interactions and disease/drug assocations found.
 #' @slot queries A list of queries submitted to the multiMiR SQL server.
 #' @slot summary A summary dataframe of the returned microRNA dataframes
 #' @slot tables A character vector of the microRNA relationship types returned
@@ -140,13 +138,14 @@ print.mmquery <- function(x) {
 #' @importFrom AnnotationDbi keys
 #' @importFrom AnnotationDbi keytypes
 #' @importFrom AnnotationDbi show
+#' @importFrom BiocGenerics Filter
 #' @importFrom methods new
 #' @importFrom methods slot
+#' @importFrom purrr reduce
+#' @importFrom dplyr full_join
 #' @export
 setClass("mmquery_bioc", 
-         representation(validated    = "data.frame",
-                        predicted    = "data.frame",
-                        disease.drug = "data.frame",
+         representation(data = "data.frame",
                         queries      = "list",
                         summary      = "data.frame",
                         tables = "character",
@@ -162,12 +161,16 @@ as.mmquery_bioc <- function(.list) {
     #                "summary", "table", "org", "predicted.cutoff",
     #                "predicted.cutoff.type", "predicted.site") %in%
     #              names(a_list)))
+    tables <- sapply(table_types(), function(y) {
+                       rtn <- .list[[y]]
+                       if (nrow(rtn) > 0) rtn$type <- y
+                       rtn
+           })
+    tables <- reduce(Filter(length, tables), full_join)
 
     # Create and return s3 object
     new("mmquery_bioc",
-        validated    = .list$validated,
-        predicted    = .list$predicted,
-        disease.drug = .list$disease.drug,
+        data    = tables,
         queries      = .list$queries,
         summary      = .list$summary,
         tables       = .list$table,
@@ -187,15 +190,11 @@ setMethod("columns", "mmquery_bioc", function(x) mm_cols(x))
 #' @export
 setMethod("keys", "mmquery_bioc",
           function(x, keytype, ...) {
+
               if(missing(keytype)){
                   keytype <- mm_centralPkgSymbol()
               }
-              tables <- c("validated", "predicted", "disease.drug")
-              rtn <- sapply(tables, function(y) {
-                                tbl <- slot(x, y)
-                                tbl[[keytype]]
-                        })
-              unique(unname(unlist(rtn)))
+              unique(unname(x@data[[keytype]]))
 
           })
 
@@ -209,39 +208,41 @@ setMethod("select", "mmquery_bioc",
           function(x, keys, columns, keytype, ...) {
 
               if (missing(keytype)) keytype <- mm_centralPkgSymbol()
-              tables <- c("validated", "predicted", "disease.drug")
-              sapply(tables, function(y) {
-                         rtn <- slot(x, y)
-                         rtn <- rtn[, colnames(rtn) %in% c(columns, keytype)]
-                         if (nrow(rtn) > 0) rtn <- rtn[rtn[, keytype] %in% keys, ]
-                         rtn
-                        })
+              rtn <- slot(x, "data")
+              rtn <- rtn[, colnames(rtn) %in% unique(c(columns, keytype))]
+              if (nrow(rtn) > 0) rtn <- rtn[rtn[[keytype]] %in% keys, ]
+              rtn
 
           })
 
 #' @rdname mmquery_bioc-class
 #' @export
 setMethod("show", "mmquery_bioc",
-    function(object)
-    {
+    function(object) {
+
         cat("MultiMiR query\n")
         cat("Validated interactions:\n")
-        print(as_data_frame(object@validated), n = 5)
+        print(as_data_frame(select(object, keytype = "type",
+                                   keys = "validated",
+                                   columns = columns(object), n = 5)))
         cat("Predicted interactions:\n")
-        print(as_data_frame(object@predicted), n = 5)
+        print(as_data_frame(select(object, keytype = "type",
+                                   keys = "predicted",
+                                   columns = columns(object), n = 5)))
         cat("Disease/Drug associations:\n")
-        print(as_data_frame(object@disease.drug), n = 5)
+        print(as_data_frame(select(object, keytype = "type",
+                                   keys = "disease.drug",
+                                   columns = columns(object), n = 5)))
         cat("Summary:\n")
         print(as_data_frame(object@summary), n = 5)
-    }
-)
+
+    })
 
 
 #' @keywords internal
 mm_cols <- function(x) {
-    tables <- c("validated", "predicted", "disease.drug")
-    rtn <- sapply(tables, function(y) colnames(slot(x, y)))
-    rtn <- unique(unname(unlist(rtn)))
+    rtn <- colnames(slot(x, "data"))
+    rtn <- unique(unname(rtn))
     rtn
 }
 
