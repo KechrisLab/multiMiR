@@ -37,12 +37,12 @@ list.multimir() has been deprecated and replaced with the list_multimir()
 version.
 }
 \examples{
-
+\dontrun{
   miRNAs <- list_multimir("mirna")
   genes <- list_multimir("gene")
   drugs <- list_multimir("drug")
   diseases <- list_multimir("disease")
-
+}
 }
 \author{
 Yuanbin Ru \email{ruyuanbin@gmail.com}
