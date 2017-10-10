@@ -225,15 +225,18 @@ The current version of *multiMiR* contains nearly 50 million records.
 # Changes to `package:multiMiR` - S3 and S4 classes
 
 With the addition of multiMiR to Bioconductor, the return object has changed
-from an S3 (`mmquery`) to an S4 class (`mmquery_bioc`).  The new S4 object is
-structured similar to the prior version. All features are now accessible using
-the S4 accessor operator `@`. 
-
-Additionally, the `AnnotationDbi` accessor methods `column`, `keys`, `keytypes`,
-and `select` all work for `mmquery_bioc` objects.  See Section \@ref(annodbi).
-
+from an S3 (`mmquery`) to an S4 class (`mmquery_bioc`).  The new S4 object has a
+similar structure to the prior version, except all returned datasets (validated,
+predicted, disease.drug) are now combined into a single dataset.  To get only
+one type, filter on the `type` variable using the AnnotationDbi method discussed
+later or the base R approach `subset(myqry@data, myqry@data$type == "validated")`).
 For backwards compatibility, `get_multimir()` will return the old S3 object if
 the argument `legacy.out = TRUE`.
+
+Features are now accessible using the S4 accessor operator `@`.  Additionally,
+the `AnnotationDbi` accessor methods `column`, `keys`, `keytypes`, and `select`
+all work for `mmquery_bioc` objects.  See Section \@ref(annodbi).
+
 
 # List miRNAs, genes, drugs and diseases in the multiMiR database
 
