@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/KechrisLab/multiMiR.svg?branch=master)](https://travis-ci.org/KechrisLab/multiMiR)
 [![codecov](https://codecov.io/gh/KechrisLab/multiMiR/branch/master/graph/badge.svg)](https://codecov.io/gh/KechrisLab/multiMiR)
 [![biocdownloads](https://bioconductor.org/shields/downloads/multiMiR.svg)](https://bioconductor.org/shields/downloads/multiMiR.svg)
-[![inBioc](https://bioconductor.org/shields/years-in-bioc/multiMiR.svg)](https://bioconductor.org/shields/years-in-bioc/multiMiR.svg)
+[![inBioc](https://bioconductor.org/shields/years-in-bioc/multiMiR.svg)](https://bioconductor.org/packages/release/bioc/html/multiMiR.html)
 ---
 
 The [*multiMiR* web server](http://multimir.ucdenver.edu) hosts a
