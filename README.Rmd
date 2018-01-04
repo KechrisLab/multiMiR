@@ -1,37 +1,25 @@
-[![Build Status](https://travis-ci.org/KechrisLab/multiMiR.svg?branch=master)](https://travis-ci.org/KechrisLab/multiMiR)
-[![codecov](https://codecov.io/gh/KechrisLab/multiMiR/branch/master/graph/badge.svg)](https://codecov.io/gh/KechrisLab/multiMiR)
-
 # multiMiR  
 
+[![Build Status](https://travis-ci.org/KechrisLab/multiMiR.svg?branch=master)](https://travis-ci.org/KechrisLab/multiMiR)
+[![codecov](https://codecov.io/gh/KechrisLab/multiMiR/branch/master/graph/badge.svg)](https://codecov.io/gh/KechrisLab/multiMiR)
+[![biocdownloads](https://bioconductor.org/shields/downloads/multiMiR.svg)](https://bioconductor.org/shields/downloads/multiMiR.svg)
+[![inBioc](https://bioconductor.org/shields/years-in-bioc/multiMiR.svg)](https://bioconductor.org/packages/release/bioc/html/multiMiR.html)
 ---
 
 The [*multiMiR* web server](http://multimir.ucdenver.edu) hosts a
 database containing miRNA-target interactions from external databases. The
-package *multiMiR* provides functions to communicate with the
-*multiMiR* web server and its database. 
+package *multiMiR* provides functions to communicate with the *multiMiR* web
+server and its database. 
 
-Note this repository is the development version.  Public releases are available
-on the web server's [website](http://multimir.ucdenver.edu) or via versioned
-tags (e.g.  v2.1) in this repo.
-
+Note this repository is where active development occurs (think 'nightly'
+builds).  The recommended release and devel versions are available via
+Bioconductor (as of Bioconductor 3.6).
 
 ```{r}
-# To install multiMiR, first install suggested package BiocStyle
+# To install multiMiR, use biocLite()
 source("https://bioconductor.org/biocLite.R")
 biocLite()
-biocLite("BiocStyle")
-
-# Now install devtools (for installing from GitHub repositories)
-install.packages("devtools")
-library(devtools)
-
-# Now install the development version of the multiMiR package
-#devtools::install_github("kechrislab/multimir", build_vignettes = TRUE)
-
-# To install a public release, use the `ref=` option to select the tag of the
-# release version 
-# The current public release is v0.99.5
-devtools::install_github("kechrislab/multimir", ref = "v0.99.5")
+biocLite("multiMiR")
 ```
 
 Terminology used in package:
@@ -40,5 +28,5 @@ Terminology used in package:
   queries (i.e. mirna; conserved; table type: validated, predicted; etc.)
 - *sql*: a complete sql statement (mmsql class)
 - *query*: table result of sql statement (mmquery class), class includes sql
-  statement and parts 
+  statement and parts.
 

@@ -39,6 +39,10 @@ is a character vector of microRNA's in the returned mmquery_bioc object.}
 \item{columns}{lists the columns that can be returned for the
 \code{mmquery_bioc} object.}
 }
+\value{
+an s4 object of class mmquery_bioc.  Contains queried data, a summary
+dataset, and associated input parameters.
+}
 \description{
 This package's primary user-facing object. Contains the SQL statement and the
 returned data query, as well as a summary table depending on

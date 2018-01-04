@@ -4,6 +4,7 @@
 #'
 #' @return A list of data queried, summary of results, and related input
 #'   parameters.
+#' @return a list for packaging by \code{as.mmquery} and \code{as.mmquery_bioc}
 #' @keywords internal
 #' @importFrom tibble as_data_frame
 #' @importFrom purrr map
@@ -132,6 +133,8 @@ print.mmquery <- function(x) {
 #' \code{mmquery_bioc} object.
 #' @param .list a list of returned dataframes, summary
 #' @param ... additional arguments
+#' @return an s4 object of class mmquery_bioc.  Contains queried data, a summary
+#' dataset, and associated input parameters.
 #' 
 #' @importFrom AnnotationDbi select
 #' @importFrom AnnotationDbi columns
