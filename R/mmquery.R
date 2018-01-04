@@ -166,7 +166,12 @@ as.mmquery_bioc <- function(.list) {
                        if (nrow(rtn) > 0) rtn$type <- y
                        rtn
            })
-    tables <- reduce(Filter(length, tables), full_join)
+    tables <- Filter(length, tables)
+    if (length(tables) != 0) {
+        tables <- reduce(tables, full_join)
+    } else {
+        tables <- data.frame()
+    }
 
     # Create and return s3 object
     new("mmquery_bioc",
