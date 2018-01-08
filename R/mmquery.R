@@ -64,7 +64,7 @@ extract_mmquery <- function(outlist, org, .args, summary = FALSE,
 as.mmquery <- function(a_list) {
 
     stopifnot(all(c("validated", "predicted", "disease.drug", "queries",
-                    "summary", "table", "org", "predicted.cutoff",
+                    "summary", "tables", "org", "predicted.cutoff",
                     "predicted.cutoff.type", "predicted.site") %in%
                   names(a_list)))
 
