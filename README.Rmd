@@ -5,7 +5,7 @@
 
 ---
 
-The [*multiMiR* web server](http://multimir.ucdenver.edu) hosts a
+The [*multiMiR* web server](http://multimir.org) hosts a
 database containing miRNA-target interactions from external databases. The
 package *multiMiR* provides functions to communicate with the
 *multiMiR* web server and its database. 

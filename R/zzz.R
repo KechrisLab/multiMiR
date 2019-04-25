@@ -19,7 +19,7 @@
 
     op <- options()
 
-    op.multimir <- list(multimir.url  = "http://multimir.ucdenver.edu/",
+    op.multimir <- list(multimir.url  = "http://multimir.org/",
                         multimir.queries = "cgi-bin/multimir_univ.pl")
 
     # Only set options multimir if name doesn't exist in current global options

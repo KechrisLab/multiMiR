@@ -9,7 +9,7 @@
 \description{
 This package provides an interface to the multiMiR database of
 microRNA-target interactions, and disease and drug associations. See
-\url{http://multimir.ucdenver.edu} and the vignette ('multiMiR') for more
+\url{http://multimir.org} and the vignette ('multiMiR') for more
 details.
 }
 \references{

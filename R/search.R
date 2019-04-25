@@ -97,7 +97,7 @@ parse_response <- function(HTML.response) {
         stop("Request to multiMiR web server failed. There could be ",
              "incorrect syntax in your query, or you are not connected to ",
              "the internet.  Alternatively the multiMiR web server at ", 
-             "http://multimir.ucdenver.edu is temporarily down. \n")
+             "http://multimir.org is temporarily down. \n")
     }  # else if l ==1, just return NULL
 
     return(response)

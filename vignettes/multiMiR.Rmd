@@ -49,7 +49,7 @@ target site packages in R are limited in the number of databases, types of
 databases and flexibility. 
 
 The R package *multiMiR*, with web server at
-[http://multimir.ucdenver.edu](http://multimir.ucdenver.edu), is a comprehensive
+[http://multimir.org](http://multimir.org), is a comprehensive
 collection of predicted and validated miRNA-target interactions and their
 associations with diseases and drugs. *multiMiR* includes several novel features
 not available in existing R packages: 
@@ -82,7 +82,7 @@ opts_chunk$set(echo       = TRUE,
 ```
 
 The *multiMiR* web server
-[http://multimir.ucdenver.edu](http://multimir.ucdenver.edu) hosts a database
+[http://multimir.org](http://multimir.org) hosts a database
 containing miRNA-target interactions from external databases. The package
 *multiMiR* provides functions to communicate with the *multiMiR* web server and
 its database. The *multiMiR* database is now versioned. By default *multiMiR*
@@ -432,7 +432,7 @@ Lul2, respectively. We identified differentially expressed miRNAs and genes
 between the metastatic and poorly metastatic cells. Let's load the data.
 
 ```{r Example5, echo=TRUE}
-load(url("http://multimir.ucdenver.edu/bladder.rda"))
+load(url("http://multimir.org/bladder.rda"))
 ```
 
 Variable `DE.miRNA.up` contains 9 up-regulated miRNAs and variable
@@ -596,7 +596,7 @@ head(select(example4, keys = mykeys, keytype = "target_entrez",
 
 As shown previously, *get_multimir* is the main function to retrieve
 information from the *multiMiR* database, which is hosted at
-http://multimir.ucdenver.edu. The function builds one SQL query for every
+http://multimir.org. The function builds one SQL query for every
 external database that the user is going to search, submits the query to the web
 server, and parses, combines, and summarizes results from the web server. For
 advanced users, there are a couple ways to query the *multiMiR*
@@ -608,7 +608,7 @@ familiar with SQL queries. In general, users are still advised to use the
 ## Direct query on the web server
 
 The *multiMiR* package communicates with the *multiMiR* database via the script
-[http://multimir.ucdenver.edu/cgi-bin/multimir\_univ.pl](http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl)
+[http://multimir.org/cgi-bin/multimir\_univ.pl](http://multimir.org/cgi-bin/multimir_univ.pl)
 on the web server. Once again, data from each of the external databases is
 stored in a table in *multiMiR*. There are also tables for miRNAs (table
 *mirna*) and target genes (table *target*).  
@@ -624,12 +624,12 @@ excluded the current version is the default.
 To learn about the structure of a table (e.g. DIANA-microT data in table
 *diana\_microt*), users can use URL
 
-[http://multimir.ucdenver.edu/cgi-bin/multimir\_univ.pl?query=describe diana\_microt](http://multimir.ucdenver.edu/cgi-bin/multimir_univ.pl?query=describe diana_microt)
+[http://multimir.org/cgi-bin/multimir\_univ.pl?query=describe diana\_microt](http://multimir.org/cgi-bin/multimir_univ.pl?query=describe diana_microt)
 
 Similar with Example 1, the following URL searches for validated target genes of
 hsa-miR-18a-3p in miRecords.
 
-[http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p'](http://multimir.ucdenver.edu/cgi-bin/multimir.pl?query=SELECT m.mature_mirna_acc, m.mature_mirna_id, t.target_symbol, t.target_entrez, t.target_ensembl, i.experiment, i.support_type, i.pubmed_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature_mirna_uid=i.mature_mirna_uid and i.target_uid=t.target_uid) WHERE m.mature_mirna_id='hsa-miR-18a-3p')
+[http://multimir.org/cgi-bin/multimir.pl?query=SELECT m.mature\_mirna\_acc, m.mature\_mirna\_id, t.target\_symbol, t.target\_entrez, t.target\_ensembl, i.experiment, i.support\_type, i.pubmed\_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature\_mirna\_uid=i.mature\_mirna\_uid and i.target\_uid=t.target\_uid) WHERE m.mature\_mirna\_id='hsa-miR-18a-3p'](http://multimir.org/cgi-bin/multimir.pl?query=SELECT m.mature_mirna_acc, m.mature_mirna_id, t.target_symbol, t.target_entrez, t.target_ensembl, i.experiment, i.support_type, i.pubmed_id FROM mirna AS m INNER JOIN mirecords AS i INNER JOIN target AS t ON (m.mature_mirna_uid=i.mature_mirna_uid and i.target_uid=t.target_uid) WHERE m.mature_mirna_id='hsa-miR-18a-3p')
 
 As you can see, the query is long and searches just one of the three validated
 tables in *multiMiR*. While in Example 1, one line of R command using the 
