@@ -10,6 +10,8 @@ extract_mmquery(outlist, org, .args, summary = FALSE, use.tibble = FALSE)
 \value{
 A list of data queried, summary of results, and related input
   parameters.
+
+a list for packaging by \code{as.mmquery} and \code{as.mmquery_bioc}
 }
 \description{
 Creates all objects needed for the legacy S3 return object and the new S4
