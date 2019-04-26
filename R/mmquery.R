@@ -4,6 +4,7 @@
 #'
 #' @return A list of data queried, summary of results, and related input
 #'   parameters.
+#' @return a list for packaging by \code{as.mmquery} and \code{as.mmquery_bioc}
 #' @keywords internal
 #' @importFrom tibble as_data_frame
 #' @importFrom purrr map
@@ -63,7 +64,7 @@ extract_mmquery <- function(outlist, org, .args, summary = FALSE,
 as.mmquery <- function(a_list) {
 
     stopifnot(all(c("validated", "predicted", "disease.drug", "queries",
-                    "summary", "table", "org", "predicted.cutoff",
+                    "summary", "tables", "org", "predicted.cutoff",
                     "predicted.cutoff.type", "predicted.site") %in%
                   names(a_list)))
 
@@ -132,6 +133,8 @@ print.mmquery <- function(x) {
 #' \code{mmquery_bioc} object.
 #' @param .list a list of returned dataframes, summary
 #' @param ... additional arguments
+#' @return an s4 object of class mmquery_bioc.  Contains queried data, a summary
+#' dataset, and associated input parameters.
 #' 
 #' @importFrom AnnotationDbi select
 #' @importFrom AnnotationDbi columns
@@ -166,7 +169,12 @@ as.mmquery_bioc <- function(.list) {
                        if (nrow(rtn) > 0) rtn$type <- y
                        rtn
            })
-    tables <- reduce(Filter(length, tables), full_join)
+    tables <- Filter(length, tables)
+    if (length(tables) != 0) {
+        tables <- reduce(tables, full_join)
+    } else {
+        tables <- data.frame()
+    }
 
     # Create and return s3 object
     new("mmquery_bioc",

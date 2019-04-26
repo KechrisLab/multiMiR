@@ -13,6 +13,9 @@ split_by(.x, .f, ...)
 
 \item{...}{Additional arguments passed on to \code{.f}.}
 }
+\value{
+A list split by \code{.f}
+}
 \description{
 Copied from purrr:v0.2.2
 }
