@@ -16,10 +16,11 @@ builds).  The recommended release and devel versions are available via
 Bioconductor (as of Bioconductor 3.6).
 
 ```{r}
-# To install multiMiR, use biocLite()
-source("https://bioconductor.org/biocLite.R")
-biocLite()
-biocLite("multiMiR")
+# To install multiMiR, use BiocManager::install()
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install()
+BiocManager::install("multiMiR")
 ```
 
 Terminology used in package:
