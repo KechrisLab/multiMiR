@@ -9,7 +9,7 @@
 The [*multiMiR* web server](http://multimir.org) hosts a
 database containing miRNA-target interactions from external databases. The
 package *multiMiR* provides functions to communicate with the *multiMiR* web
-server and its database. 
+server and its database.
 
 Note this repository is where active development occurs (think 'nightly'
 builds).  The recommended release and devel versions are available via
@@ -30,4 +30,6 @@ Terminology used in package:
 - *sql*: a complete sql statement (mmsql class)
 - *query*: table result of sql statement (mmquery class), class includes sql
   statement and parts.
+  
+### * Warning * There are issues with merging target IDs from older unmaintained databases.  Databases that have been updated more recently (1-2 years) use current versions of annotated IDs.  In each update these old target IDs are carried over due to a lack of a reliable method to disambiguate the original ID with current IDs.  Please keep this in mind with results from older databases that have not been updated.  We continue to look at methods to resolve these ambiguities and improve target agreement between databases. You can use the unique() R function to identify and then remove multiple target genes if needed.
 
