@@ -2,11 +2,11 @@ Package: multiMiR
 Title: 
     Integration of multiple microRNA-target databases with their disease and
     drug associations
-Version: 1.27.0
+Version: 1.27.1
 Authors@R: c(
       person("Yuanbin", "Ru", email = "ruyuanbin@gmail.com", role = c("aut")),
-      person("Matt", "Mulvahill", email = "matt.mulvahill@gmail.com", role = c("cre", "aut")),
-      person("Spencer", "Mahaffey", email = "spencer.mahaffey@ucdenver.edu", role = c("aut")),
+      person("Matt", "Mulvahill", email = "matt.mulvahill@gmail.com", role = c("aut")),
+      person("Spencer", "Mahaffey", email = "Spencer.Mahaffey@cuanschutz.edu", role = c("cre","aut")),
       person("Katerina", "Kechris", email = "Katerina.Kechris@ucdenver.edu", role = c("aut", "cph", "ths")))
 Description: 
     A collection of microRNAs/targets from external resources, including
