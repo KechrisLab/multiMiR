@@ -2,10 +2,10 @@
 
 [![Build Status](https://travis-ci.org/KechrisLab/multiMiR.svg?branch=master)](https://travis-ci.org/KechrisLab/multiMiR)
 [![codecov](https://codecov.io/gh/KechrisLab/multiMiR/branch/master/graph/badge.svg)](https://codecov.io/gh/KechrisLab/multiMiR)
-[![biocdownloads](https://bioconductor.org/shields/downloads/multiMiR.svg)](https://bioconductor.org/shields/downloads/multiMiR.svg)
+[![biocdownloads](https://bioconductor.org/shields/downloads/release/multiMiR.svg)](https://bioconductor.org/shields/downloads/release/multiMiR.svg)
 [![inBioc](https://bioconductor.org/shields/years-in-bioc/multiMiR.svg)](https://bioconductor.org/packages/release/bioc/html/multiMiR.html)
 ---
-
+## 2023 DB update is coming July 2024 (Thank you for your patience) - [Please comment to provide feedback](https://github.com/KechrisLab/multiMiR/issues/45)
 The [*multiMiR* web server](http://multimir.org) hosts a
 database containing miRNA-target interactions from external databases. The
 package *multiMiR* provides functions to communicate with the *multiMiR* web
