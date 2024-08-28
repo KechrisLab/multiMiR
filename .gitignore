@@ -5,6 +5,7 @@
 .Rhistory
 .Rapp_history
 ..Rcheck
+*.Rproj
 
 # Vim temp files
 *.swo
