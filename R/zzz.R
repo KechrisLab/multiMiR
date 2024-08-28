@@ -16,9 +16,8 @@
 
 # Set default url options on load
 .onLoad <- function(libname, pkgname) {
-
     op <- options()
-
+    options(timeout = 180)
     op.multimir <- list(multimir.url  = "http://multimir.org/",
                         multimir.queries = "cgi-bin/multimir_univ.pl")
 
