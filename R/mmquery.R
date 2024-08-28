@@ -6,7 +6,7 @@
 #'   parameters.
 #' @return a list for packaging by \code{as.mmquery} and \code{as.mmquery_bioc}
 #' @keywords internal
-#' @importFrom tibble as_data_frame
+#' @importFrom tibble as_tibble
 #' @importFrom purrr map
 #' @importFrom purrr transpose
 #' @importFrom purrr reduce
@@ -26,7 +26,7 @@ extract_mmquery <- function(outlist, org, .args, summary = FALSE,
 
     if (summary) {
         mmsum <- multimir.summary(data_wo_null)
-        if (use.tibble) mmsum <- as_data_frame(mmsum)
+        if (use.tibble) mmsum <- as_tibble(mmsum)
     } else mmsum <- data.frame()
 
     cutoff      <- null_to_num(.args$predicted.cutoff)
@@ -84,19 +84,19 @@ as.mmquery <- function(a_list) {
 }
 
 
-#' @importFrom tibble as_data_frame
+#' @importFrom tibble as_tibble
 #' @rdname as.mmquery
 print.mmquery <- function(x) {
 
     cat("MultiMiR query\n")
     cat("Validated interactions:\n")
-    print(as_data_frame(x$validated), n = 5)
+    print(as_tibble(x$validated), n = 5)
     cat("Predicted interactions:\n")
-    print(as_data_frame(x$predicted), n = 5)
+    print(as_tibble(x$predicted), n = 5)
     cat("Disease/Drug associations:\n")
-    print(as_data_frame(x$diseasedrug), n = 5)
+    print(as_tibble(x$diseasedrug), n = 5)
     cat("Summary:\n")
-    print(as_data_frame(x$summary), n = 5)
+    print(as_tibble(x$summary), n = 5)
 
 }
 
@@ -230,19 +230,19 @@ setMethod("show", "mmquery_bioc",
 
         cat("MultiMiR query\n")
         cat("Validated interactions:\n")
-        print(as_data_frame(select(object, keytype = "type",
+        print(as_tibble(select(object, keytype = "type",
                                    keys = "validated",
                                    columns = columns(object), n = 5)))
         cat("Predicted interactions:\n")
-        print(as_data_frame(select(object, keytype = "type",
+        print(as_tibble(select(object, keytype = "type",
                                    keys = "predicted",
                                    columns = columns(object), n = 5)))
         cat("Disease/Drug associations:\n")
-        print(as_data_frame(select(object, keytype = "type",
+        print(as_tibble(select(object, keytype = "type",
                                    keys = "disease.drug",
                                    columns = columns(object), n = 5)))
         cat("Summary:\n")
-        print(as_data_frame(object@summary), n = 5)
+        print(as_tibble(object@summary), n = 5)
 
     })
 

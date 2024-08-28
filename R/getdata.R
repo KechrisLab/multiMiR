@@ -109,7 +109,7 @@
 #'   head(example2@data)
 #'
 #' @importFrom purrr map
-#' @importFrom tibble as_data_frame
+#' @importFrom tibble as_tibble
 #' @importFrom stats setNames
 #' @export get_multimir
 get_multimir <- function(url                   = NULL,
@@ -287,7 +287,7 @@ default_cutoff <- function(predicted.cutoff.type, predicted.cutoff) {
 #' 
 #' @return The queried multimir data with the addition of a requested feature.
 #' @keywords internal
-#' @importFrom tibble as_data_frame
+#' @importFrom tibble as_tibble
 query_multimir <- function(x, org, add.link, use.tibble) {
 
     cat("Searching", x$table, "...\n")
@@ -302,7 +302,7 @@ query_multimir <- function(x, org, add.link, use.tibble) {
         x$data <- data.frame()
     }
 
-    if (use.tibble) x$data <- as_data_frame(x$data)
+    if (use.tibble) x$data <- as_tibble(x$data)
     if (x$table %in% diseasedrug_tables()) x$data <- unique(x$data)
 
     return(x)
