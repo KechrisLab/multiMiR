@@ -175,12 +175,16 @@ as.mmquery_bioc <- function(.list) {
     } else {
         tables <- data.frame()
     }
+    summaryDF <- data.frame()
+    if(length(.list$summary)>0){
+      summaryDF <- as_tibble(.list$summary)
+    }
 
     # Create and return s3 object
     new("mmquery_bioc",
         data    = tables,
         queries      = .list$queries,
-        summary      = .list$summary,
+        summary      = summaryDF,
         tables       = .list$table,
         org          = .list$org,
         predicted.cutoff      = .list$predicted.cutoff,
