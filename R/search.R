@@ -58,15 +58,15 @@ search.multimir <- function(query) {
 #' directly.  Please use \code{get_multimir}.
 #' 
 #' @importFrom XML readHTMLTable
+#' @import RCurl curlOptions
 #' @importFrom RCurl postForm
 #' @return Table requested in \code{query}.
 #' @keywords internal
 submit_request <- function(url = full_url("multimir.queries"), query, ...) {
-
-    request <- RCurl::postForm(url, query = query, ... )
+    myOpts <- curlOptions(connecttimeout = 300)
+    request <- RCurl::postForm(url, query = query, ... ,.opts=myOpts)
     result  <- XML::readHTMLTable(request, stringsAsFactors = FALSE)
     parse_response(result)
-
 }
 
 
